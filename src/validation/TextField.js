@@ -2,19 +2,28 @@ import React from 'react'
 import Validation from './Validation'
 import TextField from 'material-ui/TextField'
 
-export default ({...props}) => {
-  state = {
-    errors: []
-  }
+class Input extends React.Component {
+  render () {
+    const {
+      rules,
+      stateComponent,
+      displayError,
+      error,
+      ...inputProps
+    } = this.props
 
-  return (
-    <TextField
-      {...props}
-      errorText={this.state.errors.length > 0 ? props.error : null}
-      onChange={(event) => {
-        this.setState({ error: Validation(event.target.value, props.validation) })
-        console.log(this.state.error)
-      }}
-    />
-  )
+    return (
+      <TextField
+        {...inputProps}
+        errorText={displayError ? error : null}
+        onChange={(e) => stateComponent({
+          errors: Validation(e.target.value, rules) || null,
+          value: e.target.value,
+          name: this.props.name || null
+        })}
+      />
+    )
+  }
 }
+
+export default Input
