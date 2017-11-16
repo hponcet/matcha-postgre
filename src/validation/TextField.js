@@ -3,6 +3,11 @@ import Validation from './Validation'
 import TextField from 'material-ui/TextField'
 
 class Input extends React.Component {
+  state = {
+    displayError: false,
+    value: '',
+    errors: []
+  }
   render () {
     const {
       rules,
@@ -15,12 +20,12 @@ class Input extends React.Component {
     return (
       <TextField
         {...inputProps}
-        errorText={displayError ? error : null}
-        onChange={(e) => stateComponent({
-          errors: Validation(e.target.value, rules) || null,
-          value: e.target.value,
-          name: this.props.name || null
-        })}
+        errorText={this.state.displayError && this.state.value && this.state.errors.length > 0 ? error : null}
+        onChange={(e) => {
+          this.setState({ errors: Validation(e.target.value, rules), value: e.target.value })
+          stateComponent({ value: e.target.value, name: this.props.name || null })
+        }}
+        onBlur={() => this.setState({displayError: true})}
       />
     )
   }

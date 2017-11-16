@@ -18,6 +18,9 @@ const validations = {
   isFloat: (value) => validations.matchRegexp(value, /^(?:[-+]?(?:\d+))?(?:\.\d*)?(?:[eE][+-]?(?:\d+))?$/),
   isWords: (value) => validations.matchRegexp(value, /^[A-Z\s]+$/i),
   isSpecialWords: (value) => validations.matchRegexp(value, /^[A-Z\s\u00C0-\u017F]+$/i),
+  isPseudo: (value) => validations.matchRegexp(value, /#[a-zA-Z0-9._]#/i),
+  haveSpace: (value) => validations.matchRegexp(value, /[\b \b]/i),
+  haveNumeric: (value) => validations.matchRegexp(value, /[\b0-9\b]/i),
   isLength: (value, length) => !_isExisty(value) || isEmpty(value) || value.length === length,
   equals: (value, eql) => !_isExisty(value) || isEmpty(value) || value === eql,
   maxLength: (value, length) => !_isExisty(value) || value.length <= length,
@@ -25,9 +28,12 @@ const validations = {
 }
 
 const validate = (value, rules) => {
-  if (!rules) return
   let errors = []
+  if (!rules) return errors
   if (_isExisty(rules.required) && validations.isDefaultRequiredValue(value)) errors.push('isRequired')
+  if (_isExisty(rules.isPseudo) && !validations.isPseudo(value)) errors.push('isNotPseudo')
+  if (_isExisty(rules.noSpace) && !isEmpty(value) && validations.haveSpace(value)) errors.push('haveSpace')
+  if (_isExisty(rules.haveNumeric) && !validations.haveNumeric(value)) errors.push('noNumeric')
   if (_isExisty(rules.isEmail) && !validations.isEmail(value)) errors.push('isNotEmail')
   if (_isExisty(rules.url) && !validations.isEmail(value)) errors.push('isNotUrl')
   if (_isExisty(rules.isEqual) && !validations.isEqual(value, rules.isEqual)) errors.push('isNotEqual')

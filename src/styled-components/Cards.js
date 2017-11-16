@@ -2,7 +2,8 @@ import React from 'react'
 import {
   Card as CardComponent,
   CardText as CardTextComponent,
-  CardHeader as CardHeaderComponent
+  CardHeader as CardHeaderComponent,
+  CardActions as CardActionsComponent
 } from 'material-ui/Card'
 
 const Card = ({children, style}) => {
@@ -45,8 +46,23 @@ const CardText = ({children, style}) => {
   )
 }
 
+const CardActions = ({children, style}) => {
+  const componentStyle = (style) => {
+    return {
+      ...style
+    }
+  }
+  return (
+    <CardActionsComponent style={componentStyle(style)}>
+      {children}
+    </CardActionsComponent>
+  )
+}
+
+
 export {
   Card,
   CardHeader,
-  CardText
+  CardText,
+  CardActions
 }
