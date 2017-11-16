@@ -1,12 +1,11 @@
 import { combineReducers } from 'redux'
 import locationReducer from './location'
-
-// Import all reducers here
+import { SignupReducer } from '../authentification/reducers'
 
 export const makeRootReducer = (asyncReducers) => {
   return combineReducers({
-    // past reducers here like class: classesReducers
     location: locationReducer,
+    signup: SignupReducer,
     ...asyncReducers
   })
 }

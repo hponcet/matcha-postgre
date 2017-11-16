@@ -23,7 +23,10 @@ class Input extends React.Component {
         errorText={this.state.displayError && this.state.value && this.state.errors.length > 0 ? error : null}
         onChange={(e) => {
           this.setState({ errors: Validation(e.target.value, rules), value: e.target.value })
-          stateComponent({ value: e.target.value, name: this.props.name || null })
+          stateComponent({
+            value: e.target.value,
+            name: this.props.name || null,
+            error: this.state.errors.length > 0 ? true : false })
         }}
         onBlur={() => this.setState({displayError: true})}
       />
