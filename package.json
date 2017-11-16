@@ -9,6 +9,8 @@
   "author": "hponcet",
   "homepage": "https://github.com/hponcet/matcha-node-react#readme",
   "devDependencies": {
+    "eslint": "^4.11.0",
+    "eslint-plugin-react": "^7.4.0",
     "nodemon": "^1.12.1",
     "standard": "^10.0.3"
   },
@@ -19,8 +21,11 @@
     "formsy-react": "^0.19.5",
     "formsy-react-es6": "^1.0.6",
     "history": "^4.7.2",
+    "http-errors": "^1.6.2",
+    "jsonwebtoken": "^8.1.0",
     "lodash": "^4.17.4",
     "material-ui": "^0.19.4",
+    "mongodb": "^2.2.33",
     "react": "^16.1.0",
     "react-dom": "^16.1.0",
     "react-redux": "^5.0.6",
