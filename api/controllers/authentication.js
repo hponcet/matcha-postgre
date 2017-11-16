@@ -1,7 +1,8 @@
-const AuthenticationService = require('../services/authentication')
-const createError = require('http-errors')
-const errors = require('../errors')
 const _ = require('lodash')
+const createError = require('http-errors')
+
+const AuthenticationService = require('../services/authentication')
+const errors = require('../errors')
 
 const signup = (req, res, next) => {
   if (!_.has(req, 'body.email') || _.isEmpty(req.body.email)) return next(createError.BadRequest(errors.EMAIL_MISSING))
@@ -18,7 +19,7 @@ const signup = (req, res, next) => {
     req.body.lastName || null,
     req.body.pseudo
   )
-  .then((token) => res.send({access_token: token}))
+  .then((accessToken) => res.send({accessToken}))
   .catch(next)
 }
 
