@@ -18,15 +18,20 @@ const signup = (req, res, next) => {
     UsersService.getByMail(req.body.email)
     .then((email) => {
       if (email) return next(createError.BadRequest(errors.EMAIL_EXIST))
-      return AuthenticationService.signup(
-        req.body.email,
-        req.body.password,
-        req.body.sex,
-        req.body.firstName || null,
-        req.body.lastName || null,
-        req.body.pseudo
-      )
-      .then((accessToken) => res.send({accessToken}))
+      UsersService.getGeolocation(req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.connection.remoteAddress)
+      .then((location) => {
+        return AuthenticationService.signup(
+          req.body.email,
+          req.body.password,
+          req.body.sex,
+          req.body.firstName || null,
+          req.body.lastName || null,
+          req.body.pseudo,
+          location
+        )
+        .then((accessToken) => res.send({accessToken}))
+        .catch(next)
+      })
       .catch(next)
     })
     .catch(next)
@@ -34,6 +39,23 @@ const signup = (req, res, next) => {
   .catch(next)
 }
 
+const login = (req, res, next) => {
+  if (!_.has(req, 'body.password') || _.isEmpty(req.body.password)) return next(createError.BadRequest(errors.PASSWORD_MISSING))
+  if (!_.has(req, 'body.pseudo') || _.isEmpty(req.body.pseudo)) return next(createError.BadRequest(errors.PSEUDO_MISSING))
+
+  UsersService.getByPseudo(req.body.pseudo)
+  .then((user) => {
+    if (!user) return next(createError.BadRequest(errors.LOGIN_UNKNOWN_PSEUDO))
+    AuthenticationService.validatePassword(req.body.password, user.password)
+    .then((isValid) => {
+      if (!isValid) return next(createError.BadRequest(errors.LOGIN_BAD_PASSWORD))
+      res.send({ accessToken: AuthenticationService.buildToken(user._id) })
+    })
+  })
+  .catch(next)
+}
+
 module.exports = {
-  signup
+  signup,
+  login
 }

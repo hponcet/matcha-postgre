@@ -1,8 +1,10 @@
 import React from 'react'
 import { compact, map } from 'lodash'
+import Crypto from 'crypto-js'
 
 import Validation from '../../validation/Validation'
 import Keys from '../../Keys'
+import config from '../../config/config'
 
 import { Card, CardHeader, CardText, CardActions } from '../../styled-components/Cards'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -99,16 +101,17 @@ class Signup extends React.Component {
   }
 
   handleSubmit (event) {
+    event.preventDefault()
     const { email, password, sex, firstName, lastName, pseudo } = this.state.inputs
+
     this.props.signup(
       email.value,
-      password.value,
+      Crypto.SHA512(password.value, config.SECRET_HASH).toString(),
       sex.value,
       firstName.value,
       lastName.value,
       pseudo.value
     )
-    event.preventDefault()
   }
 
   render () {
@@ -163,7 +166,7 @@ class Signup extends React.Component {
                 />
                 <TextField
                   type='email'
-                  hintText='Email *'
+                  hintText='E-mail *'
                   errorText={this.state.inputs.email.showError && 'Veuillez saisir un e-mail'}
                   name='email'
                   value={this.state.inputs.email.value}
@@ -174,7 +177,7 @@ class Signup extends React.Component {
                 />
                 <TextField
                   type='password'
-                  hintText='Password'
+                  hintText='Mot de passe'
                   errorText={this.state.inputs.password.showError && 'Veuillez saisir un mot de passe de 8 caractères minimum avec au moins un chiffre'}
                   name='password'
                   value={this.state.inputs.password.value}
@@ -191,7 +194,7 @@ class Signup extends React.Component {
           </form>
           <CardText>
             <div className='Signup__errorContainer'>
-              { Keys(this.props.error && this.props.error.response ? this.props.error.response.data : null) }
+              { Keys(this.props.error ? this.props.error.appCode : null) }
             </div>
           </CardText>
         </Card>

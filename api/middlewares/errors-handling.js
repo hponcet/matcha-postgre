@@ -32,7 +32,7 @@ const errorsHandling = (err, req, res, next) => {
   err.json = {
     code: err.message
   }
-  res.status(err.statusCode).json(err.message)
+  res.status(err.statusCode).json(err.json)
 }
 
 module.exports = {

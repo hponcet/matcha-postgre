@@ -1,4 +1,5 @@
 const MongoClient = require('mongodb').MongoClient
+const axios = require('axios')
 
 const dbParams = require('../config/config').DATABASE
 const dbUrl = `${dbParams.dialect}://${dbParams.host}:${dbParams.port}/${dbParams.database}`
@@ -31,7 +32,27 @@ const getByMail = (email) => {
   })
 }
 
+const getGeolocation = (ip) => {
+  return axios({
+    method: 'get',
+    url: `https://ipinfo.io/${(ip === '::1' || ip === '127.0.0.1') ? '93.26.180.80' : ip}/json`
+  })
+  .then((geoData) => {
+    const { ip, city, region, country, postal, loc } = geoData.data
+    return {
+      ip: ip,
+      city: city,
+      region: region,
+      country: country,
+      zip: postal,
+      loc: loc.split(',')
+    }
+  })
+  .catch((err) => err)
+}
+
 module.exports = {
   getByPseudo,
-  getByMail
+  getByMail,
+  getGeolocation
 }
