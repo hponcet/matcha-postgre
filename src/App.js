@@ -2,6 +2,7 @@ import React from 'react'
 import { Router, Switch, Route } from 'react-router'
 import { Provider } from 'react-redux'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import './styles/App.css'
 
 import history from './config/history'
 import Layout from './routes/containers/Layout'

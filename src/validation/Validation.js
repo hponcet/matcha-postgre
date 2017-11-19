@@ -2,7 +2,7 @@ const _isExisty = (value) => value !== null && value !== undefined
 const isEmpty = (value) => value === ''
 
 const validations = {
-  isDefaultRequiredValue: (value) => value === undefined || value === '',
+  isDefaultRequiredValue: (value) => value === undefined || value === '' || value === null,
   isExisty: (value) => _isExisty(value),
   matchRegexp: (value, regexp) => !_isExisty(value) || isEmpty(value) || regexp.test(value),
   isUndefined: (value) => value === undefined,
@@ -27,31 +27,30 @@ const validations = {
   minLength: (value, length) => !_isExisty(value) || isEmpty(value) || value.length >= length
 }
 
-const validate = (value, rules) => {
-  let errors = []
-  if (!rules) return errors
-  if (_isExisty(rules.required) && validations.isDefaultRequiredValue(value)) errors.push('isRequired')
-  if (_isExisty(rules.isPseudo) && !validations.isPseudo(value)) errors.push('isNotPseudo')
-  if (_isExisty(rules.noSpace) && !isEmpty(value) && validations.haveSpace(value)) errors.push('haveSpace')
-  if (_isExisty(rules.haveNumeric) && !validations.haveNumeric(value)) errors.push('noNumeric')
-  if (_isExisty(rules.isEmail) && !validations.isEmail(value)) errors.push('isNotEmail')
-  if (_isExisty(rules.url) && !validations.isEmail(value)) errors.push('isNotUrl')
-  if (_isExisty(rules.isEqual) && !validations.isEqual(value, rules.isEqual)) errors.push('isNotEqual')
-  if (_isExisty(rules.maxLength) && !validations.maxLength(value, rules.maxLength)) errors.push('isInferior')
-  if (_isExisty(rules.minLength) && !validations.minLength(value, rules.minLength)) errors.push('isSueprior')
-  if (_isExisty(rules.isInt) && !validations.isInt(value)) errors.push('isNotInt')
-  if (_isExisty(rules.isTrue) && !validations.isTrue(value)) errors.push('isNotTrue')
-  if (_isExisty(rules.isFalse) && !validations.isFalse(value)) errors.push('isNoFalse')
-  if (_isExisty(rules.isFloat) && !validations.isFloat(value)) errors.push('isNotFloat')
-  if (_isExisty(rules.isAlpha) && !validations.isAlpha(value)) errors.push('isNotAlpha')
-  if (_isExisty(rules.isAlphanumeric) && !validations.isAlphanumeric(value)) errors.push('isNotAlphanumeric')
-  if (_isExisty(rules.isNumeric) && !validations.isNumeric(value)) errors.push('isNotNumeric')
-  if (_isExisty(rules.isWords) && !validations.isWords(value)) errors.push('isNotWords')
-  if (_isExisty(rules.isEmptyString) && !validations.isEmptyString(value)) errors.push('isNotEmptyString')
-  if (_isExisty(rules.isLength) && !validations.isLength(value, rules.isLength)) errors.push('isNotLength')
-  if (_isExisty(rules.isUndefined) && !validations.isUndefined(value)) errors.push('isNotUndefined')
-  if (_isExisty(rules.isSpecialWords) && !validations.isSpecialWords(value, rules.isSpecialWords)) errors.push('isNotSpecialWords')
-  return errors
+const validate = (value, rules, required) => {
+  if (!rules) return true
+  if (_isExisty(rules.isRequired) && validations.isDefaultRequiredValue(value)) return false
+  if (_isExisty(rules.isPseudo) && !validations.isPseudo(value)) return false
+  if (_isExisty(rules.noSpace) && !isEmpty(value) && validations.haveSpace(value)) return false
+  if (_isExisty(rules.haveNumeric) && !validations.haveNumeric(value)) return false
+  if (_isExisty(rules.isEmail) && !validations.isEmail(value)) return false
+  if (_isExisty(rules.url) && !validations.isEmail(value)) return false
+  if (_isExisty(rules.isEqual) && !validations.isEqual(value, rules.isEqual)) return false
+  if (_isExisty(rules.maxLength) && !validations.maxLength(value, rules.maxLength)) return false
+  if (_isExisty(rules.minLength) && !validations.minLength(value, rules.minLength)) return false
+  if (_isExisty(rules.isInt) && !validations.isInt(value)) return false
+  if (_isExisty(rules.isTrue) && !validations.isTrue(value)) return false
+  if (_isExisty(rules.isFalse) && !validations.isFalse(value)) return false
+  if (_isExisty(rules.isFloat) && !validations.isFloat(value)) return false
+  if (_isExisty(rules.isAlpha) && !validations.isAlpha(value)) return false
+  if (_isExisty(rules.isAlphanumeric) && !validations.isAlphanumeric(value)) return false
+  if (_isExisty(rules.isNumeric) && !validations.isNumeric(value)) return false
+  if (_isExisty(rules.isWords) && !validations.isWords(value)) return false
+  if (_isExisty(rules.isEmptyString) && !validations.isEmptyString(value)) return false
+  if (_isExisty(rules.isLength) && !validations.isLength(value, rules.isLength)) return false
+  if (_isExisty(rules.isUndefined) && !validations.isUndefined(value)) return false
+  if (_isExisty(rules.isSpecialWords) && !validations.isSpecialWords(value, rules.isSpecialWords)) return false
+  return true
 }
 
 export default validate

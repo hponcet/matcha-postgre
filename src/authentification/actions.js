@@ -5,9 +5,7 @@ import config from '../config/config'
 import history from '../config/history'
 
 export const signup = (email, password, sex, firstName, lastName, pseudo) => dispatch => {
-  dispatch({
-    type: constants.SIGNUP_REQUEST
-  })
+  dispatch({type: constants.SIGNUP_REQUEST})
   axios({
     method: 'post',
     url: config.API_BASE_URI + '/signup',
@@ -15,16 +13,8 @@ export const signup = (email, password, sex, firstName, lastName, pseudo) => dis
   })
   .then((json) => {
     window.localStorage.token = json.data.accessToken
-    dispatch({
-      type: constants.SIGNUP_SUCCESS,
-      payload: json.data
-    })
+    dispatch({type: constants.SIGNUP_SUCCESS, payload: json.data})
     return history.push('/home')
   })
-  .catch((error) => {
-    dispatch({
-      type: constants.SIGNUP_FAILURE,
-      payload: error.appCode
-    })
-  })
+  .catch((error) => dispatch({type: constants.SIGNUP_FAILURE, payload: error}))
 }

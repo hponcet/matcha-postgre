@@ -13,9 +13,8 @@ const signup = (email, password, sex, firstName, lastName, pseudo) => {
       const Users = db.collection('users')
       Users.insertOne({email, password, sex, firstName, lastName, pseudo}, (err, data) => {
         if (err) return reject(err)
-        console.log(data)
         db.close()
-        resolve()
+        resolve(buildToken(data.ops[0]._id.toString()))
       })
     })
   })
