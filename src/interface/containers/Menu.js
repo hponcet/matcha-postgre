@@ -1,9 +1,9 @@
 import { connect } from 'react-redux'
-import { logoutAction } from '../actions'
+import { logoutAction, fetchUser } from '../actions'
 
 import Menu from '../components/Menu'
 
 export default connect(
   (state) => ({}),
-  { logout: logoutAction }
+  { logout: logoutAction, fetchUser }
 )(Menu)

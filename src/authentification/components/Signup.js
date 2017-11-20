@@ -5,10 +5,12 @@ import Crypto from 'crypto-js'
 import Validation from '../../validation/Validation'
 import Keys from '../../Keys'
 import config from '../../config/config'
+import history from '../../config/history'
 
 import { Card, CardHeader, CardText, CardActions } from '../../styled-components/Cards'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
+import { ClassicLinkButton } from '../../styled-components/Button'
 import Select from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 
@@ -197,6 +199,10 @@ class Signup extends React.Component {
               { Keys(this.props.error ? this.props.error.appCode : null) }
             </div>
           </CardText>
+          <div className='Sign__linkContainer'>
+            <div className='Sign__link'><ClassicLinkButton onClick={() => { history.push('/login') }}>Se connécter ?</ClassicLinkButton></div>
+            <div className='Sign__link'><ClassicLinkButton onClick={() => { window.alert('Soon...') }}>Oublie du mot de passe ?</ClassicLinkButton></div>
+          </div>
         </Card>
       </div>
     )

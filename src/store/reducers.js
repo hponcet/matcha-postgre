@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 import locationReducer from './location'
-import { SignupReducer, LoginReducer, UserReducer } from '../authentification/reducers'
+import { SignupReducer, LoginReducer } from '../authentification/reducers'
+import { UserReducer } from '../interface/reducers'
 
 export const makeRootReducer = (asyncReducers) => {
   return combineReducers({

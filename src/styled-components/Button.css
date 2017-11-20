@@ -1,0 +1,6 @@
+.Button__noHighlight:active {
+  outline: none;
+}
+.Button__noHighlight:focus {
+  outline: none;
+}

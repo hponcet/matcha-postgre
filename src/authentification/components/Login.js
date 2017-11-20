@@ -10,6 +10,7 @@ import { getToken } from '../utils'
 
 import { Card, CardHeader, CardText, CardActions } from '../../styled-components/Cards'
 import RaisedButton from 'material-ui/RaisedButton'
+import { ClassicLinkButton } from '../../styled-components/Button'
 import TextField from 'material-ui/TextField'
 
 import './Signup.css'
@@ -88,7 +89,7 @@ class Login extends React.Component {
           <CardHeader>Connection</CardHeader>
           <form onSubmit={this.handleSubmit} method='post'>
             <CardText>
-              <div className='Signup__inputsColumnContainer'>
+              <div className='Sign__inputsColumnContainer'>
                 <TextField
                   type='text'
                   hintText='Pseudo *'
@@ -118,10 +119,14 @@ class Login extends React.Component {
             </CardActions>
           </form>
           <CardText>
-            <div className='Signup__errorContainer'>
+            <div className='Sign__errorContainer'>
               {Keys(this.props.error ? this.props.error.appCode : null)}
             </div>
           </CardText>
+          <div className='Sign__linkContainer'>
+            <div className='Sign__link'><ClassicLinkButton onClick={() => { history.push('/signup') }}>Créer un compte ?</ClassicLinkButton></div>
+            <div className='Sign__link'><ClassicLinkButton onClick={() => { window.alert('Soon...') }}>Oublie du mot de passe ?</ClassicLinkButton></div>
+          </div>
         </Card>
       </div>
     )
