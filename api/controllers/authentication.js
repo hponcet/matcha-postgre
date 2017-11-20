@@ -43,7 +43,7 @@ const login = (req, res, next) => {
   if (!_.has(req, 'body.password') || _.isEmpty(req.body.password)) return next(createError.BadRequest(errors.PASSWORD_MISSING))
   if (!_.has(req, 'body.pseudo') || _.isEmpty(req.body.pseudo)) return next(createError.BadRequest(errors.PSEUDO_MISSING))
 
-  UsersService.getByPseudo(req.body.pseudo)
+  UsersService.getByPseudo(req.body.pseudo, {fields: {password: 1}})
   .then((user) => {
     if (!user) return next(createError.BadRequest(errors.LOGIN_UNKNOWN_PSEUDO))
     AuthenticationService.validatePassword(req.body.password, user.password)
@@ -51,6 +51,7 @@ const login = (req, res, next) => {
       if (!isValid) return next(createError.BadRequest(errors.LOGIN_BAD_PASSWORD))
       res.send({ accessToken: AuthenticationService.buildToken(user._id) })
     })
+    .catch(next)
   })
   .catch(next)
 }

@@ -7,12 +7,12 @@ const dbUrl = `${dbParams.dialect}://${dbParams.host}:${dbParams.port}/${dbParam
 
 const requiredFields = {fields: {password: 0}}
 
-const getByPseudo = (pseudo) => {
+const getByPseudo = (pseudo, requestedFields) => {
   return new Promise((resolve, reject) => {
     MongoClient.connect(dbUrl, (err, db) => {
       if (err) return reject(err)
       const Users = db.collection('users')
-      Users.findOne({pseudo}, requiredFields, (err, data) => {
+      Users.findOne({pseudo}, requestedFields || requiredFields, (err, data) => {
         if (err) return reject(err)
         db.close()
         resolve(data)

@@ -27,8 +27,10 @@ const signup = (email, password, sex, firstName, lastName, pseudo, location) => 
 }
 
 const validatePassword = (receivedPassword, userPassword) => {
+  if (!receivedPassword || !userPassword) return Promise.resolve(false)
   return bcrypt.compare(receivedPassword, userPassword)
   .then((isValid) => isValid)
+  .catch((err) => err)
 }
 
 const buildToken = (userId) => {

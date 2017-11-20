@@ -2,6 +2,7 @@ import { combineReducers } from 'redux'
 import locationReducer from './location'
 import { SignupReducer, LoginReducer } from '../authentification/reducers'
 import { UserReducer } from '../interface/reducers'
+import { ProfilReducer } from '../profil/reducers'
 
 export const makeRootReducer = (asyncReducers) => {
   return combineReducers({
@@ -9,6 +10,7 @@ export const makeRootReducer = (asyncReducers) => {
     signup: SignupReducer,
     login: LoginReducer,
     user: UserReducer,
+    profil: ProfilReducer,
     ...asyncReducers
   })
 }
