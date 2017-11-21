@@ -1,9 +1,9 @@
 import { connect } from 'react-redux'
 import { fetchUser } from '../actions'
 
-import Home from '../components/Home'
+import Interface from '../components/Interface'
 
 export default connect(
   (state) => ({}),
   { fetchUser }
-)(Home)
+)(Interface)

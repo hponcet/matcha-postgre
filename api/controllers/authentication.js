@@ -20,7 +20,7 @@ const signup = (req, res, next) => {
       if (email) return next(createError.BadRequest(errors.EMAIL_EXIST))
       UsersService.getGeolocation(req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.connection.remoteAddress)
       .then((location) => {
-        return AuthenticationService.signup(
+        return UsersService.add(
           req.body.email,
           req.body.password,
           req.body.sex,

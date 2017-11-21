@@ -3,11 +3,12 @@ import {Card, CardText} from 'material-ui/Card'
 
 class HomeGrid extends React.Component {
   render () {
+    console.log(this.props)
     return (
       <div>
         <Card>
           <CardText>
-            Home sweet home
+            Bonjour {this.props.pseudo}, ton id est {this.props.id} et {this.props.profil ? `vous avez un profil.` : 'vous n\'avez pas de profil.'}
           </CardText>
         </Card>
       </div>

@@ -1,11 +1,30 @@
 const MongoClient = require('mongodb').MongoClient
 const ObjectID = require('mongodb').ObjectID
 const axios = require('axios')
+const bcrypt = require('bcrypt')
 
 const dbParams = require('../config/config').DATABASE
 const dbUrl = `${dbParams.dialect}://${dbParams.host}:${dbParams.port}/${dbParams.database}`
+const AuthenticationService = require('./authentication')
 
 const requiredFields = {fields: {password: 0}}
+
+const add = (email, password, sex, firstName, lastName, pseudo, location) => {
+  return new Promise((resolve, reject) => {
+    MongoClient.connect(dbUrl, (err, db) => {
+      if (err) return reject(err)
+      const Users = db.collection('users')
+      bcrypt.hash(password, 10)
+      .then((hash) => {
+        Users.insertOne({email, password: hash, sex, firstName, lastName, pseudo, profil: null, location}, (err, data) => {
+          if (err) return reject(err)
+          db.close()
+          resolve(AuthenticationService.buildToken(data.ops[0]._id))
+        })
+      })
+    })
+  })
+}
 
 const getByPseudo = (pseudo, requestedFields) => {
   return new Promise((resolve, reject) => {
@@ -65,10 +84,11 @@ const getGeolocation = (ip) => {
       loc: loc.split(',') || null
     }
   })
-  .catch((err) => err)
+  .catch((err) => console.log('[GEOLOCATION API ERROR]', err.response.data))
 }
 
 module.exports = {
+  add,
   getById,
   getByPseudo,
   getByMail,

@@ -41,7 +41,7 @@ class Login extends React.Component {
   }
 
   componentWillMount () {
-    if (getToken()) history.push('/home')
+    if (getToken()) history.push('/dashboard/home')
   }
 
   enableButton () { this.setState({canSubmit: true}) }

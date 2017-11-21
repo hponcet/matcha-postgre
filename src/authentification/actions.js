@@ -6,7 +6,7 @@ import history from '../config/history'
 
 export const signup = (email, password, sex, firstName, lastName, pseudo) => dispatch => {
   dispatch({type: constants.SIGNUP_REQUEST})
-  axios({
+  return axios({
     method: 'post',
     url: config.API_BASE_URI + '/signup',
     data: { email, password, sex, firstName, lastName, pseudo }
@@ -14,23 +14,22 @@ export const signup = (email, password, sex, firstName, lastName, pseudo) => dis
   .then((json) => {
     window.localStorage.token = json.data.accessToken
     dispatch({type: constants.SIGNUP_SUCCESS, payload: json.data})
-    return history.push('/home')
+    return history.push('/dashboard/home')
   })
   .catch((error) => dispatch({type: constants.SIGNUP_FAILURE, payload: error}))
 }
 
 export const login = (pseudo, password) => dispatch => {
   dispatch({type: constants.LOGIN_REQUEST})
-  axios({
+  return axios({
     method: 'post',
     url: config.API_BASE_URI + '/login',
     data: { pseudo, password }
   })
   .then((json) => {
-    console.log(json)
     window.localStorage.token = json.data.accessToken
     dispatch({type: constants.LOGIN_SUCCESS, payload: json.data})
-    return history.push('/home')
+    return history.push('/dashboard/home')
   })
   .catch((error) => dispatch({type: constants.LOGIN_FAILURE, payload: error}))
 }

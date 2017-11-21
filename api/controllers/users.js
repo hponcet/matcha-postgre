@@ -12,6 +12,7 @@ const getUser = (req, res, next) => {
       user.location = location
       res.send({ data: user })
     })
+    .catch(() => res.send({ data: user }))
   })
   .catch(next)
 }

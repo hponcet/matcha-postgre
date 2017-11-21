@@ -6,6 +6,9 @@ import { updateProfil } from '../actions'
 export default connect(
   (state) => ({
     user: state.user.data,
+    profil: {
+      sex: state.user.sex
+    },
     error: state.profil.error
   }), {
     updateProfil
