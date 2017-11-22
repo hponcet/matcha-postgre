@@ -4,6 +4,8 @@ import { fetchUser } from '../actions'
 import Interface from '../components/Interface'
 
 export default connect(
-  (state) => ({}),
+  (state) => ({
+    user: state.user.data
+  }),
   { fetchUser }
 )(Interface)
