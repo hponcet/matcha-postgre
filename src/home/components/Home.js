@@ -3,7 +3,6 @@ import {Card, CardText} from 'material-ui/Card'
 
 class HomeGrid extends React.Component {
   render () {
-    console.log(this.props)
     return (
       <div>
         <Card>

@@ -6,6 +6,7 @@ import Validation from '../../validation/Validation'
 import { Card, CardTitle, CardText, CardHeader } from 'material-ui/Card'
 import Select from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
+import Tags from '../../styled-components/tags/component/Tags'
 
 import './Profil.css'
 
@@ -32,6 +33,12 @@ class Profil extends React.Component {
           pristine: true,
           showError: false,
           valid: (value) => Validation(value, {isInt: true})
+        },
+        tags: {
+          value: [],
+          pristine: true,
+          showError: false,
+          valid: (value) => Validation(value, {isArray: true})
         }
       }
     }
@@ -149,10 +156,10 @@ class Profil extends React.Component {
 
         <Card style={{margin: '20px'}}>
           <CardHeader>
-            Mes interêts
+            Ma liste d'interrets
           </CardHeader>
           <CardText>
-            Input
+            <Tags handleChange={this.handleChange} componentName='tags' />
           </CardText>
         </Card>
 

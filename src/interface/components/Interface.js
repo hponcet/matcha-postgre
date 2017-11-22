@@ -1,6 +1,7 @@
 import React from 'react'
 import Menu from '../containers/Menu'
 import { Switch, Route, Redirect } from 'react-router'
+import history from '../../config/history'
 
 import Home from '../../home/containers/Home'
 import Profil from '../../profil/containers/Profil'
@@ -12,10 +13,14 @@ class Interface extends React.Component {
     this.props.fetchUser()
   }
 
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.user && !nextProps.user.profil && this.props.location.pathname !== '/dashboard/profil') history.push('/dashboard/profil')
+  }
+
   render () {
     return (
       <div style={{ height: '100%', width: '100%' }}>
-        <Menu />
+        <Menu pseudo={this.props.user && this.props.user.pseudo ? this.props.user.pseudo : null} />
         <div className='Home__contentContainer'>
           <Route path='/dashboard/home' component={Home} />
           <Route path='/dashboard/profil' component={Profil} />
