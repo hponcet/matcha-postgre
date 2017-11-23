@@ -14,7 +14,8 @@ const newProfil = (userId) => {
         orientation: null,
         biography: null,
         pictures: [],
-        profilPicture: null
+        profilPicture: null,
+        userId
       }
       Profil.insertOne(profilSignature, (err, data) => {
         if (err) return reject(err)

@@ -21,7 +21,7 @@ export const fetchUser = () => dispatch => {
 
 export const logoutAction = () => {
   logout()
-  history.push('/')
+  history.push('/login')
   return {
     type: constants.LOGOUT
   }
