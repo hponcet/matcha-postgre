@@ -4,7 +4,8 @@ const initialUserState = {
   data: null,
   pseudo: null,
   id: null,
-  profil: null,
+  email: null,
+  profilId: null,
   error: null,
   isFetching: false
 }
@@ -21,11 +22,13 @@ export const UserReducer = (state = initialUserState, { type, payload }) => {
         ...state,
         isFetching: false,
         error: null,
-        data: payload,
-        pseudo: payload.pseudo,
         id: payload._id,
+        pseudo: payload.pseudo,
         sex: payload.sex,
-        profil: payload.profil
+        profilId: payload.profilId,
+        email: payload.email,
+        firstName: payload.firstName,
+        lastName: payload.lastName
       }
     default:
       return state

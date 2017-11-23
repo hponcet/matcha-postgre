@@ -2,44 +2,46 @@ import axios from 'axios'
 import config from '../../config/config'
 import * as constants from './constants'
 
+const url = `${config.API_BASE_URI}/tags`
+
 export const fetchTags = () => dispatch => {
   dispatch({type: constants.FETCH_TAGS_REQUEST})
   return axios({
     method: 'get',
-    url: `${config.API_BASE_URI}/tags`
+    url
   })
   .then((tags) => dispatch({type: constants.FETCH_TAGS_SUCCESS, payload: tags}))
   .catch((err) => dispatch({type: constants.FETCH_TAGS_FAILURE, payload: err}))
 }
 
-export const updateTag = (tagName, id) => dispatch => {
+export const updateTag = (name, id) => dispatch => {
   dispatch({type: constants.TAG_OPERATION_REQUEST})
   return axios({
-    method: 'update',
-    url: `${config.API_BASE_URI}/tags`,
-    data: {tagName, id}
+    method: 'patch',
+    url,
+    data: {name, id}
   })
   .then(() => dispatch({type: constants.TAG_OPERATION_SUCCESS}))
   .catch((err) => dispatch({type: constants.TAG_OPERATION_FAILURE, payload: err}))
 }
 
-export const addTag = (tag) => dispatch => {
+export const addTag = (name, id) => dispatch => {
   dispatch({type: constants.TAG_OPERATION_REQUEST})
   return axios({
     method: 'post',
-    url: `${config.API_BASE_URI}/tags`,
-    data: tag
+    url,
+    data: {name, id}
   })
   .then(() => dispatch({type: constants.TAG_OPERATION_SUCCESS}))
   .catch((err) => dispatch({type: constants.TAG_OPERATION_FAILURE, payload: err}))
 }
 
-export const removeTag = (tagName, id) => dispatch => {
+export const removeTag = (name, id) => dispatch => {
   dispatch({type: constants.TAG_OPERATION_REQUEST})
   return axios({
     method: 'delete',
-    url: `${config.API_BASE_URI}/tags`,
-    data: {tagName, id}
+    url,
+    data: {name, id}
   })
   .then(() => dispatch({type: constants.TAG_OPERATION_SUCCESS}))
   .catch((err) => dispatch({type: constants.TAG_OPERATION_FAILURE, payload: err}))

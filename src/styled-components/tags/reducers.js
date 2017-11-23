@@ -10,7 +10,7 @@ export const TagsReducer = (state = initialTagsState, { type, payload }) => {
     case constants.FETCH_TAGS_REQUEST:
       return { ...state, onProgress: true }
     case constants.FETCH_TAGS_SUCCESS:
-      return { ...state, onProgress: false, error: null, data: payload }
+      return { ...state, onProgress: false, error: null, data: payload.data }
     case constants.FETCH_TAGS_FAILURE:
       return { ...state, onProgress: false, error: payload }
     case constants.TAG_OPERATION_REQUEST:

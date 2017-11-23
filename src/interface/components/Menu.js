@@ -21,6 +21,7 @@ class Menu extends React.Component {
           title={title}
           titleStyle={styles.titleStyle}
           iconElementRight={<IconButton><LogoutIcon onClick={this.props.logout} /></IconButton>}
+          children={<div>{this.props.pseudo}</div>}
         />
       </div>
     )

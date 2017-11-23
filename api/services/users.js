@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt')
 const dbParams = require('../config/config').DATABASE
 const dbUrl = `${dbParams.dialect}://${dbParams.host}:${dbParams.port}/${dbParams.database}`
 const AuthenticationService = require('./authentication')
+const ProfilService = require('./profil')
 
 const requiredFields = {fields: {password: 0}}
 
@@ -16,12 +17,18 @@ const add = (email, password, sex, firstName, lastName, pseudo, location) => {
       const Users = db.collection('users')
       bcrypt.hash(password, 10)
       .then((hash) => {
-        Users.insertOne({email, password: hash, sex, firstName, lastName, pseudo, profil: null, location}, (err, data) => {
+        Users.insertOne({email, password: hash, sex, firstName, lastName, pseudo, profilId: null, location}, (err, data) => {
           if (err) return reject(err)
           db.close()
-          resolve(AuthenticationService.buildToken(data.ops[0]._id))
+          ProfilService.newProfil(data.ops[0]._id)
+          .then((profilId) => {
+            Users.findOneAndUpdate({_id: data.ops[0]._id}, {profilId})
+            resolve(AuthenticationService.buildToken(data.ops[0]._id))
+          })
+          .catch(reject(err))
         })
       })
+      .catch(reject(err))
     })
   })
 }

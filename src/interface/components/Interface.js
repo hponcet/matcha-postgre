@@ -20,7 +20,7 @@ class Interface extends React.Component {
   render () {
     return (
       <div style={{ height: '100%', width: '100%' }}>
-        <Menu />
+        <Menu pseudo={this.props.user && this.props.user.pseudo ? this.props.user.pseudo : null} />
         <div className='Home__contentContainer'>
           <Route path='/dashboard/home' component={Home} />
           <Route path='/dashboard/profil' component={Profil} />

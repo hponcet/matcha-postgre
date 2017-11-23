@@ -7,7 +7,7 @@ class HomeGrid extends React.Component {
       <div>
         <Card>
           <CardText>
-            Bonjour {this.props.pseudo}, ton id est {this.props.id} et {this.props.profil ? `vous avez un profil.` : 'vous n\'avez pas de profil.'}
+            Bonjour {this.props.pseudo}, ton id est {this.props.id} et {this.props.profilId ? `vous avez un profil.` : 'vous n\'avez pas de profil.'}
           </CardText>
         </Card>
       </div>

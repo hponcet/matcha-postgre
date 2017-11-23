@@ -12,6 +12,10 @@ export const setToken = (token) => {
   window.localStorage.token = token
 }
 
+export const logout = () => {
+  delete window.localStorage.token
+}
+
 export const initInterceptor = () => {
   axios.interceptors.request.use((config) => {
     const token = getToken()
@@ -24,8 +28,7 @@ export const initInterceptor = () => {
   axios.interceptors.response.use(null, (error) => {
     if (
       error.response &&
-      error.response.status === 401 &&
-      error.response.data.code === 'INVALID_TOKEN'
+      error.response.status === 401 && error.response.data.code === 'INVALID_TOKEN'
     ) {
       logout()
       history.push('/login')
@@ -33,8 +36,4 @@ export const initInterceptor = () => {
 
     return Promise.reject(error)
   })
-}
-
-export const logout = () => {
-  delete window.localStorage.token
 }

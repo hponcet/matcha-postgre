@@ -6,6 +6,6 @@ export default connect(
   (state) => ({
     pseudo: state.user.pseudo,
     id: state.user.id,
-    profil: state.user.profil
+    profilId: state.user.profilId
   }), null
 )(Home)
