@@ -12,13 +12,13 @@ const signup = (req, res, next) => {
   if (!_.has(req, 'body.sex') || _.isEmpty(req.body.sex)) return next(createError.BadRequest(errors.SEX_MISSING))
   if (!_.has(req, 'body.pseudo') || _.isEmpty(req.body.pseudo)) return next(createError.BadRequest(errors.PSEUDO_MISSING))
 
-  UsersService.getByPseudo(req.body.pseudo)
+  return UsersService.getByPseudo(req.body.pseudo)
   .then((pseudo) => {
     if (pseudo) return next(createError.BadRequest(errors.PSEUDO_EXIST))
-    UsersService.getByMail(req.body.email)
+    return UsersService.getByMail(req.body.email)
     .then((email) => {
       if (email) return next(createError.BadRequest(errors.EMAIL_EXIST))
-      UsersService.getGeolocation(req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.connection.remoteAddress)
+      return UsersService.getGeolocation(req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.connection.remoteAddress)
       .then((location) => {
         return UsersService.add(
           req.body.email,

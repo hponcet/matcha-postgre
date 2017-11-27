@@ -10,8 +10,8 @@ export const fetchProfil = () => dispatch => {
     method: 'get',
     url
   })
-  .then((data) => {
-    dispatch({type: constants.FETCH_PROFIL_SUCCESS, payload: data})
+  .then((profil) => {
+    dispatch({type: constants.FETCH_PROFIL_SUCCESS, payload: profil.data})
   })
   .catch((error) => {
     dispatch({type: constants.FETCH_PROFIL_FAILURE, payload: error})

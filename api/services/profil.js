@@ -1,31 +1,40 @@
 const MongoClient = require('mongodb').MongoClient
+const ObjectID = require('mongodb').ObjectID
 
 const dbParams = require('../config/config').DATABASE
 const dbUrl = `${dbParams.dialect}://${dbParams.host}:${dbParams.port}/${dbParams.database}`
 
-const newProfil = (userId) => {
-  return new Promise((resolve, reject) => {
-    MongoClient.connect(dbUrl, (err, db) => {
-      if (err) return reject(err)
-      const Profil = db.collection('profil')
-      const profilSignature = {
-        tags: [],
-        sex: null,
-        orientation: null,
-        biography: null,
-        pictures: [],
-        profilPicture: null,
-        userId
-      }
-      Profil.insertOne(profilSignature, (err, data) => {
-        if (err) return reject(err)
-        db.close()
-        resolve(data.ops[0]._id)
-      })
-    })
+const getProfil = (userId) => {
+  return MongoClient.connect(dbUrl).then(db => {
+    const Profils = db.collection('profils')
+    return Profils.findOne({userId: ObjectID(userId)})
+    .then(data => data)
+    .catch(err => err)
   })
+  .catch(err => err)
+}
+
+const newProfil = (userId) => {
+  return MongoClient.connect(dbUrl)
+  .then((db) => {
+    const Profil = db.collection('profils')
+    const profil = {
+      tags: [],
+      sex: null,
+      orientation: null,
+      biography: null,
+      pictures: [],
+      profilPicture: null,
+      userId
+    }
+    return Profil.insertOne(profil)
+    .then((data) => data.ops[0]._id)
+    .catch(err => err)
+  })
+  .catch(err => err)
 }
 
 module.exports = {
-  newProfil
+  newProfil,
+  getProfil
 }

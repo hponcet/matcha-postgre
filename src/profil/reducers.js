@@ -22,6 +22,7 @@ export const ProfilReducer = (state = initialProfilState, { type, payload }) => 
     case constants.FETCH_PROFIL_REQUEST:
       return { ...state, isFetching: true }
     case constants.FETCH_PROFIL_SUCCESS:
+      console.log(payload)
       return {
         ...state,
         isFetching: false,

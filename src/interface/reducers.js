@@ -1,13 +1,15 @@
 import * as constants from './constants'
 
 const initialUserState = {
-  data: null,
-  pseudo: null,
-  id: null,
-  email: null,
-  profilId: null,
+  isFetching: false,
   error: null,
-  isFetching: false
+  id: null,
+  pseudo: null,
+  sex: null,
+  profilId: null,
+  email: null,
+  firstName: null,
+  lastName: null
 }
 export const UserReducer = (state = initialUserState, { type, payload }) => {
   switch (type) {
@@ -22,7 +24,7 @@ export const UserReducer = (state = initialUserState, { type, payload }) => {
         ...state,
         isFetching: false,
         error: null,
-        id: payload._id,
+        id: payload._id.toString(),
         pseudo: payload.pseudo,
         sex: payload.sex,
         profilId: payload.profilId,

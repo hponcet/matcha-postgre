@@ -11,6 +11,7 @@ const authenticationRouter = require('./routes/authentication')
 const usersRouter = require('./routes/users')
 const corsRouter = require('./routes/cors')
 const tagsRouter = require('./routes/tags')
+const profilRouter = require('./routes/profil')
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
@@ -20,6 +21,7 @@ app.use('/', authenticationRouter)
 app.use('/', usersRouter)
 app.use('/', corsRouter)
 app.use('/', tagsRouter)
+app.use('/', profilRouter)
 app.use(errorsHandlingMiddleware)
 
 let server = app.listen(config.PORT, () => {

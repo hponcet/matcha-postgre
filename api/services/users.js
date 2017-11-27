@@ -11,68 +11,59 @@ const ProfilService = require('./profil')
 const requiredFields = {fields: {password: 0}}
 
 const add = (email, password, sex, firstName, lastName, pseudo, location) => {
-  return new Promise((resolve, reject) => {
-    MongoClient.connect(dbUrl, (err, db) => {
-      if (err) return reject(err)
-      const Users = db.collection('users')
-      bcrypt.hash(password, 10)
-      .then((hash) => {
-        Users.insertOne({email, password: hash, sex, firstName, lastName, pseudo, profilId: null, location}, (err, data) => {
-          if (err) return reject(err)
-          db.close()
-          ProfilService.newProfil(data.ops[0]._id)
-          .then((profilId) => {
-            Users.findOneAndUpdate({_id: data.ops[0]._id}, {profilId})
-            resolve(AuthenticationService.buildToken(data.ops[0]._id))
+  return MongoClient.connect(dbUrl)
+  .then((db) => {
+    const Users = db.collection('users')
+    return bcrypt.hash(password, 10)
+    .then((hash) =>
+      Users.insertOne({email, password: hash, sex, firstName, lastName, pseudo, profilId: null, location})
+      .then((data) =>
+        ProfilService.newProfil(data.ops[0]._id)
+        .then((profilId) =>
+          Users.updateOne({_id: data.ops[0]._id}, {$set: {profilId}}, false, true)
+          .then(() => {
+            db.close()
+            return AuthenticationService.buildToken(data.ops[0]._id)
           })
-          .catch(reject(err))
-        })
-      })
-      .catch(reject(err))
-    })
+          .catch(err => err))
+        .catch(err => err))
+      .catch(err => err))
+    .catch(err => err)
   })
+  .catch(err => err)
 }
 
 const getByPseudo = (pseudo, requestedFields) => {
-  return new Promise((resolve, reject) => {
-    MongoClient.connect(dbUrl, (err, db) => {
-      if (err) return reject(err)
-      const Users = db.collection('users')
-      Users.findOne({pseudo}, requestedFields || requiredFields, (err, data) => {
-        if (err) return reject(err)
-        db.close()
-        resolve(data)
-      })
-    })
+  return MongoClient.connect(dbUrl)
+  .then((db) => {
+    const Users = db.collection('users')
+    return Users.findOne({pseudo}, requiredFields)
+    .then((user) => user)
+    .catch(err => err)
   })
+  .catch(err => err)
 }
 
 const getByMail = (email) => {
-  return new Promise((resolve, reject) => {
-    MongoClient.connect(dbUrl, (err, db) => {
-      if (err) return reject(err)
-      const Users = db.collection('users')
-      Users.findOne({email}, requiredFields, (err, data) => {
-        if (err) return reject(err)
-        db.close()
-        resolve(data)
-      })
-    })
+  return MongoClient.connect(dbUrl)
+  .then((db) => {
+    const Users = db.collection('users')
+    return Users.findOne({email}, requiredFields)
+    .then((user) => user)
+    .catch(err => err)
   })
+  .catch(err => err)
 }
 
 const getById = (userId) => {
-  return new Promise((resolve, reject) => {
-    MongoClient.connect(dbUrl, (err, db) => {
-      if (err) return reject(err)
-      const Users = db.collection('users')
-      Users.findOne({_id: ObjectID(userId)}, requiredFields, (err, data) => {
-        if (err) return reject(err)
-        db.close()
-        resolve(data)
-      })
-    })
+  return MongoClient.connect(dbUrl)
+  .then((db) => {
+    const Users = db.collection('users')
+    return Users.findOne({_id: ObjectID(userId)}, requiredFields)
+    .then((user) => user)
+    .catch(err => err)
   })
+  .catch(err => err)
 }
 
 const getGeolocation = (ip) => {
@@ -82,14 +73,14 @@ const getGeolocation = (ip) => {
   })
   .then((geoData) => {
     const { ip, city, region, country, postal, loc } = geoData.data
-    return {
+    return Promise.resolve({
       ip: ip || null,
       city: city || null,
       region: region || null,
       country: country || null,
       zip: postal || null,
       loc: loc.split(',') || null
-    }
+    })
   })
   .catch((err) => console.log('[GEOLOCATION API ERROR]', err.response.data))
 }

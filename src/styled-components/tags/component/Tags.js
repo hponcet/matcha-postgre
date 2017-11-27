@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { fetchTags, updateTag, addTag, removeTag } from '../actions'
 import findIndex from 'lodash/findIndex'
+import map from 'lodash/map'
 
 import AutoComplete from 'material-ui/AutoComplete'
 import Chip from 'material-ui/Chip'
@@ -40,13 +41,15 @@ class Tags extends React.Component {
 
   componentDidMount () {
     this.props.fetchTags()
-    this.setState({tags: this.props.tags || []})
+    if (this.props.tags) this.setState({tags: this.props.tags})
   }
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.suggestions) {
-      console.log(nextProps.suggestions)
       this.setState({suggestions: nextProps.suggestions})
+    }
+    if (nextProps.tags) {
+      this.setState({tags: nextProps.tags})
     }
   }
 
@@ -92,6 +95,10 @@ class Tags extends React.Component {
     this.setState({suggestions})
   }
 
+  parseSuggestions () {
+    return map(this.props.suggestions, (suggestion) => suggestion.name)
+  }
+
   updateSuggestions (tagName) {
     const suggestions = this.state.suggestions
     if (suggestions.find((tag) => tag.name === tagName)) {
@@ -119,7 +126,6 @@ class Tags extends React.Component {
             this.state.tags.map((tag, index) => {
               return <Chip
                 key={index}
-                style={style.tag}
                 onRequestDelete={() => this.handleRequestDelete(index)}>{tag}</Chip>
             })
           }
@@ -128,9 +134,9 @@ class Tags extends React.Component {
           <AutoComplete
             hintText={`Choisissez un interret...`}
             searchText={this.state.inputValue}
-            dataSource={this.state.suggestions}
+            dataSource={this.parseSuggestions()}
             onUpdateInput={this.handleInputChange}
-            openOnFocus
+            openOnFocus={false}
           />
           <button type='submit' style={{display: 'none'}} />
         </form>

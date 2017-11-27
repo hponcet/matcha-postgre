@@ -13,10 +13,10 @@ const validatePassword = (receivedPassword, userPassword) => {
 }
 
 const buildToken = (userId) => {
-  return jwt.sign(
+  return Promise.resolve(jwt.sign(
     {userId: userId.toString()},
     fs.readFileSync(path.join(__dirname, '../config/secret.key'))
-  )
+  ))
 }
 
 const buildJwtMiddleware = (validateToken) => {

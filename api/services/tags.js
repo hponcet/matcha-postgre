@@ -1,4 +1,5 @@
 const MongoClient = require('mongodb').MongoClient
+const ObjectID = require('mongodb').ObjectID
 const dbParams = require('../config/config').DATABASE
 const dbUrl = `${dbParams.dialect}://${dbParams.host}:${dbParams.port}/${dbParams.database}`
 
@@ -17,29 +18,23 @@ const getTags = () => {
 }
 
 const addUserTag = (name, id) => {
-  return new Promise((resolve, reject) => {
-    MongoClient.connect(dbUrl, (err, db) => {
-      if (err) return reject(err)
-      const Profil = db.collection('profil')
-      Profil.updateOne({userId: id}, {$pull: {tags: name}}, (err) => {
-        if (err) return reject(err)
-        resolve()
-      })
-    })
+  return MongoClient.connect(dbUrl)
+  .then((db) => {
+    const Profils = db.collection('profils')
+    Profils.updateOne({userId: ObjectID(id)}, {$push: {tags: name}})
+    .catch(err => err)
   })
+  .catch(err => err)
 }
 
 const removeUserTag = (name, id) => {
-  return new Promise((resolve, reject) => {
-    MongoClient.connect(dbUrl, (err, db) => {
-      if (err) return reject(err)
-      const Profil = db.collection('profil')
-      Profil.updateOne({userId: id}, {$pull: {tags: {$in: [ name ]}}}, (err) => {
-        if (err) return reject(err)
-        resolve()
-      })
-    })
+  return MongoClient.connect(dbUrl)
+  .then((db) => {
+    const Profils = db.collection('profils')
+    Profils.updateOne({userId: ObjectID(id)}, {$pull: {tags: {$in: [ name ]}}})
+    .catch(err => err)
   })
+  .catch(err => err)
 }
 
 const getTagByName = (name) => {
