@@ -4,11 +4,12 @@ import { Link } from 'react-router-dom'
 
 import './Button.css'
 
-export const CustomButton = ({props, children}) => {
+export const CustomButton = ({props, children, onclick}) => {
   return (
     <button
-      {...props}
       className='Button__noHighlight'
+      onClick={onclick}
+      {...props}
     >
       {children}
     </button>

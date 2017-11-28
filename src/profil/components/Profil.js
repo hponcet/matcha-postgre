@@ -7,6 +7,7 @@ import { Card, CardTitle, CardText, CardHeader } from 'material-ui/Card'
 import Select from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 import Tags from '../../styled-components/tags/component/Tags'
+import Pictures from '../../styled-components/pictures/components/Pictures'
 
 import './Profil.css'
 
@@ -98,7 +99,7 @@ class Profil extends React.Component {
         </CardTitle>
 
         <Card style={{margin: '20px'}}>
-          <CardHeader>
+          <CardHeader style={{backgroundColor: 'lightgrey'}}>
             Mes attirances
           </CardHeader>
           <CardText>
@@ -137,7 +138,7 @@ class Profil extends React.Component {
         </Card>
 
         <Card style={{margin: '20px'}}>
-          <CardHeader>
+          <CardHeader style={{backgroundColor: 'lightgrey'}}>
             Biographie
           </CardHeader>
           <CardText>
@@ -155,11 +156,20 @@ class Profil extends React.Component {
         </Card>
 
         <Card style={{margin: '20px'}}>
-          <CardHeader>
+          <CardHeader style={{backgroundColor: 'lightgrey'}}>
             Ma liste d'interrets
           </CardHeader>
           <CardText>
             <Tags handleChange={this.handleChange} componentName='tags' />
+          </CardText>
+        </Card>
+
+        <Card style={{margin: '20px'}}>
+          <CardHeader style={{backgroundColor: 'lightgrey'}}>
+            Mes photos
+          </CardHeader>
+          <CardText>
+            <Pictures />
           </CardText>
         </Card>
 

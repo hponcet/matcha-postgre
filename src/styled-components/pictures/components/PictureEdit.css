@@ -1,0 +1,21 @@
+.PictureEdit__container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.PictureEdit__rowContainer {
+  width: '100%';
+  height: 30px;
+  margin: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.PictureEdit__slider {
+  width: 300px;
+  position: relative;
+  top: 10px;
+}
