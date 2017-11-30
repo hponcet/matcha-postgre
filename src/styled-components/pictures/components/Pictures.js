@@ -12,10 +12,12 @@ class Pictures extends React.Component {
     this.state = {
       isUploading: true,
       open: false,
+      error: '',
       currentPictureData: {
         data: null,
         index: 0
-      }
+      },
+      pictures: []
     }
     this.handleDialogOpen = this.handleDialogOpen.bind(this)
     this.handleDialogClose = this.handleDialogClose.bind(this)
@@ -24,17 +26,38 @@ class Pictures extends React.Component {
 
   handleDialogOpen () { this.setState({open: true}) }
   handleDialogClose () { this.setState({open: false}) }
+  resetInput () { this.refs.uploadPictureInput.value = '' }
 
   getCroppedPicture (picture, index) {
-    this.props.uploadPicture(picture, index)
+    const data = new FormData()
+
+    data.append('picture', new Blob([picture], {type: 'image/png'}))
+    data.append('index', index)
+    this.props.uploadPicture(data)
+    this.resetInput()
     this.handleDialogClose()
+  }
+
+  checkMimeType (picture) {
+    const error = 'Veuillez choisir une image [jpeg|png|bmp]'
+    const mimeType = picture.split(',')[0].split(':')[1].split(';')[0]
+    const mime = mimeType.split('/')[0]
+    const type = mimeType.split('/')[1]
+    if (mime !== 'image' || (type !== 'png' && type !== 'jpeg' && type !== 'jpg' && type !== 'bmp')) {
+      this.setState({error})
+      return true
+    }
+    return false
   }
 
   getNewPicture (event, index) {
     const file = event.target.files[0]
     const reader = new FileReader()
+
     reader.addEventListener('load', () => {
-      this.setState({ currentPictureData: reader.result, open: true })
+      const picture = reader.result
+      if (this.checkMimeType(picture)) return this.resetInput()
+      this.setState({ currentPictureData: {data: picture, index}, open: true })
     }, false)
 
     if (file) reader.readAsDataURL(file)
@@ -42,18 +65,26 @@ class Pictures extends React.Component {
 
   render () {
     const { pictures, onUpload } = this.props
+
     const userPictures = !pictures ? [] : pictures.map((picture, index) => (
       <div key={index} className='pictures__pictureContainer'>
-        {onUpload ? <div className='pictures__loader'><CircularProgress size={60} thickness={7} /></div> : null}
+        {
+          onUpload
+          ? <div className='pictures__loader'><CircularProgress size={60} thickness={7} /></div>
+          : null
+        }
         <img className='pictures__picture' src={picture} alt='' />
       </div>
     ))
+
     const emptyPicture = (
       <div className='pictures__emptyPictures'>
         <input
           type='file'
+          ref='uploadPictureInput'
           className='pictures__inputs'
-          onChange={(event) => { this.getNewPicture(event) }}
+          onChange={(event) => { this.getNewPicture(event, pictures.length) }}
+          onClick={() => { this.setState({error: ''}) }}
         />
         <AddIcon className='pictures__addIcon' color='grey' />
       </div>
@@ -68,11 +99,13 @@ class Pictures extends React.Component {
           open={this.state.open}
         >
           <PictureEdit
-            picture={this.state.currentPictureData}
+            picture={this.state.currentPictureData.data}
+            index={this.state.currentPictureData.index}
             closeDialog={() => this.handleDialogClose()}
             getCroppedPicture={this.getCroppedPicture}
           />
         </Dialog>
+        <div>{this.state.error}</div>
       </div>
     )
   }

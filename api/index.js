@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const config = require('./config/config')
 const logo = require('./config/asciilogo')
 const app = express()
+const path = require('path')
 
 const corsMiddleware = require('./middlewares/cors')
 const errorsHandlingMiddleware = require('./middlewares/errors-handling').errorsHandling
@@ -13,6 +14,8 @@ const corsRouter = require('./routes/cors')
 const tagsRouter = require('./routes/tags')
 const profilRouter = require('./routes/profil')
 const picturesRouter = require('./routes/pictures')
+
+app.use('/files/pictures', express.static(path.join(__dirname, '../files/pictures')))
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))

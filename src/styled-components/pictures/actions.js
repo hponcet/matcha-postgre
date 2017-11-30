@@ -14,15 +14,12 @@ export const fetchPictures = () => dispatch => {
   .catch((err) => dispatch({type: constants.FETCH_PICTURES_FAILURE, payload: err}))
 }
 
-export const uploadPicture = (picture, index) => dispatch => {
+export const uploadPicture = (data) => dispatch => {
   dispatch({type: constants.UPLOAD_PICTURE_REQUEST})
-  const data = new FormData()
-  data.append('image', picture)
-  data.append('name', 'picture')
   return axios({
     method: 'post',
     url,
-    data: {image: picture}
+    data
   })
   .then((data) => dispatch({type: constants.UPLOAD_PICTURE_SUCCESS, payload: data}))
   .catch((err) => dispatch({type: constants.UPLOAD_PICTURE_FAILURE, payload: err}))

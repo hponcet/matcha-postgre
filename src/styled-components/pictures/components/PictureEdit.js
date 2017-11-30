@@ -43,8 +43,10 @@ class PictureEdit extends React.Component {
   setEditor (ref) { this.editor = ref }
   handleSubmit () {
     this.setState({onSubmit: true})
-    const pictureToData = this.editor.getImage().toDataURL()
-    this.props.getCroppedPicture(pictureToData)
+    const pictureToData = this.editor.getImage()
+    pictureToData.toBlob((pictureToBlob) => {
+      this.props.getCroppedPicture(pictureToBlob, this.props.index)
+    })
   }
 
   rotateLeft () { this.state.rotate <= 0 ? this.setState({rotate: 270}) : this.setState({rotate: this.state.rotate - 90}) }
