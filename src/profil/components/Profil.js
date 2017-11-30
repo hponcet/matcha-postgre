@@ -7,7 +7,7 @@ import { Card, CardTitle, CardText, CardHeader } from 'material-ui/Card'
 import Select from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 import Tags from '../../styled-components/tags/component/Tags'
-import Pictures from '../../styled-components/pictures/components/Pictures'
+import Pictures from '../../styled-components/pictures/containers/Pictures'
 
 import './Profil.css'
 

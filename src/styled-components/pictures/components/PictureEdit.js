@@ -43,7 +43,8 @@ class PictureEdit extends React.Component {
   setEditor (ref) { this.editor = ref }
   handleSubmit () {
     this.setState({onSubmit: true})
-    this.props.getCroppedPicture(this.editor.getImage().toDataURL())
+    const pictureToData = this.editor.getImage().toDataURL()
+    this.props.getCroppedPicture(pictureToData)
   }
 
   rotateLeft () { this.state.rotate <= 0 ? this.setState({rotate: 270}) : this.setState({rotate: this.state.rotate - 90}) }
@@ -94,7 +95,6 @@ class PictureEdit extends React.Component {
             disabled={this.state.onSubmit}
           >
             {!this.state.onSubmit ? 'Valider' : <CircularProgress size={60} />}
-            
           </RaisedButton>
           <RaisedButton style={{color: 'grey'}} onClick={() => { this.props.closeDialog() }} icon={<CancelIcon color='grey' />}>
             Annuler

@@ -2,6 +2,7 @@ import React from 'react'
 import AddIcon from 'material-ui/svg-icons/content/add'
 import Dialog from 'material-ui/Dialog'
 import PictureEdit from './PictureEdit'
+import CircularProgress from 'material-ui/CircularProgress'
 
 import './Pictures.css'
 
@@ -9,12 +10,12 @@ class Pictures extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
+      isUploading: true,
       open: false,
       currentPictureData: {
         data: null,
         index: 0
-      },
-      pictures: []
+      }
     }
     this.handleDialogOpen = this.handleDialogOpen.bind(this)
     this.handleDialogClose = this.handleDialogClose.bind(this)
@@ -25,16 +26,13 @@ class Pictures extends React.Component {
   handleDialogClose () { this.setState({open: false}) }
 
   getCroppedPicture (picture, index) {
-    const pictures = this.state.pictures
-    pictures.push(picture)
-    this.setState({pictures})
+    this.props.uploadPicture(picture, index)
     this.handleDialogClose()
   }
 
   getNewPicture (event, index) {
     const file = event.target.files[0]
     const reader = new FileReader()
-
     reader.addEventListener('load', () => {
       this.setState({ currentPictureData: reader.result, open: true })
     }, false)
@@ -43,9 +41,13 @@ class Pictures extends React.Component {
   }
 
   render () {
-    const pictures = this.state.pictures.map((picture, index) => <img key={index} className='pictures__picture' src={picture} alt='' />)
-    console.log(pictures.length)
-
+    const { pictures, onUpload } = this.props
+    const userPictures = !pictures ? [] : pictures.map((picture, index) => (
+      <div key={index} className='pictures__pictureContainer'>
+        {onUpload ? <div className='pictures__loader'><CircularProgress size={60} thickness={7} /></div> : null}
+        <img className='pictures__picture' src={picture} alt='' />
+      </div>
+    ))
     const emptyPicture = (
       <div className='pictures__emptyPictures'>
         <input
@@ -59,8 +61,8 @@ class Pictures extends React.Component {
 
     return (
       <div className='pictures__container'>
-        {pictures}
-        {pictures.length < 5 ? emptyPicture : null}
+        {userPictures}
+        {userPictures.length < 5 ? emptyPicture : null}
         <Dialog
           modal
           open={this.state.open}
