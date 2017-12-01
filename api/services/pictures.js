@@ -21,20 +21,21 @@ const getPictures = (userId) => {
 
 const addPicture = (picture, index, userId) => {
   return getPictures(userId)
-  .then((pictures) => {
-    return MongoClient.connect(dbUrl)
+  .then((pictures) => MongoClient.connect(dbUrl)
     .then((db) => {
-      const pictureLocalPath = picture.path
-      const picturePublicPath = `${picturesUrl}/${userId}/${picture.filename}`
-      if (pictures[index]) fsRemovePicture(pictureLocalPath)
-      pictures[index] = picturePublicPath
       const Profils = db.collection('profils')
+      const pictureLocalPath = `./${picture.path}`
+      const picturePublicPath = `${picturesUrl}/${userId}/${picture.filename}`
+
+      if (pictures[index]) fsRemovePicture(pictureLocalPath)
+      pictures[index] = {picturePublicPath, pictureLocalPath}
+
       return Profils.findOneAndUpdate({userId: ObjectID(userId)}, {$set: {pictures}})
-      .then((data) => pictures)
+      .then(() => pictures.map((picture) => picture.picturePublicPath))
       .catch(err => err)
     })
     .catch(err => err)
-  })
+  )
 }
 
 const removePicture = (pictureUrl, index, userId) => {
@@ -43,26 +44,22 @@ const removePicture = (pictureUrl, index, userId) => {
     return MongoClient.connect(dbUrl)
     .then((db) => {
       const Profils = db.collection('profils')
-      if (pictures[index] !== pictureUrl) return
-      fsRemovePicture(pictures[index])
-      .then(() => {
-        pictures[index].splice(index, 1)
-        Profils.insertOne({userId: ObjectID(userId)}, {pictures})
-        .then()
-        .catch(err => err)
-      })
+
+      if (pictures[index] && pictures[index].picturePublicPath !== pictureUrl) return pictures.map((picture) => picture.picturePublicPath)
+      fsRemovePicture(pictures[index].pictureLocalPath)
+      pictures.splice(index, 1)
+
+      return Profils.findOneAndUpdate({userId: ObjectID(userId)}, {$set: {pictures}})
+      .then(() => pictures.map((picture) => picture.picturePublicPath))
       .catch(err => err)
     })
     .catch(err => err)
   })
 }
 
-const fsRemovePicture = (pictureUrl) => {
-  return new Promise((resolve, reject) => {
-    fs.unlink(pictureUrl, (err) => {
-      if (err) reject(err)
-      resolve()
-    })
+const fsRemovePicture = (picturePath) => {
+  fs.unlink(picturePath, (err) => {
+    if (err) return console.log(err)
   })
 }
 

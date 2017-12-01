@@ -2,7 +2,7 @@ import React from 'react'
 import AddIcon from 'material-ui/svg-icons/content/add'
 import Dialog from 'material-ui/Dialog'
 import PictureEdit from './PictureEdit'
-import CircularProgress from 'material-ui/CircularProgress'
+import Picture from '../containers/Picture'
 
 import './Pictures.css'
 
@@ -33,6 +33,7 @@ class Pictures extends React.Component {
 
     data.append('picture', new Blob([picture], {type: 'image/png'}))
     data.append('index', index)
+
     this.props.uploadPicture(data)
     this.resetInput()
     this.handleDialogClose()
@@ -64,17 +65,10 @@ class Pictures extends React.Component {
   }
 
   render () {
-    const { pictures, onUpload } = this.props
+    const { pictures } = this.props
 
     const userPictures = !pictures ? [] : pictures.map((picture, index) => (
-      <div key={index} className='pictures__pictureContainer'>
-        {
-          onUpload
-          ? <div className='pictures__loader'><CircularProgress size={60} thickness={7} /></div>
-          : null
-        }
-        <img className='pictures__picture' src={picture} alt='' />
-      </div>
+      <Picture key={index} index={index} src={picture} />
     ))
 
     const emptyPicture = (

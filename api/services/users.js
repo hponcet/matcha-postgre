@@ -8,8 +8,6 @@ const dbUrl = `${dbParams.dialect}://${dbParams.host}:${dbParams.port}/${dbParam
 const AuthenticationService = require('./authentication')
 const ProfilService = require('./profil')
 
-const requiredFields = {fields: {password: 0}}
-
 const add = (email, password, sex, firstName, lastName, pseudo, location) => {
   return MongoClient.connect(dbUrl)
   .then((db) => {
@@ -33,11 +31,22 @@ const add = (email, password, sex, firstName, lastName, pseudo, location) => {
   .catch(err => err)
 }
 
-const getByPseudo = (pseudo, requestedFields) => {
+const getByPseudo = (pseudo) => {
   return MongoClient.connect(dbUrl)
   .then((db) => {
     const Users = db.collection('users')
-    return Users.findOne({pseudo}, requiredFields)
+    return Users.findOne({pseudo}, {fields: {password: 0}})
+    .then((user) => user)
+    .catch(err => err)
+  })
+  .catch(err => err)
+}
+
+const getPassword = (pseudo) => {
+  return MongoClient.connect(dbUrl)
+  .then((db) => {
+    const Users = db.collection('users')
+    return Users.findOne({pseudo}, {fields: {password: 1}})
     .then((user) => user)
     .catch(err => err)
   })
@@ -48,7 +57,7 @@ const getByMail = (email) => {
   return MongoClient.connect(dbUrl)
   .then((db) => {
     const Users = db.collection('users')
-    return Users.findOne({email}, requiredFields)
+    return Users.findOne({email})
     .then((user) => user)
     .catch(err => err)
   })
@@ -59,7 +68,7 @@ const getById = (userId) => {
   return MongoClient.connect(dbUrl)
   .then((db) => {
     const Users = db.collection('users')
-    return Users.findOne({_id: ObjectID(userId)}, requiredFields)
+    return Users.findOne({_id: ObjectID(userId)})
     .then((user) => user)
     .catch(err => err)
   })
@@ -89,6 +98,7 @@ module.exports = {
   add,
   getById,
   getByPseudo,
+  getPassword,
   getByMail,
   getGeolocation
 }

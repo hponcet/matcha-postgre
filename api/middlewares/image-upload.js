@@ -7,9 +7,10 @@ const uploadPath = config.UPLOAD_PICTURES_PATH
 
 const createDir = (userId) => {
   const userPath = path.join(uploadPath, userId)
-  if (!fs.existsSync(userPath)) {
-    fs.mkdirSync(userPath)
-  }
+  if (!fs.existsSync('files')) fs.mkdirSync('files')
+  if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath)
+  if (!fs.existsSync(userPath)) fs.mkdirSync(userPath)
+
   return userPath
 }
 

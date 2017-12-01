@@ -8,7 +8,6 @@ const initialProfilState = {
   sex: null,
   orientation: null,
   biography: null,
-  pictures: [],
   profilPicture: null
 }
 export const ProfilReducer = (state = initialProfilState, { type, payload }) => {
@@ -32,7 +31,6 @@ export const ProfilReducer = (state = initialProfilState, { type, payload }) => 
         sex: payload.sex,
         orientation: payload.orientation,
         biography: payload.biography,
-        pictures: payload.pictures,
         profilPicture: payload.profilPicture
       }
     case constants.FETCH_PROFIL_FAILURE:

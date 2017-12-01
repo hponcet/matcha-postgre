@@ -6,7 +6,7 @@ const errors = require('../errors')
 
 const getPictures = (req, res, next) => {
   return PicturesService.getPictures(req.token.userId)
-  .then((pictures) => res.send(pictures))
+  .then((pictures) => res.send(pictures.map((picture) => picture.picturePublicPath)))
 }
 
 const addPicture = (req, res, next) => {
@@ -26,9 +26,9 @@ const addPicture = (req, res, next) => {
 const removePicture = (req, res, next) => {
   if (!_.has(req, 'body.picture') || _.isEmpty(req.body.picture) ||
     !_.has(req, 'body.picture.url') || _.isEmpty(req.body.picture.url) ||
-    !_.has(req, 'body.picture.index') || _.isEmpty(req.body.picture.index)) return next(createError.BadRequest(errors.BAD_PICTURE_SIGNATURE))
-  return PicturesService.removePicture(req.picture.url, req.picture.index, req.token.userId)
-  .then((pictureUrl) => res.send(pictureUrl))
+    !_.has(req, 'body.picture.index')) return next(createError.BadRequest(errors.BAD_PICTURE_SIGNATURE))
+  return PicturesService.removePicture(req.body.picture.url, req.body.picture.index, req.token.userId)
+  .then((pictures) => res.send(pictures))
   .catch(next)
 }
 

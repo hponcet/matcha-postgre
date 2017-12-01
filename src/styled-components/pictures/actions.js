@@ -32,6 +32,6 @@ export const deletePicture = (pictureUrl, index) => dispatch => {
     url,
     data: {picture: {url: pictureUrl, index}}
   })
-  .then(() => dispatch({type: constants.UPLOAD_PICTURE_SUCCESS}))
+  .then((data) => dispatch({type: constants.UPLOAD_PICTURE_SUCCESS, payload: data}))
   .catch((err) => dispatch({type: constants.UPLOAD_PICTURE_FAILURE, payload: err}))
 }

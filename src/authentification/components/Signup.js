@@ -105,7 +105,6 @@ class Signup extends React.Component {
   handleSubmit (event) {
     event.preventDefault()
     const { email, password, sex, firstName, lastName, pseudo } = this.state.inputs
-
     this.props.signup(
       email.value,
       Crypto.SHA512(password.value, config.SECRET_HASH).toString(),

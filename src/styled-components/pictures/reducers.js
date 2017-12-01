@@ -22,7 +22,7 @@ export const PicturesUploadReducer = (state = initialPicturesState, { type, payl
     case constants.DELETE_PICTURE_REQUEST:
       return { ...state }
     case constants.DELETE_PICTURE_SUCCESS:
-      return { ...state }
+      return { ...state, onUpload: false, error: null, data: payload.data }
     case constants.DELETE_PICTURE_FAILURE:
       return { ...state, error: payload }
     default:
