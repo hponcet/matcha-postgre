@@ -16,6 +16,7 @@ const profilRouter = require('./routes/profil')
 const picturesRouter = require('./routes/pictures')
 
 app.use('/files/pictures', express.static(path.join(__dirname, '../files/pictures')))
+app.use('/files/assets', express.static(path.join(__dirname, '../files/assets')))
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))

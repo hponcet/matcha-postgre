@@ -7,7 +7,8 @@ export default connect(
   (state) => ({
     user: state.user.data,
     profil: {
-      sex: state.user.sex
+      sex: state.user.sex,
+      profilPicture: state.pictures.profilPicture
     },
     error: state.profil.error
   }), {

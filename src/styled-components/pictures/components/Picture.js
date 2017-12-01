@@ -43,6 +43,11 @@ const styles = {
     width: 25,
     height: 25,
     color: 'lightgrey'
+  },
+  pictureProfilIcon: {
+    width: 25,
+    height: 25,
+    color: 'yellow'
   }
 }
 
@@ -50,7 +55,8 @@ class Picture extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      open: false
+      open: false,
+      profilPicture: false
     }
     this.handleOpen = this.handleOpen.bind(this)
     this.handleClose = this.handleClose.bind(this)
@@ -60,7 +66,8 @@ class Picture extends React.Component {
   handleClose () { this.setState({open: false}) }
 
   render () {
-    const {src, index} = this.props
+    const { src, index, profilPicture } = this.props
+    console.log(src)
     const DeleteButton = (
       <IconButton
         iconStyle={styles.smallIcon}
@@ -73,11 +80,12 @@ class Picture extends React.Component {
     )
     const ProfilPictureButton = (
       <IconButton
-        iconStyle={styles.smallIcon}
+        iconStyle={profilPicture === src ? styles.pictureProfilIcon : styles.smallIcon}
         style={styles.smallLeft}
         tooltip='Photo de profil'
         touch
         tooltipPosition='bottom-center'
+        onClick={profilPicture === src ? () => null : () => { this.props.updateProfilPicture(src) }}
       ><ActionGrade /></IconButton>
     )
 

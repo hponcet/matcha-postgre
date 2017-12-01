@@ -57,6 +57,28 @@ const removePicture = (pictureUrl, index, userId) => {
   })
 }
 
+const updateProfilPicture = (pictureUrl, userId) => {
+  return MongoClient.connect(dbUrl)
+  .then((db) => {
+    const Profils = db.collection('profils')
+
+    return Profils.findOneAndUpdate({userId: ObjectID(userId)}, {$set: {profilPicture: pictureUrl}})
+    .then(() => pictureUrl)
+    .catch(err => err)
+  })
+}
+
+const getProfilePicture = (userId) => {
+  return MongoClient.connect(dbUrl)
+  .then((db) => {
+    const Profils = db.collection('profils')
+
+    return Profils.findOne({userId: ObjectID(userId)}, {fields: {profilPicture: 1}})
+    .then((data) => data.profilPicture)
+    .catch(err => err)
+  })
+}
+
 const fsRemovePicture = (picturePath) => {
   fs.unlink(picturePath, (err) => {
     if (err) return console.log(err)
@@ -66,5 +88,7 @@ const fsRemovePicture = (picturePath) => {
 module.exports = {
   getPictures,
   addPicture,
-  removePicture
+  removePicture,
+  getProfilePicture,
+  updateProfilPicture
 }

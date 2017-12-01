@@ -34,7 +34,7 @@ const validate = (value, rules, required) => {
   if (_isExisty(rules.noSpace) && !isEmpty(value) && validations.haveSpace(value)) return false
   if (_isExisty(rules.haveNumeric) && !validations.haveNumeric(value)) return false
   if (_isExisty(rules.isEmail) && !validations.isEmail(value)) return false
-  if (_isExisty(rules.url) && !validations.isEmail(value)) return false
+  if (_isExisty(rules.isUrl) && !validations.isUrl(value)) return false
   if (_isExisty(rules.isEqual) && !validations.isEqual(value, rules.isEqual)) return false
   if (_isExisty(rules.maxLength) && !validations.maxLength(value, rules.maxLength)) return false
   if (_isExisty(rules.minLength) && !validations.minLength(value, rules.minLength)) return false

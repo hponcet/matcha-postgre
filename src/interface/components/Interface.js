@@ -13,6 +13,7 @@ class Interface extends React.Component {
     this.props.fetchUser()
     this.props.fetchProfil()
     this.props.fetchPictures()
+    this.props.getProfilPicture()
   }
 
   componentWillReceiveProps (nextProps) {

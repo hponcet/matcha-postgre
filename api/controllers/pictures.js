@@ -32,8 +32,25 @@ const removePicture = (req, res, next) => {
   .catch(next)
 }
 
+const updateProfilPicture = (req, res, next) => {
+  if (!_.has(req, 'body.pictureUrl') || _.isEmpty(req.body.pictureUrl)) {
+    return next(createError.BadRequest(errors.BAD_PROFIL_PICTURE))
+  }
+  return PicturesService.updateProfilPicture(req.body.pictureUrl, req.token.userId)
+  .then((profilPicture) => res.send(profilPicture))
+  .catch(next)
+}
+
+const getProfilPicture = (req, res, next) => {
+  return PicturesService.getProfilePicture(req.token.userId)
+  .then((profilPicture) => res.send(profilPicture))
+  .catch(next)
+}
+
 module.exports = {
   getPictures,
   addPicture,
-  removePicture
+  removePicture,
+  getProfilPicture,
+  updateProfilPicture
 }

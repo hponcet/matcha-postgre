@@ -92,12 +92,14 @@ class Profil extends React.Component {
   }
 
   render () {
+    console.log(this.props.profil.profilPicture)
     return (
       <Card>
+        <img src={this.props.profil.profilPicture} alt='' />
+        
         <CardTitle>
           Éditer mon profil
         </CardTitle>
-
         <Card style={{margin: '20px'}}>
           <CardHeader style={{backgroundColor: 'lightgrey'}}>
             Mes attirances
@@ -105,7 +107,7 @@ class Profil extends React.Component {
           <CardText>
             <div style={{display: 'flex', flexDirection: 'row', fontSize: '16px'}}>
               <div style={{height: '50px', display: 'flex', alignItems: 'center', marginRight: '5px'}}>Je suis</div>
-              <div style={{height: '50px', display: 'flex', alignItems: 'center'}}>
+              <div style={{height: '50px', display: 'flex', alignItems: 'center'}}>              
                 <Select
                   ref='sex'
                   value={this.state.inputs.sex.pristine ? this.props.profil.sex : this.state.inputs.sex.value}
