@@ -61,12 +61,6 @@ class Tags extends React.Component {
     if (this.updateSuggestions(inputValue)) return this.handleNewRequest()
     tags.push(inputValue)
     this.setState({tags, inputValue: ''})
-    this.props.handleChange({
-      target: {
-        value: tags,
-        name: this.props.componentName
-      }
-    })
     this.handleNewRequest()
     event.preventDefault()
   }
@@ -76,12 +70,6 @@ class Tags extends React.Component {
     this.deleteSuggestions(tags[index])
     tags.splice(index, 1)
     this.setState({tags})
-    this.props.handleChange({
-      target: {
-        value: tags,
-        name: this.props.componentName
-      }
-    })
   }
 
   deleteSuggestions (tagName) {
@@ -125,6 +113,7 @@ class Tags extends React.Component {
           {
             this.state.tags.map((tag, index) => {
               return <Chip
+                style={{margin: '4px'}}
                 key={index}
                 onRequestDelete={() => this.handleRequestDelete(index)}>{tag}</Chip>
             })

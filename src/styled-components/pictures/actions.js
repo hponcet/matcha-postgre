@@ -38,7 +38,6 @@ export const deletePicture = (pictureUrl, index) => dispatch => {
 }
 
 export const updateProfilPicture = (pictureUrl) => dispatch => {
-  console.log(pictureUrl)
   return axios({
     method: 'post',
     url: profilPictureUrl,

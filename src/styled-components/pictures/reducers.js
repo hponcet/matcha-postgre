@@ -2,7 +2,7 @@ import * as constants from './constants'
 
 const initialPicturesState = {
   onUpload: false,
-  profilPicture: constants.EMPTY_PICTURE,
+  profilPicture: null,
   data: null,
   error: null
 }
@@ -30,7 +30,7 @@ export const PicturesUploadReducer = (state = initialPicturesState, { type, payl
       return { ...state, error: payload }
 
     case constants.PROFIL_PICTURE_SUCCESS:
-      return { ...state, error: null, profilPicture: payload.data }
+      return { ...state, error: null, profilPicture: payload.data.length > 0 ? payload.data : constants.EMPTY_PICTURE }
     case constants.PROFIL_PICTURE_FAILURE:
       return { ...state, error: payload }
 

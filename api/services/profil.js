@@ -25,7 +25,10 @@ const newProfil = (userId) => {
       biography: null,
       pictures: [],
       profilPicture: null,
-      userId
+      userId,
+      profilScore: 100,
+      consultedBy: [],
+      likes: []
     }
     return Profil.insertOne(profil)
     .then((data) => data.ops[0]._id)

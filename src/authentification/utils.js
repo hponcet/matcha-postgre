@@ -1,6 +1,7 @@
 import axios from 'axios'
 import startsWith from 'lodash/startsWith'
 import history from '../config/history'
+import areIntlLocalesSupported from 'intl-locales-supported'
 
 import appConfig from '../config/config'
 
@@ -36,4 +37,17 @@ export const initInterceptor = () => {
 
     return Promise.reject(error)
   })
+}
+
+export const dateTimeFormat = () => {
+  let DateTimeFormat
+  if (areIntlLocalesSupported(['fr'])) {
+    DateTimeFormat = global.Intl.DateTimeFormat
+  } else {
+    const IntlPolyfill = require('intl')
+    DateTimeFormat = IntlPolyfill.DateTimeFormat
+    require('intl/locale-data/jsonp/fr')
+    require('intl/locale-data/jsonp/fa-IR')
+  }
+  return DateTimeFormat
 }

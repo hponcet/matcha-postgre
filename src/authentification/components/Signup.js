@@ -1,7 +1,6 @@
 import React from 'react'
 import { compact, map } from 'lodash'
 import Crypto from 'crypto-js'
-import areIntlLocalesSupported from 'intl-locales-supported'
 
 import Validation from '../../validation/Validation'
 import Keys from '../../Keys'
@@ -15,18 +14,9 @@ import { ClassicLinkButton } from '../../styled-components/Button'
 import Select from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 import DatePicker from 'material-ui/DatePicker'
+import { dateTimeFormat } from '../utils'
 
 import './Signup.css'
-
-let DateTimeFormat
-if (areIntlLocalesSupported(['fr'])) {
-  DateTimeFormat = global.Intl.DateTimeFormat
-} else {
-  const IntlPolyfill = require('intl')
-  DateTimeFormat = IntlPolyfill.DateTimeFormat
-  require('intl/locale-data/jsonp/fr')
-  require('intl/locale-data/jsonp/fa-IR')
-}
 
 class Signup extends React.Component {
   constructor (props) {
@@ -138,7 +128,7 @@ class Signup extends React.Component {
       firstName.value,
       lastName.value,
       pseudo.value,
-      Date.parse(birthday.value)
+      birthday.value
     )
   }
 
@@ -185,7 +175,7 @@ class Signup extends React.Component {
                   hintText='Date de naissance *'
                   value={this.state.inputs.birthday.value}
                   onChange={this.handleDateChange}
-                  DateTimeFormat={DateTimeFormat}
+                  DateTimeFormat={dateTimeFormat()}
                   openToYearSelection
                   locale='fr'
                   fullWidth

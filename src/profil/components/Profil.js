@@ -3,7 +3,7 @@ import { compact, map } from 'lodash'
 
 import Validation from '../../validation/Validation'
 
-import { Card, CardTitle, CardText, CardHeader } from 'material-ui/Card'
+import { Card, CardText, CardHeader } from 'material-ui/Card'
 import Select from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 import Tags from '../../styled-components/tags/component/Tags'
@@ -34,12 +34,6 @@ class Profil extends React.Component {
           pristine: true,
           showError: false,
           valid: (value) => Validation(value, {isInt: true})
-        },
-        tags: {
-          value: [],
-          pristine: true,
-          showError: false,
-          valid: (value) => Validation(value, {isArray: true})
         }
       }
     }
@@ -93,11 +87,12 @@ class Profil extends React.Component {
 
   render () {
     return (
-      <Card style={{maxWidth: '1200px', alignSelf: 'center'}}>
-        <img style={{width: '200px', borderRadius: '50%'}}src={this.props.profil.profilPicture} alt='' />
-        <CardTitle>
-          Éditer mon profil
-        </CardTitle>
+      <Card style={{width: '70%', alignSelf: 'center'}}>
+        <div className='Profil__profilPicture__container'>
+          <div className='Profil__profilPicture__border'>
+            <img style={{width: '200px', borderRadius: '50%'}}src={this.props.profil.profilPicture} alt='' />
+          </div>
+        </div>
         <Card style={{margin: '20px'}}>
           <CardHeader style={{backgroundColor: 'lightgrey'}}>
             Mes attirances
@@ -160,7 +155,7 @@ class Profil extends React.Component {
             Ma liste d'interrets
           </CardHeader>
           <CardText>
-            <Tags handleChange={this.handleChange} componentName='tags' />
+            <Tags componentName='tags' />
           </CardText>
         </Card>
 

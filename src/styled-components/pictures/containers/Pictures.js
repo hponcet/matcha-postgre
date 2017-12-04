@@ -3,7 +3,8 @@ import { connect } from 'react-redux'
 import Pictures from '../components/Pictures'
 import {
   uploadPicture,
-  deletePicture } from '../actions'
+  deletePicture,
+  updateProfilPicture } from '../actions'
 
 export default connect(
   (state) => ({
@@ -12,6 +13,7 @@ export default connect(
     errors: state.pictures.error
   }), {
     uploadPicture,
-    deletePicture
+    deletePicture,
+    updateProfilPicture
   }
 )(Pictures)

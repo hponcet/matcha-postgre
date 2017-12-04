@@ -8,7 +8,11 @@ const initialProfilState = {
   sex: null,
   orientation: null,
   biography: null,
-  profilPicture: null
+  profilPicture: null,
+  profilScore: 0,
+  consultedBy: [],
+  likes: []
+
 }
 export const ProfilReducer = (state = initialProfilState, { type, payload }) => {
   switch (type) {
@@ -21,7 +25,6 @@ export const ProfilReducer = (state = initialProfilState, { type, payload }) => 
     case constants.FETCH_PROFIL_REQUEST:
       return { ...state, isFetching: true }
     case constants.FETCH_PROFIL_SUCCESS:
-      console.log(payload)
       return {
         ...state,
         isFetching: false,
@@ -31,7 +34,10 @@ export const ProfilReducer = (state = initialProfilState, { type, payload }) => 
         sex: payload.sex,
         orientation: payload.orientation,
         biography: payload.biography,
-        profilPicture: payload.profilPicture
+        profilPicture: payload.profilPicture,
+        profilScore: payload.profilScore,
+        consultedBy: payload.consultedBy,
+        likes: payload.likes
       }
     case constants.FETCH_PROFIL_FAILURE:
       return { ...state, isFetching: false, error: payload }

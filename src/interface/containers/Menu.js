@@ -4,6 +4,8 @@ import { logoutAction } from '../actions'
 import Menu from '../components/Menu'
 
 export default connect(
-  (state) => ({}),
+  (state) => ({
+    profilScore: state.profil ? state.profil.profilScore : 0
+  }),
   { logout: logoutAction }
 )(Menu)

@@ -1,6 +1,6 @@
 const createError = require('http-errors')
 const _ = require('lodash')
-
+const config = require('../config/config')
 const PicturesService = require('../services/pictures')
 const errors = require('../errors')
 
@@ -28,7 +28,10 @@ const removePicture = (req, res, next) => {
     !_.has(req, 'body.picture.url') || _.isEmpty(req.body.picture.url) ||
     !_.has(req, 'body.picture.index')) return next(createError.BadRequest(errors.BAD_PICTURE_SIGNATURE))
   return PicturesService.removePicture(req.body.picture.url, req.body.picture.index, req.token.userId)
-  .then((pictures) => res.send(pictures))
+  .then((pictures) => {
+    if (pictures.length === 0) PicturesService.updateProfilPicture(`${config.HOST}:${config.PORT}/files/assets/empty_avatar.jpg`, req.token.userId)
+    res.send(pictures)
+  })
   .catch(next)
 }
 

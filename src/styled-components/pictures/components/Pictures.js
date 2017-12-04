@@ -28,6 +28,10 @@ class Pictures extends React.Component {
   handleDialogClose () { this.setState({open: false}) }
   resetInput () { this.refs.uploadPictureInput.value = '' }
 
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.pictures.length === 1 && this.props.profilPicture !== nextProps.pictures[0]) return this.props.updateProfilPicture(nextProps.pictures[0])
+  }
+
   getCroppedPicture (picture, index) {
     const data = new FormData()
 
