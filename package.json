@@ -23,6 +23,8 @@
     "express": "^4.16.2",
     "history": "^4.7.2",
     "http-errors": "^1.6.2",
+    "intl": "^1.2.5",
+    "intl-locales-supported": "^1.0.0",
     "jsonwebtoken": "^8.1.0",
     "lodash": "^4.17.4",
     "logger": "0.0.1",

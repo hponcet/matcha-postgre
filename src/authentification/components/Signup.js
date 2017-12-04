@@ -1,6 +1,7 @@
 import React from 'react'
 import { compact, map } from 'lodash'
 import Crypto from 'crypto-js'
+import areIntlLocalesSupported from 'intl-locales-supported'
 
 import Validation from '../../validation/Validation'
 import Keys from '../../Keys'
@@ -13,8 +14,19 @@ import TextField from 'material-ui/TextField'
 import { ClassicLinkButton } from '../../styled-components/Button'
 import Select from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
+import DatePicker from 'material-ui/DatePicker'
 
 import './Signup.css'
+
+let DateTimeFormat
+if (areIntlLocalesSupported(['fr'])) {
+  DateTimeFormat = global.Intl.DateTimeFormat
+} else {
+  const IntlPolyfill = require('intl')
+  DateTimeFormat = IntlPolyfill.DateTimeFormat
+  require('intl/locale-data/jsonp/fr')
+  require('intl/locale-data/jsonp/fa-IR')
+}
 
 class Signup extends React.Component {
   constructor (props) {
@@ -57,11 +69,18 @@ class Signup extends React.Component {
           pristine: true,
           showError: false,
           valid: (value) => Validation(value, {isRequired: true, haveNumeric: true, minLength: 8})
+        },
+        birthday: {
+          value: null,
+          pristine: true,
+          showError: false,
+          valid: (value) => Validation(value, {isRequired: true})
         }
       }
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSelectChange = this.handleSelectChange.bind(this)
+    this.handleDateChange = this.handleDateChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.showError = this.showError.bind(this)
   }
@@ -95,6 +114,13 @@ class Signup extends React.Component {
     this.canSubmit()
   }
 
+  handleDateChange (event, date) {
+    const inputs = this.state.inputs
+    inputs['birthday'].value = date
+    this.setState({inputs})
+    this.canSubmit()
+  }
+
   handleSelectChange (event, index, value) {
     const inputs = this.state.inputs
     inputs['sex'].value = value
@@ -104,14 +130,15 @@ class Signup extends React.Component {
 
   handleSubmit (event) {
     event.preventDefault()
-    const { email, password, sex, firstName, lastName, pseudo } = this.state.inputs
+    const { email, password, sex, firstName, lastName, pseudo, birthday } = this.state.inputs
     this.props.signup(
       email.value,
       Crypto.SHA512(password.value, config.SECRET_HASH).toString(),
       sex.value,
       firstName.value,
       lastName.value,
-      pseudo.value
+      pseudo.value,
+      Date.parse(birthday.value)
     )
   }
 
@@ -122,7 +149,7 @@ class Signup extends React.Component {
           <CardHeader>Créer mon compte</CardHeader>
           <form onSubmit={this.handleSubmit} method='post'>
             <CardText>
-              <div className='Signup__inputsColumnContainer'>
+              <div className='Sign__inputsColumnContainer'>
                 <Select
                   floatingLabelText='Sexe *'
                   value={this.state.inputs.sex.value}
@@ -134,7 +161,7 @@ class Signup extends React.Component {
                   <MenuItem value={'1'} primaryText='Homme' />
                   <MenuItem value={'2'} primaryText='Femme' />
                 </Select>
-                <div className='Signup__inputsRowContainer'>
+                <div className='Sign__inputsRowContainer'>
                   <TextField
                     type='text'
                     hintText='Prénom'
@@ -154,6 +181,16 @@ class Signup extends React.Component {
                     style={{width: '47%'}}
                   />
                 </div>
+                <DatePicker
+                  hintText='Date de naissance *'
+                  value={this.state.inputs.birthday.value}
+                  onChange={this.handleDateChange}
+                  DateTimeFormat={DateTimeFormat}
+                  openToYearSelection
+                  locale='fr'
+                  fullWidth
+                  required
+                />
                 <TextField
                   type='text'
                   hintText='Pseudo *'
@@ -194,7 +231,7 @@ class Signup extends React.Component {
             </CardActions>
           </form>
           <CardText>
-            <div className='Signup__errorContainer'>
+            <div className='Sign__errorContainer'>
               { Keys(this.props.error ? this.props.error.appCode : null) }
             </div>
           </CardText>

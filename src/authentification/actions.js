@@ -4,12 +4,12 @@ import * as constants from './constants'
 import config from '../config/config'
 import history from '../config/history'
 
-export const signup = (email, password, sex, firstName, lastName, pseudo) => dispatch => {
+export const signup = (email, password, sex, firstName, lastName, pseudo, birthday) => dispatch => {
   dispatch({type: constants.SIGNUP_REQUEST})
   return axios({
     method: 'post',
     url: config.API_BASE_URI + '/signup',
-    data: { email, password, sex, firstName, lastName, pseudo }
+    data: { email, password, sex, firstName, lastName, pseudo, birthday }
   })
   .then((json) => {
     window.localStorage.token = json.data.accessToken

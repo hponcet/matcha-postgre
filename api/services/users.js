@@ -8,24 +8,24 @@ const dbUrl = `${dbParams.dialect}://${dbParams.host}:${dbParams.port}/${dbParam
 const AuthenticationService = require('./authentication')
 const ProfilService = require('./profil')
 
-const add = (email, password, sex, firstName, lastName, pseudo, location) => {
+const add = (email, password, sex, firstName, lastName, pseudo, birthday, location) => {
   return MongoClient.connect(dbUrl)
   .then((db) => {
     const Users = db.collection('users')
     return bcrypt.hash(password, 10)
     .then((hash) =>
-      Users.insertOne({email, password: hash, sex, firstName, lastName, pseudo, profilId: null, location})
-      .then((data) =>
-        ProfilService.newProfil(data.ops[0]._id)
-        .then((profilId) =>
-          Users.updateOne({_id: data.ops[0]._id}, {$set: {profilId}}, false, true)
-          .then(() => {
-            db.close()
-            return AuthenticationService.buildToken(data.ops[0]._id)
-          })
-          .catch(err => err))
-        .catch(err => err))
-      .catch(err => err))
+    Users.insertOne({email, password: hash, sex, birthday, firstName, lastName, pseudo, profilId: null, location})
+    .then((data) =>
+    ProfilService.newProfil(data.ops[0]._id)
+    .then((profilId) =>
+    Users.updateOne({_id: data.ops[0]._id}, {$set: {profilId}}, false, true)
+    .then(() => {
+      db.close()
+      return AuthenticationService.buildToken(data.ops[0]._id)
+    })
+    .catch(err => err))
+    .catch(err => err))
+    .catch(err => err))
     .catch(err => err)
   })
   .catch(err => err)

@@ -67,7 +67,6 @@ class Picture extends React.Component {
 
   render () {
     const { src, index, profilPicture } = this.props
-    console.log(src)
     const DeleteButton = (
       <IconButton
         iconStyle={styles.smallIcon}

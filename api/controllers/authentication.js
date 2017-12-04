@@ -6,7 +6,10 @@ const UsersService = require('../services/users')
 const errors = require('../errors')
 
 const signup = (req, res, next) => {
+  console.log(req.body.birthday)
   if (!_.has(req, 'body.email') || _.isEmpty(req.body.email)) return next(createError.BadRequest(errors.EMAIL_MISSING))
+  if (!_.has(req, 'body.birthday') || _.isEmpty(req.body.birthday)) return next(createError.BadRequest(errors.BIRTHDAY_MISSING))
+  if (Date.Now() - req.body.birthday < 18) return next(createError.BadRequest(errors.AGE_ERROR))
   if (!_.has(req, 'body.password') || _.isEmpty(req.body.password)) return next(createError.BadRequest(errors.PASSWORD_MISSING))
   if (req.body.password.length < 8) return next(createError.BadRequest(errors.PASSWORD_TO_SHORT))
   if (!_.has(req, 'body.sex') || _.isEmpty(req.body.sex)) return next(createError.BadRequest(errors.SEX_MISSING))
@@ -27,6 +30,7 @@ const signup = (req, res, next) => {
           req.body.firstName || null,
           req.body.lastName || null,
           req.body.pseudo,
+          req.body.birthday,
           location
         )
         .then((accessToken) => res.send({accessToken}))
