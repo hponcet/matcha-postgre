@@ -53,4 +53,4 @@ const validate = (value, rules, required) => {
   return true
 }
 
-export default validate
+module.exports = validate

@@ -8,7 +8,7 @@ import Showcase from '../../showcase/components/Showcase'
 class Layout extends React.Component {
   render () {
     return (
-      <div style={{ height: '100%', width: '100%' }}>
+      <div className='App'>
         <Route path='/dashboard' component={isAuthenticated(Interface)} />
         <Route path='/signup' component={Signup} />
         <Route path='/login' component={Login} />
