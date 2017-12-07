@@ -71,7 +71,9 @@ class Menu extends React.Component {
               <MenuItem onClick={this.handleClose}>Menu</MenuItem>
             </Link>
             <Divider />
-            <MenuItem onClick={this.handleClose}>Rechercher</MenuItem>
+            <Link to='/dashboard/finder'>
+              <MenuItem onClick={this.handleClose}>Rechercher</MenuItem>
+            </Link>
             <Divider />
             <MenuItem onClick={this.handleClose}>Mes matchs</MenuItem>
             <Divider />
