@@ -145,7 +145,6 @@ class Signup extends React.Component {
                   value={this.state.inputs.sex.value}
                   errorText={this.state.inputs.sex.showError && 'Veuillez selecionner votre sexe'}
                   onChange={this.handleSelectChange}
-                  id='sex'
                   fullWidth
                 >
                   <MenuItem value={'1'} primaryText='Homme' />

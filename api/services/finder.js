@@ -18,9 +18,7 @@ const findByLatLng = (coordinates, callback) => {
       }
     }
     return Profils.findOne(query, callback)
-    .then((data) => {
-      return data
-    })
+    .then(data => data)
     .catch(err => err)
   })
   .catch(err => err)
