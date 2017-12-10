@@ -1,6 +1,8 @@
 import React from 'react'
 import InputRange from 'react-input-range'
 
+import Tags from '../containers/Tags'
+
 import { Card, CardHeader, CardText } from '../../styled-components/Cards'
 
 import 'react-input-range/lib/css/index.css'
@@ -19,18 +21,26 @@ class Finder extends React.Component {
 
   render () {
     return (
-      <Card style={{width: '70%', alignSelf: 'center'}}>
-        <CardHeader>Rechercher</CardHeader>
-        <CardText>
-          <InputRange
-            maxValue={80}
-            minValue={18}
-            formatLabel={value => `${value} ans`}
-            value={this.state.oldRange}
-            onChange={value => this.setState({ oldRange: value })}
-            onChangeComplete={value => console.log(value)} />
-        </CardText>
-      </Card>
+      <div style={{width: '70%', alignSelf: 'center'}}>
+        <Card>
+          <CardHeader>Intervale</CardHeader>
+          <CardText>
+            <InputRange
+              maxValue={80}
+              minValue={18}
+              formatLabel={value => `${value} ans`}
+              value={this.state.oldRange}
+              onChange={value => this.setState({ oldRange: value })}
+              onChangeComplete={value => console.log(value)} />
+          </CardText>
+        </Card>
+        <Card>
+          <CardHeader>Par tag</CardHeader>
+          <CardText>
+            <Tags />
+          </CardText>
+        </Card>
+      </div>
     )
   }
 }
