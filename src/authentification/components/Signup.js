@@ -100,6 +100,7 @@ class Signup extends React.Component {
     const inputs = this.state.inputs
     inputs[name].value = targetValue
     if (!inputs[name].valid(value) && !inputs[name].pristine) inputs[name].showError = true
+    else if (inputs[name].valid(value) && !inputs[name].pristine) inputs[name].showError = false
     this.setState({ inputs })
     this.canSubmit()
   }

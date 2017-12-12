@@ -5,11 +5,11 @@ import { updateProfil } from '../actions'
 
 export default connect(
   (state) => ({
-    user: state.user.data,
-    profil: {
-      sex: state.user.sex,
-      profilPicture: state.pictures.profilPicture
-    },
+    email: state.user.email,
+    firstName: state.user.firstName,
+    lastName: state.user.lastName,
+    profil: state.profil,
+    profilPicture: state.pictures.profilPicture,
     error: state.profil.error
   }), {
     updateProfil

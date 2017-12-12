@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { fetchTags, updateTag, addTag, removeTag } from '../actions'
+import { fetchTags } from '../actions'
 import findIndex from 'lodash/findIndex'
 import map from 'lodash/map'
 
@@ -25,7 +25,7 @@ const style = {
   }
 }
 
-class Tags extends React.Component {
+class SearchTags extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -45,12 +45,8 @@ class Tags extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.suggestions) {
-      this.setState({suggestions: nextProps.suggestions})
-    }
-    if (nextProps.tags) {
-      this.setState({tags: nextProps.tags})
-    }
+    if (nextProps.suggestions) this.setState({suggestions: nextProps.suggestions})
+    if (nextProps.tags) this.setState({tags: nextProps.tags})
   }
 
   handleInputChange (inputValue) { this.setState({inputValue}) }
@@ -62,6 +58,7 @@ class Tags extends React.Component {
     tags.push(inputValue)
     this.setState({tags, inputValue: ''})
     this.handleNewRequest()
+    this.handleChange(tags)
     event.preventDefault()
   }
 
@@ -79,7 +76,6 @@ class Tags extends React.Component {
     if (!suggestions[tagNameId].ids.find((id) => id === this.props.id)) return
     const idIndex = suggestions[tagNameId].ids.indexOf(this.props.id)
     suggestions[tagNameId].ids.splice(idIndex, 1)
-    this.props.removeTag(tagName, this.props.id)
     this.setState({suggestions})
   }
 
@@ -93,14 +89,12 @@ class Tags extends React.Component {
       const tagNameId = findIndex(suggestions, {name: tagName})
       if (suggestions[tagNameId].ids.find((id) => id === this.props.id)) return true
       suggestions[tagNameId].ids.push(this.props.id)
-      this.props.updateTag(tagName, this.props.id)
     } else {
       const newTag = {
         name: tagName,
         ids: [this.props.id]
       }
       suggestions.push(newTag)
-      this.props.addTag(tagName, this.props.id)
     }
     this.setState({suggestions})
     return false
@@ -140,9 +134,6 @@ export default connect(
     tags: state.profil.tags,
     id: state.user.id
   }), {
-    fetchTags,
-    updateTag,
-    addTag,
-    removeTag
+    fetchTags
   }
-)(Tags)
+)(SearchTags)

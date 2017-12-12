@@ -3,6 +3,7 @@ const createError = require('http-errors')
 
 const AuthenticationService = require('../services/authentication')
 const UsersService = require('../services/users')
+const ProfilService = require('../services/profil')
 const errors = require('../errors')
 
 const MAJORITY_TIMESTAMP = 567993600000
@@ -54,10 +55,13 @@ const login = (req, res, next) => {
     AuthenticationService.validatePassword(req.body.password, user.password)
     .then((isValid) => {
       if (!isValid) return next(createError.BadRequest(errors.LOGIN_BAD_PASSWORD))
-      return AuthenticationService.buildToken(user._id)
-      .then((token) => {
-        res.send({ accessToken: token })
-      })
+      return UsersService.getGeolocation(req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.connection.remoteAddress)
+      .then((location) => ProfilService.updateLocation(location, user._id)
+        .then(() => AuthenticationService.buildToken(user._id)
+          .then((token) => res.send({ accessToken: token }))
+          .catch(next))
+        .catch(next))
+      .catch(next)
     })
     .catch(next)
   })

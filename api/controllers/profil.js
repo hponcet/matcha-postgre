@@ -11,6 +11,7 @@ const getProfil = (req, res, next) => {
   .then((profil) => res.send(profil))
 }
 const updateProfil = (req, res, next) => {
+  console.log(req.body)
   if (!_.has(req, 'body.name') || _.isEmpty(req.body.name)) return next(createError.BadRequest(errors.BAD_TAG_ID))
   if (!_.has(req, 'body.id') || _.isEmpty(req.body.id) || !ValidateObjectId.test(req.body.id)) return next(createError.BadRequest(errors.BAD_USER_ID))
 

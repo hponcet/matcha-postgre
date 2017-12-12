@@ -1,5 +1,7 @@
 import React from 'react'
 import InputRange from 'react-input-range'
+import axios from 'axios'
+import map from 'lodash/map'
 
 import { Card, CardText } from '../../styled-components/Cards'
 import Select from 'material-ui/SelectField'
@@ -18,16 +20,35 @@ class Finder extends React.Component {
         max: 55
       },
       location: null,
+      departments: [],
       tags: []
     }
+    this.handleTagChange = this.handleTagChange.bind(this)
+    this.handleSelectChange = this.handleSelectChange.bind(this)
   }
 
   componentDidMount () {
     this.setState({location: this.props.location})
+    this.getDepartments()
   }
 
-  handleChange (data) {
-    console.log(data)
+  handleTagChange (tags) {
+    this.setState({tags})
+  }
+
+  handleSelectChange (event, index, value) {
+    this.setState({location: value})
+  }
+
+  getDepartments () {
+    axios({
+      method: 'get',
+      url: 'http://geo.api.gouv.fr/departements'
+    })
+    .then((departments) => {
+      this.setState({departments: departments.data})
+    })
+    .catch((err) => console.log(err))
   }
 
   render () {
@@ -45,17 +66,19 @@ class Finder extends React.Component {
                 onChangeComplete={value => console.log(value)} />
             </div>
             <div className='Finder__tagContainer'>
-              <SearchTags handleChange={this.handleChange} />
+              <SearchTags handleChange={this.handleTagChange} />
             </div>
             <div className='Finder__locationContainer'>
               <Select
-                floatingLabelText='Sexe *'
+                floatingLabelText='Localité'
                 value={this.state.location}
                 onChange={this.handleSelectChange}
                 fullWidth
               >
-                <MenuItem value={'1'} primaryText='Homme' />
-                <MenuItem value={'2'} primaryText='Femme' />
+                {
+                  map(this.state.departments, (department, index) =>
+                    <MenuItem key={index} value={department.code} primaryText={department.nom} />)
+                }
               </Select>
             </div>
           </CardText>

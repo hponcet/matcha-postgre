@@ -16,7 +16,7 @@ const add = (email, password, sex, firstName, lastName, pseudo, birthday, locati
     .then((hash) =>
     Users.insertOne({email, password: hash, sex, birthday, firstName, lastName, pseudo, profilId: null, location})
     .then((data) =>
-    ProfilService.newProfil(data.ops[0]._id)
+    ProfilService.newProfil(data.ops[0])
     .then((profilId) =>
     Users.updateOne({_id: data.ops[0]._id}, {$set: {profilId}}, false, true)
     .then(() => {
