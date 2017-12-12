@@ -21,17 +21,24 @@ class Finder extends React.Component {
       },
       location: null,
       departments: [],
+      userLocation: null,
+      userZip: null,
       tags: []
     }
     this.handleTagChange = this.handleTagChange.bind(this)
     this.handleSelectChange = this.handleSelectChange.bind(this)
+    this.getUserDepartement = this.getUserDepartement.bind(this)
   }
 
   componentDidMount () {
     this.setState({location: this.props.location})
     this.getDepartments()
+    if (this.props.location && this.props.location.zip) this.getUserDepartement(this.props.location.zip)
   }
 
+  componentWillReceiveProps (nextProps) {
+    if (!this.props.location && nextProps.location && nextProps.location.zip) this.getUserDepartement(nextProps.location.zip)
+  }
   handleTagChange (tags) {
     this.setState({tags})
   }
@@ -41,7 +48,7 @@ class Finder extends React.Component {
   }
 
   getDepartments () {
-    axios({
+    return axios({
       method: 'get',
       url: 'https://geo.api.gouv.fr/departements'
     })
@@ -49,6 +56,10 @@ class Finder extends React.Component {
       this.setState({departments: departments.data})
     })
     .catch((err) => console.log(err))
+  }
+
+  getUserDepartement (zip) {
+    this.setState({userZip: zip})
   }
 
   render () {
@@ -71,10 +82,11 @@ class Finder extends React.Component {
             <div className='Finder__locationContainer'>
               <Select
                 floatingLabelText='Localité'
-                value={this.state.location}
+                value={this.state.userZip && this.state.userZip.substr(0, 2)}
                 onChange={this.handleSelectChange}
                 fullWidth
               >
+                <MenuItem key={'FR'} value={'FR'} primaryText='France' />
                 {
                   map(this.state.departments, (department, index) =>
                     <MenuItem key={index} value={department.code} primaryText={department.nom} />)
