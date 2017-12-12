@@ -1,0 +1,6 @@
+.Tags__tagContainer {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+}

@@ -1,5 +1,5 @@
 import React from 'react'
-import { compact, map } from 'lodash'
+import { compact, map, forEach } from 'lodash'
 
 import Validation from '../../validation/Validation'
 
@@ -60,10 +60,21 @@ class Profil extends React.Component {
     this.handleChange = this.handleChange.bind(this)
     this.handleSelectChange = this.handleSelectChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.clearFields = this.clearFields.bind(this)
   }
 
   enableButton () { this.setState({canSubmit: true}) }
   disableButton () { this.setState({canSubmit: false}) }
+
+  clearFields () {
+    const inputs = this.state.inputs
+    forEach(inputs, (input, key) => {
+      input.pristine = true
+      input.value = ''
+      input.showError = false
+    })
+    this.setState({inputs, canSubmit: false})
+  }
 
   canSubmit () {
     const inputsValidity = map(this.state.inputs, (input) => input.valid(input.value))
@@ -99,13 +110,17 @@ class Profil extends React.Component {
       return {type: key, pristine: true}
     })
     if (updatedData.length < 1) return this.setState({canSubmit: false})
-    console.log(updatedData)
-    this.props.updateProfil()
+    return this.props.updateProfil(updatedData)
+    .then(() => {
+      this.clearFields()
+      this.props.fetchUser()
+      this.props.fetchProfil()
+    })
   }
 
   render () {
     return (
-      <Card style={{width: '70%', alignSelf: 'center'}}>
+      <Card style={{minWidth: '400px', width: '70%', alignSelf: 'center'}}>
         <div className='Profil__profilPicture__container'>
           <div className='Profil__profilPicture__border'>
             <img style={{width: '200px', borderRadius: '50%'}} src={this.props.profilPicture} alt='' />
@@ -166,10 +181,9 @@ class Profil extends React.Component {
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', height: '100%'}}>
               <textarea
                 type='text'
-                style={{width: '80%', height: '50px'}}
+                style={{width: '98%', height: '70px'}}
                 name='biography'
                 value={this.state.inputs.biography.pristine ? this.props.profil.biography : this.state.inputs.biography.value}
-                defaultValue={this.props.profil.biography}
                 onChange={this.handleChange}
               />
             </div>
@@ -201,7 +215,7 @@ class Profil extends React.Component {
             <Pictures />
           </CardText>
         </Card>
-        
+
         <Card style={{margin: '20px'}}>
           <CardHeader
             style={{backgroundColor: 'lightgrey'}}
@@ -216,7 +230,7 @@ class Profil extends React.Component {
                 type='text'
                 hintText='Prénom'
                 name='firstName'
-                value={this.state.inputs.firstName.pristine ? this.props.firstName : this.state.inputs.firstName.value}
+                value={this.state.inputs.firstName.pristine ? this.props.user.firstName : this.state.inputs.firstName.value}
                 onChange={this.handleChange}
                 style={{width: '47%'}}
               />
@@ -224,7 +238,7 @@ class Profil extends React.Component {
                 type='text'
                 hintText='Nom'
                 name='lastName'
-                value={this.state.inputs.lastName.pristine ? this.props.lastName : this.state.inputs.lastName.value}
+                value={this.state.inputs.lastName.pristine ? this.props.user.lastName : this.state.inputs.lastName.value}
                 onChange={this.handleChange}
                 style={{width: '47%'}}
               />
@@ -234,7 +248,7 @@ class Profil extends React.Component {
               hintText='E-mail'
               errorText={this.state.inputs.email.showError ? 'Votre email doit avoir un format valide.' : null}
               name='email'
-              value={this.state.inputs.email.pristine ? this.props.email : this.state.inputs.email.value}
+              value={this.state.inputs.email.pristine ? this.props.user.email : this.state.inputs.email.value}
               onChange={this.handleChange}
               fullWidth
             />
@@ -242,7 +256,7 @@ class Profil extends React.Component {
         </Card>
 
         <CardActions style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-          <RaisedButton label='Valider' disabled={!this.state.canSubmit} primary onClick={this.handleSubmit} style={{margin: '20px'}} />
+          <RaisedButton label='Valider' disabled={!this.state.canSubmit || this.props.isUpdating} primary onClick={this.handleSubmit} style={{margin: '20px'}} />
         </CardActions>
 
       </Card>

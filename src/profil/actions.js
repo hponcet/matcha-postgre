@@ -20,15 +20,17 @@ export const fetchProfil = () => dispatch => {
 
 export const updateProfil = (profil) => dispatch => {
   dispatch({ type: constants.UPDATE_PROFIL_REQUEST })
-  axios({
+  return axios({
     method: 'post',
     url,
-    data: profil
+    data: {profil}
   })
   .then(() => {
     dispatch({type: constants.UPDATE_PROFIL_SUCCESS})
+    return null
   })
   .catch((error) => {
     dispatch({type: constants.UPDATE_PROFIL_FAILURE, payload: error})
+    return null
   })
 }

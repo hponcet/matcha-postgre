@@ -24,6 +24,16 @@ const updateLocation = (location, userId) => {
   .catch(err => err)
 }
 
+const updateField = (name, value, userId) => {
+  return MongoClient.connect(dbUrl).then(db => {
+    const Profils = db.collection('profils')
+    return Profils.findOneAndUpdate({userId: ObjectID(userId)}, {$set: {[name]: value}})
+    .then(() => db.close())
+    .catch(err => err)
+  })
+  .catch(err => err)
+}
+
 const newProfil = (user) => {
   return MongoClient.connect(dbUrl)
   .then((db) => {
@@ -53,5 +63,6 @@ const newProfil = (user) => {
 module.exports = {
   newProfil,
   getProfil,
-  updateLocation
+  updateLocation,
+  updateField
 }

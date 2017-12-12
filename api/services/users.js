@@ -75,6 +75,20 @@ const getById = (userId) => {
   .catch(err => err)
 }
 
+const updateField = (name, value, userId) => {
+  return MongoClient.connect(dbUrl)
+  .then(db => {
+    const Users = db.collection('users')
+    return Users.findOneAndUpdate({_id: ObjectID(userId)}, {$set: {[name]: value}})
+    .then((data) => {
+      db.close()
+      return data
+    })
+    .catch(err => err)
+  })
+  .catch(err => err)
+}
+
 const getGeolocation = (ip) => {
   return axios({
     method: 'get',
@@ -100,5 +114,6 @@ module.exports = {
   getByPseudo,
   getPassword,
   getByMail,
-  getGeolocation
+  getGeolocation,
+  updateField
 }

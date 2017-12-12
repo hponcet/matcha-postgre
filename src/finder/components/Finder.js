@@ -43,7 +43,7 @@ class Finder extends React.Component {
   getDepartments () {
     axios({
       method: 'get',
-      url: 'http://geo.api.gouv.fr/departements'
+      url: 'https://geo.api.gouv.fr/departements'
     })
     .then((departments) => {
       this.setState({departments: departments.data})
