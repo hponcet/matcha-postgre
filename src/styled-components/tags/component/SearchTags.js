@@ -16,7 +16,8 @@ const style = {
     display: 'flex',
     borderRadius: '5px',
     flexDirection: 'row',
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+    flexWrap: 'wrap'
   },
   tag: {
     padding: '10px',
@@ -41,12 +42,10 @@ class SearchTags extends React.Component {
 
   componentDidMount () {
     this.props.fetchTags()
-    if (this.props.tags) this.setState({tags: this.props.tags})
   }
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.suggestions) this.setState({suggestions: nextProps.suggestions})
-    if (nextProps.tags) this.setState({tags: nextProps.tags})
   }
 
   handleInputChange (inputValue) { this.setState({inputValue}) }
@@ -54,11 +53,11 @@ class SearchTags extends React.Component {
 
   handleComponentChange (event) {
     const {tags, inputValue} = this.state
-    if (this.updateSuggestions(inputValue)) return this.handleNewRequest()
+    this.updateSuggestions(inputValue)
     tags.push(inputValue)
     this.setState({tags, inputValue: ''})
     this.handleNewRequest()
-    this.handleChange(tags)
+    this.props.handleChange(tags)
     event.preventDefault()
   }
 
@@ -67,6 +66,7 @@ class SearchTags extends React.Component {
     this.deleteSuggestions(tags[index])
     tags.splice(index, 1)
     this.setState({tags})
+    this.props.handleChange(tags)
   }
 
   deleteSuggestions (tagName) {
@@ -115,7 +115,7 @@ class SearchTags extends React.Component {
         </div>
         <form onSubmit={this.handleComponentChange}>
           <AutoComplete
-            hintText={`Choisissez un interet...`}
+            hintText={`Centre d'interet`}
             searchText={this.state.inputValue}
             dataSource={this.parseSuggestions()}
             onUpdateInput={this.handleInputChange}

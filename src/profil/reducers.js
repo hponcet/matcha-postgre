@@ -4,24 +4,27 @@ const initialProfilState = {
   isUpdating: false,
   isFetching: false,
   error: null,
+  profilError: null,
   tags: [],
   sex: null,
   orientation: null,
   biography: null,
   profilPicture: null,
   profilScore: 0,
+  location: [],
   consultedBy: [],
-  likes: []
-
+  likes: [],
+  userId: null,
+  profilId: null
 }
 export const ProfilReducer = (state = initialProfilState, { type, payload }) => {
   switch (type) {
     case constants.UPDATE_PROFIL_REQUEST:
       return { ...state, isUpdating: true }
     case constants.UPDATE_PROFIL_SUCCESS:
-      return { ...state, isUpdating: false, error: null }
+      return { ...state, isUpdating: false, profilError: null }
     case constants.UPDATE_PROFIL_FAILURE:
-      return { ...state, isUpdating: false, error: payload }
+      return { ...state, isUpdating: false, profilError: payload }
     case constants.FETCH_PROFIL_REQUEST:
       return { ...state, isFetching: true }
     case constants.FETCH_PROFIL_SUCCESS:
@@ -30,6 +33,7 @@ export const ProfilReducer = (state = initialProfilState, { type, payload }) => 
         isFetching: false,
         error: null,
         userId: payload.userId,
+        profilId: payload._id,
         birthday: payload.birthday,
         pseudo: payload.pseudo,
         location: payload.location,

@@ -1,0 +1,67 @@
+.ProfilPicture__container {
+  position: relative;
+  min-width: 200px;
+}
+.ProfilPicture__picture {
+  width: 100%;
+}
+.ProfilPicture__Profil {
+  position: absolute;
+  z-index: 10;
+  background-color: #ffffff;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+  width: 400px;
+  left: -100px;
+  top: -30%;
+  border-radius: 3px;
+  padding: 10px;
+}
+
+.Viewer__picture {
+  width: 100%;
+}
+.Viewer__prevBtn,
+.Viewer__nextBtn {
+  position: absolute;
+}
+
+.Profil__pseudo {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 4px;
+}
+.Profil__age {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: -4px;
+}
+.Profil__infoRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-content: center;
+  align-items: center;
+}
+.Profil__infoCol {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  
+  align-content: center;
+  align-items: center;
+}
+.Profil__content {
+  display: flex;
+  flex-direction: 'row';
+  align-content: center;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 4px;
+}
+
+.gridContainer {
+  position: relative;
+  padding: 0 50px;
+}

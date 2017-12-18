@@ -1,19 +1,11 @@
 const ErrorStackParser = require('error-stack-parser')
 
 const errorsHandling = (err, req, res, next) => {
-  console.error(err.message)
+  console.error('[ERROR]', err.message)
 
-  if (!err.statusCode) {
-    console.log(err, ErrorStackParser.parse(err))
-  }
-
-  if (res.headersSent) {
-    return next(err)
-  }
-
-  if (!err.statusCode) {
-    return next(err)
-  }
+  if (!err.statusCode) console.log(err, ErrorStackParser.parse(err))
+  if (res.headersSent) return next(err)
+  if (!err.statusCode) return next(err)
 
   err.json = {
     code: err.message

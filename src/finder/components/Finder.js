@@ -1,12 +1,13 @@
 import React from 'react'
 import InputRange from 'react-input-range'
-import axios from 'axios'
-import map from 'lodash/map'
 
-import { Card, CardText } from '../../styled-components/Cards'
-import Select from 'material-ui/SelectField'
-import MenuItem from 'material-ui/MenuItem'
+import RaisedButton from 'material-ui/RaisedButton'
+import { Card, CardText, CardHeader } from '../../styled-components/Cards'
+import SearchIcon from 'material-ui/svg-icons/action/search'
+import CloseIcon from 'material-ui/svg-icons/navigation/close'
 import SearchTags from '../../styled-components/tags/component/SearchTags'
+
+import Profils from '../../profils-list/containers/ProfilList'
 
 import 'react-input-range/lib/css/index.css'
 import './Finder.css'
@@ -15,86 +16,92 @@ class Finder extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      oldRange: {
+      ageRange: {
         min: 20,
         max: 55
       },
+      rangeDistance: 60,
       location: null,
       departments: [],
-      userLocation: null,
       userZip: null,
       tags: []
     }
     this.handleTagChange = this.handleTagChange.bind(this)
-    this.handleSelectChange = this.handleSelectChange.bind(this)
-    this.getUserDepartement = this.getUserDepartement.bind(this)
   }
 
   componentDidMount () {
     this.setState({location: this.props.location})
-    this.getDepartments()
-    if (this.props.location && this.props.location.zip) this.getUserDepartement(this.props.location.zip)
   }
 
-  componentWillReceiveProps (nextProps) {
-    if (!this.props.location && nextProps.location && nextProps.location.zip) this.getUserDepartement(nextProps.location.zip)
-  }
   handleTagChange (tags) {
     this.setState({tags})
   }
 
-  handleSelectChange (event, index, value) {
-    this.setState({location: value})
-  }
-
-  getDepartments () {
-    return axios({
-      method: 'get',
-      url: 'https://geo.api.gouv.fr/departements'
-    })
-    .then((departments) => {
-      this.setState({departments: departments.data})
-    })
-    .catch((err) => console.log(err))
-  }
-
-  getUserDepartement (zip) {
-    this.setState({userZip: zip})
-  }
-
   render () {
     return (
-      <div style={{width: '70%', alignSelf: 'center'}}>
-        <Card>
-          <CardText>
-            <div className='Finder__intervalContainer'>
-              <InputRange
-                maxValue={80}
-                minValue={18}
-                formatLabel={value => `${value} ans`}
-                value={this.state.oldRange}
-                onChange={value => this.setState({ oldRange: value })}
-                onChangeComplete={value => console.log(value)} />
+      <div style={{width: '80%', alignSelf: 'center'}}>
+        <Card
+          style={{
+            padding: '0px',
+            border: 'none',
+            backgroundColor: 'inherit',
+            boxShadow: '0'
+          }}>
+          <CardHeader
+            actAsExpander
+            style={{backgroundColor: '#79A5C5', color: '#ffffff'}}
+            showExpandableButton
+            closeIcon={<SearchIcon color='#ffffff' />}
+            openIcon={<CloseIcon color='#ffffff' />}
+          >
+            Recherche
+          </CardHeader>
+          <CardText
+            expandable
+            style={{
+              width: '99%',
+              alignSelf: 'center',
+              padding: '20px 50px',
+              backgroundColor: '#ffffff',
+              margin: '0 auto',
+              boxShadow: 'rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px'
+            }}>
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingTop: '20px'}}>
+              <div className='Finder__intervalContainer'>
+                <div className='Finder__displayRowCenter'>
+                  <div className='Finder__searchTitle'>Age</div>
+                  <InputRange
+                    maxValue={80}
+                    minValue={18}
+                    formatLabel={value => `${value} ans`}
+                    value={this.state.ageRange}
+                    onChange={value => this.setState({ ageRange: value })}
+                  />
+                </div>
+              </div>
+              <div className='Finder__intervalContainer'>
+                <div className='Finder__displayRowCenter'>
+                  <div className='Finder__searchTitle'>Distance</div>
+                  <InputRange
+                    maxValue={1000}
+                    minValue={10}
+                    step={10}
+                    formatLabel={value => `${value}km`}
+                    value={this.state.rangeDistance}
+                    onChange={value => this.setState({ rangeDistance: value })}
+                  />
+                </div>
+              </div>
             </div>
             <div className='Finder__tagContainer'>
               <SearchTags handleChange={this.handleTagChange} />
             </div>
-            <div className='Finder__locationContainer'>
-              <Select
-                floatingLabelText='Localité'
-                value={this.state.userZip && this.state.userZip.substr(0, 2)}
-                onChange={this.handleSelectChange}
-                fullWidth
-              >
-                <MenuItem key={'FR'} value={'FR'} primaryText='France' />
-                {
-                  map(this.state.departments, (department, index) =>
-                    <MenuItem key={index} value={department.code} primaryText={department.nom} />)
-                }
-              </Select>
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+              <RaisedButton label='Valider' backgroundColor='#79A5C5' labelColor='#ffffff' style={{marginTop: '20px'}} />
             </div>
           </CardText>
         </Card>
+        <Profils />
       </div>
     )
   }

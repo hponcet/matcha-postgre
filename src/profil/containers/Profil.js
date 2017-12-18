@@ -10,6 +10,7 @@ export default connect(
     user: state.user,
     profil: state.profil,
     profilPicture: state.pictures.profilPicture,
+    profilError: state.profil.profilError,
     error: state.profil.error
   }), {
     updateProfil,

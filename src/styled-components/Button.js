@@ -38,11 +38,12 @@ export const ClassicLinkButton = ({props, children, style, onClick}) => {
   )
 }
 
-export const LinkButton = ({props, children, style}) => {
+export const LinkButton = ({to, props, className, children, style}) => {
   return (
     <Link
       {...props}
-      className='Button__noHighlight'
+      to={to}
+      className={className}
       style={{
         backgroundColor: 'none',
         border: '0 none',

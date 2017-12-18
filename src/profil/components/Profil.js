@@ -2,6 +2,7 @@ import React from 'react'
 import { compact, map, forEach } from 'lodash'
 
 import Validation from '../../validation/Validation'
+import Keys from '../../Keys'
 
 import { Card, CardText, CardHeader, CardActions } from 'material-ui/Card'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -61,6 +62,10 @@ class Profil extends React.Component {
     this.handleSelectChange = this.handleSelectChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.clearFields = this.clearFields.bind(this)
+  }
+
+  componentDidMount () {
+    this.props.fetchUser()
   }
 
   enableButton () { this.setState({canSubmit: true}) }
@@ -258,6 +263,12 @@ class Profil extends React.Component {
         <CardActions style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
           <RaisedButton label='Valider' disabled={!this.state.canSubmit || this.props.isUpdating} primary onClick={this.handleSubmit} style={{margin: '20px'}} />
         </CardActions>
+
+        <CardText>
+          <div className='Sign__errorContainer'>
+            {Keys(this.props.profilError ? this.props.profilError.appCode : null)}
+          </div>
+        </CardText>
 
       </Card>
     )

@@ -18,6 +18,9 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  linkStyle: {
+    textDecoration: 'none'
   }
 }
 
@@ -58,6 +61,7 @@ class Menu extends React.Component {
           iconElementLeft={leftMenuIcon}
           iconElementRight={<IconButton><LogoutIcon onClick={this.props.logout} /></IconButton>}
           children={<div>{profilScore}</div>}
+          style={{backgroundColor: '#79A5C5'}}
         />
         <div>
           <Drawer
@@ -67,11 +71,11 @@ class Menu extends React.Component {
           >
             <div style={{height: '80px'}} />
             <Divider />
-            <Link to='/dashboard'>
+            <Link to='/dashboard' style={styles.linkStyle}>
               <MenuItem onClick={this.handleClose}>Menu</MenuItem>
             </Link>
             <Divider />
-            <Link to='/dashboard/finder'>
+            <Link to='/dashboard/finder' style={styles.linkStyle}>
               <MenuItem onClick={this.handleClose}>Rechercher</MenuItem>
             </Link>
             <Divider />
@@ -79,7 +83,7 @@ class Menu extends React.Component {
             <Divider />
             <MenuItem onClick={this.handleClose}>Discussions</MenuItem>
             <Divider />
-            <Link to='/dashboard/profil'>
+            <Link to='/dashboard/profil' style={styles.linkStyle}>
               <MenuItem onClick={this.handleClose}>Mon profil</MenuItem>
             </Link>
             <Divider />

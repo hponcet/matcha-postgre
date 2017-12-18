@@ -1,5 +1,7 @@
 const MongoClient = require('mongodb').MongoClient
 const ObjectID = require('mongodb').ObjectID
+const createError = require('http-errors')
+const errors = require('../errors')
 
 const dbParams = require('../config/config').DATABASE
 const dbUrl = `${dbParams.dialect}://${dbParams.host}:${dbParams.port}/${dbParams.database}`
@@ -12,6 +14,14 @@ const getProfil = (userId) => {
     .catch(err => err)
   })
   .catch(err => err)
+}
+
+const getProfilLocation = (userId) => {
+  return getProfil(userId)
+  .then((profil) => {
+    if (!profil || !profil.location || !profil.location.loc) return Promise.reject(createError.BadRequest(errors.EMPTY_LOCATION))
+    return profil.location.loc
+  })
 }
 
 const updateLocation = (location, userId) => {
@@ -34,35 +44,41 @@ const updateField = (name, value, userId) => {
   .catch(err => err)
 }
 
-const newProfil = (user) => {
-  return MongoClient.connect(dbUrl)
-  .then((db) => {
-    const Profil = db.collection('profils')
-    const profil = {
-      tags: [],
-      sex: user.sex,
-      pseudo: user.pseudo,
-      location: user.location,
-      birthday: user.birthday,
-      orientation: '3',
-      biography: '',
-      pictures: [],
-      profilPicture: null,
-      userId: user._id,
-      profilScore: 100,
-      consultedBy: [],
-      likes: []
-    }
-    return Profil.insertOne(profil)
-    .then((data) => data.ops[0]._id)
-    .catch(err => err)
+const add = (user, location) => {
+  return new Promise((resolve, reject) => {
+    return MongoClient.connect(dbUrl)
+    .then((db) => {
+      const Profils = db.collection('profils')
+      const profil = {
+        tags: [],
+        sex: user.sex,
+        pseudo: user.pseudo,
+        location,
+        birthday: user.birthday,
+        orientation: '3',
+        biography: '',
+        pictures: [],
+        profilPicture: null,
+        userId: user._id,
+        profilScore: 100,
+        consultedBy: [],
+        likes: []
+      }
+      return Profils.insertOne(profil)
+      .then((data) => resolve(data.ops[0]))
+      .catch(err => {
+        if (err.code === 121) return reject(createError.BadRequest(errors.PROFIL_VALIDATION_ERROR))
+        return reject(err)
+      })
+    })
+    .catch(err => reject(err))
   })
-  .catch(err => err)
 }
 
 module.exports = {
-  newProfil,
+  add,
   getProfil,
   updateLocation,
-  updateField
+  updateField,
+  getProfilLocation
 }

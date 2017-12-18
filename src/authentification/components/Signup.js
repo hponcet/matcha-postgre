@@ -6,6 +6,7 @@ import Validation from '../../validation/Validation'
 import Keys from '../../Keys'
 import config from '../../config/config'
 import history from '../../config/history'
+import { getToken } from '../utils'
 
 import { Card, CardHeader, CardText, CardActions } from '../../styled-components/Cards'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -77,6 +78,10 @@ class Signup extends React.Component {
 
   enableButton () { this.setState({canSubmit: true}) }
   disableButton () { this.setState({canSubmit: false}) }
+
+  componentWillMount () {
+    if (getToken()) history.push('/dashboard/home')
+  }
 
   canSubmit () {
     const inputsValidity = map(this.state.inputs, (input) => input.valid(input.value))

@@ -1,9 +1,10 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const config = require('./config/config')
-const logo = require('./config/asciilogo')
 const app = express()
 const path = require('path')
+
+const serverInit = require('./config/server-init')
 
 const corsMiddleware = require('./middlewares/cors')
 const errorsHandlingMiddleware = require('./middlewares/errors-handling').errorsHandling
@@ -30,7 +31,8 @@ app.use('/', profilRouter)
 app.use('/', picturesRouter)
 app.use(errorsHandlingMiddleware)
 
-let server = app.listen(config.PORT, () => {
-  console.log(logo)
-  console.log(`${config.APP_NAME} now running on port ${server.address().port}`)
+serverInit().then(() => {
+  let server = app.listen(config.PORT, () => {
+    console.log(`[SERVER] ${config.APP_NAME} now running on port ${server.address().port}`)
+  })
 })

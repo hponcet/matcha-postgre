@@ -16,7 +16,8 @@ const style = {
     display: 'flex',
     borderRadius: '5px',
     flexDirection: 'row',
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+    flexWrap: 'wrap'
   },
   tag: {
     padding: '10px',
@@ -121,7 +122,7 @@ class Tags extends React.Component {
         </div>
         <form onSubmit={this.handleComponentChange}>
           <AutoComplete
-            hintText={`Choisissez un interet...`}
+            hintText={`Centre d'interet`}
             searchText={this.state.inputValue}
             dataSource={this.parseSuggestions()}
             onUpdateInput={this.handleInputChange}
