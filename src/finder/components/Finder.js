@@ -27,6 +27,7 @@ class Finder extends React.Component {
       tags: []
     }
     this.handleTagChange = this.handleTagChange.bind(this)
+    this.handleSearch = this.handleSearch.bind(this)
   }
 
   componentDidMount () {
@@ -35,6 +36,14 @@ class Finder extends React.Component {
 
   handleTagChange (tags) {
     this.setState({tags})
+  }
+
+  handleSearch () {
+    this.props.searchProfils({
+      ageRange: this.state.ageRange,
+      rangeDistance: this.state.rangeDistance,
+      tags: this.state.tags
+    })
   }
 
   render () {
@@ -97,7 +106,14 @@ class Finder extends React.Component {
               <SearchTags handleChange={this.handleTagChange} />
             </div>
             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
-              <RaisedButton label='Valider' backgroundColor='#79A5C5' labelColor='#ffffff' style={{marginTop: '20px'}} />
+              <RaisedButton
+                disabled={this.props.profilsRequesting}
+                onClick={this.handleSearch}
+                label='Valider'
+                backgroundColor='#79A5C5'
+                labelColor='#ffffff'
+                style={{marginTop: '20px'}}
+              />
             </div>
           </CardText>
         </Card>

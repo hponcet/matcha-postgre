@@ -17,7 +17,7 @@ export const searchProfils = (search) => dispatch => {
   return axios({
     method: 'post',
     url: `${config.API_BASE_URI}/profils`,
-    data: {search}
+    data: search
   })
   .then((profils) => dispatch({type: constants.GET_PROFILS_SUCCESS, payload: profils.data}))
   .catch((error) => dispatch({type: constants.GET_PROFILS_FAILURE, payload: error}))

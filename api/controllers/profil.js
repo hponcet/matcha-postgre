@@ -91,8 +91,36 @@ const getProfils = (req, res, next) => {
   .catch(next)
 }
 
+const searchProfils = (req, res, next) => {
+  if (!_.has(req.body, 'ageRange') || _.isEmpty(req.body.ageRange) ||
+  !_.has(req.body.ageRange, 'min') || !_.has(req.body.ageRange, 'max')) return next(createError.BadRequest(errors.BAD_PROFILS_SEARCH))
+  if (!_.has(req.body, 'rangeDistance')) return next(createError.BadRequest(errors.BAD_PROFILS_SEARCH))
+  if (!_.has(req.body, 'tags')) return next(createError.BadRequest(errors.BAD_PROFILS_SEARCH))
+
+  return FinderService.searchProfils(req.token.userId)
+  .then((profils) => {
+    const userProfil = _.map(profils, (profil) => {
+      const { biography, birthday, location, pictures, profilPicture, profilScore, pseudo, userId, _id } = profil
+      return {
+        biography,
+        birthday,
+        location,
+        pictures: _.map(pictures, (picture) => picture.picturePublicPath),
+        profilPicture,
+        profilScore,
+        pseudo,
+        userId,
+        _id
+      }
+    })
+    return res.send(userProfil)
+  })
+  .catch(next)
+}
+
 module.exports = {
   getProfil,
   getProfils,
-  updateProfil
+  updateProfil,
+  searchProfils
 }

@@ -1,5 +1,4 @@
-[
-  '01_prenom',
+const pseudos = [
   'aaliyah',
   'aapeli',
   'aapo',
@@ -11405,3 +11404,5 @@
   'zvonko',
   'zygmunt'
 ]
+
+module.exports = pseudos

@@ -1,6 +1,7 @@
 import React from 'react'
 import map from 'lodash/map'
 import chunk from 'lodash/chunk'
+import shuffle from 'lodash/shuffle'
 
 import { Card, CardText } from '../../styled-components/Cards'
 import ProfilPicture from '../../profil-picture/containers/ProfilPicture'
@@ -39,8 +40,7 @@ class ProfilList extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.profils) {
-      const chunkedProfils = chunk(nextProps.profils, 12)
-      console.log(chunkedProfils)
+      const chunkedProfils = chunk(shuffle(nextProps.profils), 12)
       const profils = map(chunkedProfils, (profils) => map(profils, (profil, index) =>
         <ProfilPicture profil={profil} key={`picture_${index}`} />
       ))
@@ -65,7 +65,6 @@ class ProfilList extends React.Component {
   }
 
   render () {
-    console.log(this.state.profils[this.state.viewPage])
     return (
       <div style={{width: '100%', alignSelf: 'center'}}>
         <Card style={{margin: '0px'}}>

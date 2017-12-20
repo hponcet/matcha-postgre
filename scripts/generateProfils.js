@@ -103,7 +103,7 @@ const generateUniqueProfil = async (profilPseudo) => {
 }
 
 const generateProfils = async () => {
-  for (let index = 0; index < pseudo.length; index++) {
+  for (let index = 0; index < 500; index++) {
     const profil = await generateUniqueProfil(pseudo[index])
     MongoClient.connect(dbUrl)
     .then((db) => {
