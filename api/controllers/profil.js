@@ -72,21 +72,8 @@ const updateProfil = async (req, res, next) => {
 const getProfils = (req, res, next) => {
   return FinderService.getProfils(req.token.userId)
   .then((profils) => {
-    const userProfil = _.map(profils, (profil) => {
-      const { biography, birthday, location, pictures, profilPicture, profilScore, pseudo, userId, _id } = profil
-      return {
-        biography,
-        birthday,
-        location,
-        pictures: _.map(pictures, (picture) => picture.picturePublicPath),
-        profilPicture,
-        profilScore,
-        pseudo,
-        userId,
-        _id
-      }
-    })
-    return res.send(userProfil)
+    if (!profils) return res.send()
+    return res.send(parseProfils(profils))
   })
   .catch(next)
 }
@@ -97,25 +84,35 @@ const searchProfils = (req, res, next) => {
   if (!_.has(req.body, 'rangeDistance')) return next(createError.BadRequest(errors.BAD_PROFILS_SEARCH))
   if (!_.has(req.body, 'tags')) return next(createError.BadRequest(errors.BAD_PROFILS_SEARCH))
 
-  return FinderService.searchProfils(req.token.userId)
+  const { ageRange, rangeDistance, tags } = req.body
+  const age = {
+    min: new Date(Date.now() - ageRange.min * 3.154e+10),
+    max: new Date(Date.now() - (ageRange.max + 1) * 3.154e+10)
+  }
+
+  return FinderService.searchProfils(req.token.userId, rangeDistance, tags, age)
   .then((profils) => {
-    const userProfil = _.map(profils, (profil) => {
-      const { biography, birthday, location, pictures, profilPicture, profilScore, pseudo, userId, _id } = profil
-      return {
-        biography,
-        birthday,
-        location,
-        pictures: _.map(pictures, (picture) => picture.picturePublicPath),
-        profilPicture,
-        profilScore,
-        pseudo,
-        userId,
-        _id
-      }
-    })
-    return res.send(userProfil)
+    if (!profils) return res.send()
+    return res.send(parseProfils(profils))
   })
   .catch(next)
+}
+
+const parseProfils = (profils) => {
+  return _.map(profils, (profil) => {
+    const { biography, birthday, location, pictures, profilPicture, profilScore, pseudo, userId, _id } = profil
+    return {
+      biography,
+      birthday,
+      location,
+      pictures: _.map(pictures, (picture) => picture.picturePublicPath),
+      profilPicture,
+      profilScore,
+      pseudo,
+      userId,
+      _id
+    }
+  })
 }
 
 module.exports = {

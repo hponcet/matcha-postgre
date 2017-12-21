@@ -1,6 +1,5 @@
 import React from 'react'
 import random from 'lodash/random'
-import haversine from 'haversine'
 
 import { Link } from 'react-router-dom'
 
@@ -40,30 +39,33 @@ class ProfilPicture extends React.Component {
       profilLoaded: false,
       currentViewerPicture: 0,
       profilIsOpen: false,
+      profil: {},
       pictures: [],
-      location: [],
-      userLocation: []
+      location: []
     }
     this.prevPicture = this.prevPicture.bind(this)
     this.nextPicture = this.nextPicture.bind(this)
     this.openProfil = this.openProfil.bind(this)
     this.closeProfil = this.closeProfil.bind(this)
+    this.componentLoadProfil = this.componentLoadProfil.bind(this)
   }
 
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.profil && nextProps.profil.location) {
-      this.setState({
-        profilLoaded: true,
-        currentViewerPicture: random(0, nextProps.profil.pictures.length - 1),
-        pictures: nextProps.profil.pictures,
-        location: nextProps.profil.location.loc
-      })
-    }
-    if (nextProps.userProfil) {
-      this.setState({
-        userLocation: nextProps.userProfil.location.loc
-      })
-    }
+  componentDidMount () {
+    this.componentLoadProfil()
+  }
+
+  componentWillReceiveProps () {
+    this.componentLoadProfil()
+  }
+
+  componentLoadProfil () {
+    this.setState({
+      profilLoaded: true,
+      currentViewerPicture: random(0, this.props.profil.pictures.length - 1),
+      pictures: this.props.profil.pictures,
+      profil: this.props.profil,
+      location: this.props.profil.location.loc
+    })
   }
 
   openProfil () { this.setState({profilIsOpen: true}) }
@@ -83,8 +85,7 @@ class ProfilPicture extends React.Component {
   }
 
   render () {
-    const { profil } = this.props
-    const { pictures, location, userLocation } = this.state
+    const { pictures, location, profil } = this.state
     return this.state.profilLoaded ? (
       <div className='col ProfilPicture__container' onMouseEnter={this.openProfil} onMouseLeave={this.closeProfil}>
         <img className='ProfilPicture__picture' src={profil.profilPicture} alt='' />
@@ -109,7 +110,7 @@ class ProfilPicture extends React.Component {
                   <div className='Profil__content'>
                     <IconLocation />
                     {profil.location.city ? `${profil.location.city}, ` : null}
-                    {Math.floor(haversine(location, userLocation, {format: '[lat,lon]'}))}km
+                    {Math.floor(location / 1000)}km
                   </div>
                   <div className='Profil__content'><IconScore />{profil.profilScore}</div>
                 </div>

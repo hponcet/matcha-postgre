@@ -26,8 +26,8 @@ const UsersValidation = {
           description: 'must be a string number between [1, 2] and is required'
         },
         birthday: {
-          bsonType: 'string',
-          description: 'must be a string and is required'
+          bsonType: 'date',
+          description: 'must be a timestamp and is required'
         },
         password: {
           bsonType: 'string',
@@ -120,8 +120,8 @@ const ProfilsValidation = {
           }
         },
         birthday: {
-          bsonType: 'string',
-          description: 'must be a string and is required'
+          bsonType: 'date',
+          description: 'must be a timestamp and is required'
         },
         orientation: {
           enum: ['1', '2', '3'],

@@ -75,7 +75,13 @@ class Finder extends React.Component {
               margin: '0 auto',
               boxShadow: 'rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px'
             }}>
-            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingTop: '20px'}}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                paddingTop: '20px'
+              }}>
               <div className='Finder__intervalContainer'>
                 <div className='Finder__displayRowCenter'>
                   <div className='Finder__searchTitle'>Age</div>

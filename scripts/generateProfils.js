@@ -86,7 +86,7 @@ const generateUniqueProfil = async (profilPseudo) => {
     sex,
     pseudo: profilPseudo,
     location: await getGeolocation(ips[random(0, ips.length)]),
-    birthday: new Date(Date.now() - 1000 * 60 * 60 * 24 * 366 * random(18, 80)).toString(),
+    birthday: new Date(Date.now() - 1000 * 60 * 60 * 24 * 366 * random(18, 80)),
     orientation: random(1, 4).toString(),
     biography: loremIpsum({
       count: random(0, 5),
@@ -102,8 +102,8 @@ const generateUniqueProfil = async (profilPseudo) => {
   return profil
 }
 
-const generateProfils = async () => {
-  for (let index = 0; index < 500; index++) {
+const generateProfils = async (nb) => {
+  for (let index = 0; index < nb; index++) {
     const profil = await generateUniqueProfil(pseudo[index])
     MongoClient.connect(dbUrl)
     .then((db) => {
@@ -116,4 +116,4 @@ const generateProfils = async () => {
   }
 }
 
-generateProfils()
+generateProfils(500)

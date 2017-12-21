@@ -19,7 +19,7 @@ const add = (email, password, sex, firstName, lastName, pseudo, birthday) => {
           email,
           password: hash,
           sex,
-          birthday,
+          birthday: new Date(birthday),
           firstName,
           lastName,
           pseudo,

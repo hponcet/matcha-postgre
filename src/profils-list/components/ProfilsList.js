@@ -66,7 +66,8 @@ class ProfilList extends React.Component {
 
   render () {
     return (
-      <div style={{width: '100%', alignSelf: 'center'}}>
+      this.state.profils.length !== 0
+      ? <div style={{width: '100%', alignSelf: 'center'}}>
         <Card style={{margin: '0px'}}>
           <CardText>
             {this.state.profilsFetched
@@ -81,6 +82,7 @@ class ProfilList extends React.Component {
           </CardText>
         </Card>
       </div>
+    : <div>Aucun profil ne correspond a votre recherche.</div>
     )
   }
 }

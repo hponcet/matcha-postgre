@@ -54,7 +54,7 @@ const add = (user, location) => {
         sex: user.sex,
         pseudo: user.pseudo,
         location,
-        birthday: user.birthday,
+        birthday: new Date(user.birthday),
         orientation: '3',
         biography: '',
         pictures: [],

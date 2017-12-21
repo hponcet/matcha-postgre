@@ -6,7 +6,7 @@ import history from '../../config/history'
 import Home from '../../home/containers/Home'
 import Profil from '../../profil/containers/Profil'
 import Finder from '../../finder/containers/Finder'
-import Loading from './Loading'
+import Loading from '../../styled-components/Loading'
 
 import './Interface.css'
 
