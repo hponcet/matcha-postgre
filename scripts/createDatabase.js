@@ -10,9 +10,9 @@ const createUsersCollection = (db) => {
     const Users = db.collection('users')
     return Users.createIndex({ email: 1, pseudo: 1 }, { unique: true })
     .then(() => console.log('[DB] Users collection created successfuly.'))
-    .catch((err) => { throw console.log(err.errmsg) })
+    .catch((err) => { return console.log(err.errmsg) })
   })
-  .catch((err) => { throw console.log(err.errmsg) })
+  .catch((err) => { return console.log(err.errmsg) })
 }
 
 const createProfilsCollection = (db) => {
@@ -22,10 +22,10 @@ const createProfilsCollection = (db) => {
     return Profils.createIndex({ pseudo: 1, userId: 1 }, { unique: true })
     .then(() => Profils.createIndex({ 'location.loc': '2dsphere' })
     .then(() => console.log('[DB] Profils collection created successfuly.'))
-    .catch((err) => { throw console.log(err.errmsg) }))
-    .catch((err) => { throw console.log(err.errmsg) })
+    .catch((err) => { return console.log(err.errmsg) }))
+    .catch((err) => { return console.log(err.errmsg) })
   })
-  .catch((err) => { throw console.log(err.errmsg) })
+  .catch((err) => { return console.log(err.errmsg) })
 }
 
 const createTagsCollection = (db) => {
@@ -34,9 +34,9 @@ const createTagsCollection = (db) => {
     const Tags = db.collection('tags')
     return Tags.createIndex({ name: 1 }, { unique: true })
     .then(() => console.log('[DB] Tags collection created successfuly.'))
-    .catch((err) => { throw console.log(err.errmsg) })
+    .catch((err) => { return console.log(err.errmsg) })
   })
-  .catch((err) => { throw console.log(err.errmsg) })
+  .catch((err) => { return console.log(err.errmsg) })
 }
 
 const initDatabase = () => {
@@ -48,9 +48,9 @@ const initDatabase = () => {
       createTagsCollection(db)
     ])
     .then(() => console.log('[DB] Creation success'))
-    .catch((err) => { throw console.log(err.errmsg) })
+    .catch((err) => { return console.log(err.errmsg) })
   })
-  .catch((err) => { throw console.log(err.errmsg) })
+  .catch((err) => { return console.log(err.errmsg) })
 }
 
 initDatabase()

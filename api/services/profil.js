@@ -16,6 +16,16 @@ const getProfil = (userId) => {
   .catch(err => err)
 }
 
+const getProfilById = (userId) => {
+  return MongoClient.connect(dbUrl).then(db => {
+    const Profils = db.collection('profils')
+    return Profils.findOne({_id: ObjectID(userId)})
+    .then(data => data)
+    .catch(err => err)
+  })
+  .catch(err => err)
+}
+
 const getProfilLocation = (userId) => {
   return getProfil(userId)
   .then((profil) => {
@@ -78,6 +88,7 @@ const add = (user, location) => {
 module.exports = {
   add,
   getProfil,
+  getProfilById,
   updateLocation,
   updateField,
   getProfilLocation

@@ -11,13 +11,15 @@ const getPublicIp = () => {
   .catch(err => err)
 }
 
-const initServer = () => {
+const initServer = (server) => {
   console.log(logo)
   return getPublicIp()
   .then((data) => {
     console.log('[IPv4]', data)
     return dbInit()
-    .then()
+    .then(() => {
+      require('../services/socket')(server)
+    })
     .catch(err => console.log(err))
   })
   .catch(err => console.log(err))

@@ -34,3 +34,19 @@ export const updateProfil = (profil) => dispatch => {
     return null
   })
 }
+
+export const getProfil = (userId) => dispatch => {
+  dispatch({ type: constants.GET_PROFIL_REQUEST })
+  return axios({
+    method: 'get',
+    url: `${config.API_BASE_URI}/profils/${userId}`
+  })
+  .then((data) => {
+    dispatch({type: constants.GET_PROFIL_SUCCESS, payload: data})
+    return null
+  })
+  .catch((error) => {
+    dispatch({type: constants.GET_PROFIL_FAILURE, payload: error})
+    return null
+  })
+}

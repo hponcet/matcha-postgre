@@ -4,6 +4,8 @@
 }
 .ProfilPicture__picture {
   width: 100%;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.5);
+  border: 2px solid #ffffff;
 }
 .ProfilPicture__Profil {
   position: absolute;
@@ -16,15 +18,9 @@
   border-radius: 3px;
   padding: 10px;
 }
-
-.Viewer__picture {
-  width: 100%;
+.Profil__Viewer {
+  position: relative;
 }
-.Viewer__prevBtn,
-.Viewer__nextBtn {
-  position: absolute;
-}
-
 .Profil__pseudo {
   text-align: center;
   font-size: 20px;

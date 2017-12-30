@@ -1,0 +1,11 @@
+.ProfilView__pseudo {
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+  padding: 4px;
+}
+.ProfilView__bio {
+  margin: 30px;
+  font-size: 16px;
+  max-width: 600px;
+}

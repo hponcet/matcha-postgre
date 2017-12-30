@@ -59,6 +59,7 @@ class Tags extends React.Component {
 
   handleComponentChange (event) {
     const {tags, inputValue} = this.state
+    if (!inputValue) return
     if (this.updateSuggestions(inputValue)) return this.handleNewRequest()
     tags.push(inputValue)
     this.setState({tags, inputValue: ''})

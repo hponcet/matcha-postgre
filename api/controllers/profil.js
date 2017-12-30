@@ -6,12 +6,14 @@ const FinderService = require('../services/finder')
 const UsersService = require('../services/users')
 const errors = require('../errors')
 
+const ValidateObjectId = /^[0-9a-fA-F]{24}$/
+
 const getProfil = (req, res, next) => {
   return ProfilService.getProfil(req.token.userId)
   .then((profil) => {
     let receivedIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.connection.remoteAddress
     if (receivedIp === '::1' || receivedIp === '127.0.0.1') receivedIp = process.env.PUBLIC_IP
-    if (receivedIp && profil.location.ip !== receivedIp) {
+    if (receivedIp && profil && profil.location && profil.location.ip !== receivedIp) {
       return UsersService.getGeolocation(receivedIp)
       .then((location) => {
         profil.location = location
@@ -23,6 +25,26 @@ const getProfil = (req, res, next) => {
     } else {
       res.send(profil)
     }
+  })
+  .catch(next)
+}
+
+const getPublicProfil = (req, res, next) => {
+  if (!_.has(req, 'params.userId') || _.isEmpty(req.params.userId) || !ValidateObjectId.test(req.params.userId)) return next(createError.BadRequest(errors.BAD_PROFIL))
+  return ProfilService.getProfilById(req.params.userId)
+  .then((profil) => {
+    const { biography, birthday, location, pictures, profilPicture, profilScore, pseudo, userId, _id } = profil
+    return res.send({
+      biography,
+      birthday,
+      location,
+      pictures: _.map(pictures, (picture) => picture.picturePublicPath),
+      profilPicture,
+      profilScore,
+      pseudo,
+      userId,
+      _id
+    })
   })
   .catch(next)
 }
@@ -118,6 +140,7 @@ const parseProfils = (profils) => {
 module.exports = {
   getProfil,
   getProfils,
+  getPublicProfil,
   updateProfil,
   searchProfils
 }

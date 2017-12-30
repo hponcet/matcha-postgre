@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const config = require('./config/config')
 const app = express()
 const path = require('path')
+const http = require('http').Server(app)
 
 const serverInit = require('./config/server-init')
 
@@ -31,8 +32,9 @@ app.use('/', profilRouter)
 app.use('/', picturesRouter)
 app.use(errorsHandlingMiddleware)
 
-serverInit().then(() => {
-  let server = app.listen(config.PORT, () => {
+serverInit(http)
+.then(() => {
+  const server = http.listen(config.PORT, () => {
     console.log(`[SERVER] ${config.APP_NAME} now running on port ${server.address().port}`)
   })
 })

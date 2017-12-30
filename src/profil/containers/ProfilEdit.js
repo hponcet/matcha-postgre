@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 
-import Profil from '../components/Profil'
+import ProfilEdit from '../components/ProfilEdit'
 import { updateProfil, fetchProfil } from '../actions'
 import { fetchUser } from '../../interface/actions'
 
@@ -17,4 +17,4 @@ export default connect(
     fetchProfil,
     fetchUser
   }
-)(Profil)
+)(ProfilEdit)

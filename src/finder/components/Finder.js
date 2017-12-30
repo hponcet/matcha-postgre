@@ -48,7 +48,7 @@ class Finder extends React.Component {
 
   render () {
     return (
-      <div style={{width: '80%', alignSelf: 'center'}}>
+      <div style={{width: '80%', alignSelf: 'center', marginBottom: '270px'}}>
         <Card
           style={{
             padding: '0px',
@@ -58,7 +58,11 @@ class Finder extends React.Component {
           }}>
           <CardHeader
             actAsExpander
-            style={{backgroundColor: '#79A5C5', color: '#ffffff'}}
+            style={{
+              backgroundColor: '#79A5C5',
+              color: '#ffffff',
+              boxShadow: 'rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px'
+            }}
             showExpandableButton
             closeIcon={<SearchIcon color='#ffffff' />}
             openIcon={<CloseIcon color='#ffffff' />}

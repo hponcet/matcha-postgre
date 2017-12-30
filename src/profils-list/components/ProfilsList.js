@@ -41,12 +41,11 @@ class ProfilList extends React.Component {
   componentWillReceiveProps (nextProps) {
     if (nextProps.profils) {
       const chunkedProfils = chunk(shuffle(nextProps.profils), 12)
-      const profils = map(chunkedProfils, (profils) => map(profils, (profil, index) =>
-        <ProfilPicture profil={profil} key={`picture_${index}`} />
-      ))
+      const profils = map(chunkedProfils, (profils) => map(profils, (profil, index) => profil))
       this.setState({
         profils,
-        profilsFetched: true
+        profilsFetched: true,
+        viewPage: 0
       })
     }
   }
@@ -68,19 +67,24 @@ class ProfilList extends React.Component {
     return (
       this.state.profils.length !== 0
       ? <div style={{width: '100%', alignSelf: 'center'}}>
-        <Card style={{margin: '0px'}}>
+        {!this.props.profilRequesting
+        ? <Card style={{margin: '0px'}}>
           <CardText>
             {this.state.profilsFetched
             ? <div className='gridContainer'>
               <IconButton style={styles.leftBtn} onClick={this.prevGrid}><ChevronLeft color='black' /></IconButton>
               <div className='grid-5-center'>
-                {this.state.profils[this.state.viewPage]}
+                {
+                  map(this.state.profils[this.state.viewPage], (profil, index) =>
+                    <ProfilPicture profil={profil} key={`picture_${index}`} />)
+                }
               </div>
               <IconButton style={styles.rightBtn} onClick={this.nextGrid}><ChevronRight color='black' /></IconButton>
             </div>
             : null}
           </CardText>
         </Card>
+        : null}
       </div>
     : <div>Aucun profil ne correspond a votre recherche.</div>
     )

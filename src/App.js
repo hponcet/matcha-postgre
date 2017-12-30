@@ -3,6 +3,7 @@ import { Router, Switch, Route } from 'react-router'
 import { Provider } from 'react-redux'
 import { initInterceptor } from './authentification/utils'
 import { initErrorInterceptor } from './config/http-interceptor'
+import { initSocket } from './config/socket'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import history from './config/history'
@@ -12,6 +13,7 @@ class App extends React.Component {
   componentWillMount () {
     initErrorInterceptor()
     initInterceptor()
+    initSocket()
   }
 
   shouldComponentUpdate () {

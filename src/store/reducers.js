@@ -2,7 +2,7 @@ import { combineReducers } from 'redux'
 import locationReducer from './location'
 import { SignupReducer, LoginReducer } from '../authentification/reducers'
 import { UserReducer } from '../interface/reducers'
-import { ProfilReducer } from '../profil/reducers'
+import { ProfilReducer, PublicProfilReducer } from '../profil/reducers'
 import { ProfilsReducer } from '../profils-list/reducers'
 import { TagsReducer } from '../styled-components/tags/reducers'
 import { PicturesUploadReducer } from '../styled-components/pictures/reducers'
@@ -14,6 +14,7 @@ export const makeRootReducer = (asyncReducers) => {
     login: LoginReducer,
     user: UserReducer,
     profil: ProfilReducer,
+    publicProfil: PublicProfilReducer,
     profils: ProfilsReducer,
     tags: TagsReducer,
     pictures: PicturesUploadReducer,

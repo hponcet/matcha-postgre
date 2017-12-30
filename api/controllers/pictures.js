@@ -6,7 +6,11 @@ const errors = require('../errors')
 
 const getPictures = (req, res, next) => {
   return PicturesService.getPictures(req.token.userId)
-  .then((pictures) => res.send(pictures.map((picture) => picture.picturePublicPath)))
+  .then((pictures) => {
+    if (!pictures) return next(createError.BadRequest(errors.BAD_PROFIL_PICTURE))
+    res.send(pictures.map((picture) => picture.picturePublicPath))
+  })
+  .catch(next)
 }
 
 const addPicture = (req, res, next) => {

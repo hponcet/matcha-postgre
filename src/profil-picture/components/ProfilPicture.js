@@ -3,9 +3,7 @@ import random from 'lodash/random'
 
 import { Link } from 'react-router-dom'
 
-import IconButton from 'material-ui/IconButton/IconButton'
-import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right'
-import ChevronLeft from 'material-ui/svg-icons/navigation/chevron-left'
+import StackedPictures from '../../profil/components/StackedPictures'
 import IconLocation from 'material-ui/svg-icons/communication/location-on'
 import IconScore from 'material-ui/svg-icons/action/trending-up'
 
@@ -19,11 +17,11 @@ const styles = {
   },
   linkToProfil: {
     position: 'absolute',
-    right: '50px',
-    left: '50px',
+    right: '0px',
+    left: '0px',
     top: '10px',
     height: '380px',
-    zIndex: '5'
+    zIndex: '9'
   },
   rightBtn: {
     position: 'absolute',
@@ -51,21 +49,23 @@ class ProfilPicture extends React.Component {
   }
 
   componentDidMount () {
-    this.componentLoadProfil()
+    this.componentLoadProfil(this.props)
   }
 
-  componentWillReceiveProps () {
-    this.componentLoadProfil()
+  componentWillReceiveProps (nextProps) {
+    this.componentLoadProfil(nextProps)
   }
 
-  componentLoadProfil () {
-    this.setState({
-      profilLoaded: true,
-      currentViewerPicture: random(0, this.props.profil.pictures.length - 1),
-      pictures: this.props.profil.pictures,
-      profil: this.props.profil,
-      location: this.props.profil.location.loc
-    })
+  componentLoadProfil (props) {
+    if (props.profil) {
+      this.setState({
+        profilLoaded: true,
+        currentViewerPicture: random(0, props.profil.pictures.length - 1),
+        pictures: props.profil.pictures,
+        profil: props.profil,
+        location: props.profil.location.loc
+      })
+    }
   }
 
   openProfil () { this.setState({profilIsOpen: true}) }
@@ -94,10 +94,8 @@ class ProfilPicture extends React.Component {
           ? (
             <div className='ProfilPicture__Profil'>
               <div className='Profil__Viewer'>
-                <IconButton style={styles.leftBtn} onClick={this.prevPicture}><ChevronLeft color='white' /></IconButton>
                 <Link style={styles.linkToProfil} to={`/dashboard/profil/${profil._id}/`} />
-                <img className='Viewer__picture' src={pictures[this.state.currentViewerPicture]} alt='' />
-                <IconButton style={styles.rightBtn} onClick={this.nextPicture}><ChevronRight color='white' /></IconButton>
+                <StackedPictures pictures={pictures} size={300} />
               </div>
               <div className='Profil__infos'>
                 <div className='Profil__infoCol'>

@@ -53,14 +53,40 @@ class Menu extends React.Component {
       : <IconButton onClick={this.handleOpenMenu}><NavigationOpen /></IconButton>
     )
 
+    const CTAMenu = (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'flex-end'
+      }}>
+        <Link
+          to='/dashboard/profil'
+          style={{
+            borderRadius: '50%',
+            border: '2px solid lightgrey',
+            width: '50px',
+            height: '50px'
+          }}>
+          <img style={{
+            width: '99%',
+            height: '99%',
+            borderRadius: '50%'
+          }} src={this.props.profilPicture} alt='' />
+        </Link>
+        <div>{profilScore}</div>
+        <IconButton><LogoutIcon color='white' onClick={this.props.logout} /></IconButton>
+      </div>
+    )
+
     return (
       <div>
         <AppBar
           title={title}
           titleStyle={styles.titleStyle}
           iconElementLeft={leftMenuIcon}
-          iconElementRight={<IconButton><LogoutIcon onClick={this.props.logout} /></IconButton>}
-          children={<div>{profilScore}</div>}
+          children={CTAMenu}
           style={{backgroundColor: '#79A5C5'}}
         />
         <div>
