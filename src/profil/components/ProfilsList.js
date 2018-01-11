@@ -4,7 +4,7 @@ import chunk from 'lodash/chunk'
 import shuffle from 'lodash/shuffle'
 
 import { Card, CardText } from '../../styled-components/Cards'
-import ProfilPicture from '../../profil-picture/containers/ProfilPicture'
+import ProfilPicture from '../containers/ProfilPicture'
 import IconButton from 'material-ui/IconButton/IconButton'
 import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right'
 import ChevronLeft from 'material-ui/svg-icons/navigation/chevron-left'

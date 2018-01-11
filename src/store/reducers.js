@@ -2,10 +2,10 @@ import { combineReducers } from 'redux'
 import locationReducer from './location'
 import { SignupReducer, LoginReducer } from '../authentification/reducers'
 import { UserReducer } from '../interface/reducers'
-import { ProfilReducer, PublicProfilReducer } from '../profil/reducers'
-import { ProfilsReducer } from '../profils-list/reducers'
+import { HistoryReducer } from '../notifications/reducers'
+import { ThreadsReducer, ChatReducer } from '../chat/reducers'
+import { ProfilReducer, ProfilsReducer, PublicProfilReducer, LikeReducer } from '../profil/reducers'
 import { TagsReducer } from '../styled-components/tags/reducers'
-import { PicturesUploadReducer } from '../styled-components/pictures/reducers'
 
 export const makeRootReducer = (asyncReducers) => {
   return combineReducers({
@@ -16,8 +16,11 @@ export const makeRootReducer = (asyncReducers) => {
     profil: ProfilReducer,
     publicProfil: PublicProfilReducer,
     profils: ProfilsReducer,
+    likes: LikeReducer,
     tags: TagsReducer,
-    pictures: PicturesUploadReducer,
+    history: HistoryReducer,
+    threads: ThreadsReducer,
+    chat: ChatReducer,
     ...asyncReducers
   })
 }

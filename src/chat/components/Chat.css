@@ -1,0 +1,103 @@
+@media screen and (max-width: 780px) {
+  .ChatProfilPreview {
+    display: none;
+  }
+}
+.ChatList {
+  width: 25%;
+  min-width: 200px;
+  position: relative;
+  z-index: 10;
+}
+
+.Chat__container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+  overflow-y: hidden;
+}
+
+.ChatField__container {
+  border-top: 1px solid lightgrey;
+  background-color: aliceblue;
+  padding-left: 20px;
+}
+.ChatField__formContainer {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.ChatField__input {
+  width: 70%;
+  background-color: inherit;
+  border: none;
+  padding: 5px;
+  font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  outline-width: 0;
+}
+
+.ChatText__container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+.ChatText__overflow {
+  height: 100%;
+  overflow-y: auto;
+}
+.ChatText__messageContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 15px 25px;
+}
+.ChatText__message {
+  display: flex;
+  padding: 8px 10px;
+  border-radius: 20px;
+  margin: 2px;
+  max-width: 60%;
+  font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  word-break: break-word;
+}
+.emoji {
+  font-size: 28px;
+  background-color: inherit;
+}
+.msgLeft {
+  background-color: aliceblue;
+  color: #000000;
+  align-self: flex-start;
+}
+.msgRight {
+  background-color: cornflowerblue;
+  color: #ffffff;
+  align-self: flex-end;
+}
+.ChatEmoji__container {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+}
+.ChatEmoji__emojiPanel {
+  align-self: center;
+  font-size: 35px;
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.ChatEmoji__emoji {
+  padding: 0 4px;
+  cursor: pointer;
+}

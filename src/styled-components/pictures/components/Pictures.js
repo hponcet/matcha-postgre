@@ -28,10 +28,6 @@ class Pictures extends React.Component {
   handleDialogClose () { this.setState({open: false}) }
   resetInput () { this.refs.uploadPictureInput.value = '' }
 
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.pictures.length === 1 && this.props.profilPicture !== nextProps.pictures[0]) return this.props.updateProfilPicture(nextProps.pictures[0])
-  }
-
   getCroppedPicture (picture, index) {
     const data = new FormData()
 
@@ -71,9 +67,9 @@ class Pictures extends React.Component {
   render () {
     const { pictures } = this.props
 
-    const userPictures = !pictures ? [] : pictures.map((picture, index) => (
-      <Picture key={index} index={index} src={picture} />
-    ))
+    const userPictures = !pictures ? [] : pictures.map((picture, index) => {
+      return <Picture key={index} index={index} src={picture} />
+    })
 
     const emptyPicture = (
       <div className='pictures__emptyPictures'>

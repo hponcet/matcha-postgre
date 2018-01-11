@@ -1,5 +1,5 @@
 import React from 'react'
-import history from '../config/history'
+import {historyPush} from '../config/history'
 
 import { getToken } from './utils'
 
@@ -8,7 +8,7 @@ export const isAuthenticated = (WrappedComponent) => {
     componentWillMount () {
       const isAuthenticated = (getToken() !== null && getToken() !== undefined)
       if (!isAuthenticated) {
-        history.push('/login')
+        historyPush('/login')
       }
     }
     render () {

@@ -5,8 +5,8 @@ import Crypto from 'crypto-js'
 import Validation from '../../validation/Validation'
 import Keys from '../../Keys'
 import config from '../../config/config'
-import history from '../../config/history'
-import { getToken } from '../utils'
+import { historyPush } from '../../config/history'
+import { getToken, dateTimeFormat } from '../utils'
 
 import { Card, CardHeader, CardText, CardActions } from '../../styled-components/Cards'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -15,7 +15,6 @@ import { ClassicLinkButton } from '../../styled-components/Button'
 import Select from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 import DatePicker from 'material-ui/DatePicker'
-import { dateTimeFormat } from '../utils'
 
 import './Signup.css'
 
@@ -80,7 +79,7 @@ class Signup extends React.Component {
   disableButton () { this.setState({canSubmit: false}) }
 
   componentWillMount () {
-    if (getToken()) history.push('/dashboard/home')
+    if (getToken()) historyPush('/dashboard/home')
   }
 
   canSubmit () {
@@ -231,7 +230,7 @@ class Signup extends React.Component {
             </div>
           </CardText>
           <div className='Sign__linkContainer'>
-            <div className='Sign__link'><ClassicLinkButton onClick={() => { history.push('/login') }}>Se connécter ?</ClassicLinkButton></div>
+            <div className='Sign__link'><ClassicLinkButton onClick={() => { historyPush('/login') }}>Se connécter ?</ClassicLinkButton></div>
             <div className='Sign__link'><ClassicLinkButton onClick={() => { window.alert('Soon...') }}>Oublie du mot de passe ?</ClassicLinkButton></div>
           </div>
         </Card>

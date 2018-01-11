@@ -7,6 +7,7 @@ module.exports = {
     dialect: 'mongodb',
     host: 'localhost',
     port: '27017',
-    database: 'matcha'
+    database: 'matcha',
+    settings: {}
   }
 }

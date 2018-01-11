@@ -5,7 +5,7 @@ import { deletePicture, updateProfilPicture } from '../actions'
 
 export default connect(
   (state) => ({
-    errors: state.pictures.error,
-    profilPicture: state.pictures.profilPicture
+    errors: state.profil.error,
+    profilPicture: state.profil.profilPicture
   }), { deletePicture, updateProfilPicture }
 )(Picture)

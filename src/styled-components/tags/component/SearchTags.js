@@ -48,7 +48,10 @@ class SearchTags extends React.Component {
     if (nextProps.suggestions) this.setState({suggestions: nextProps.suggestions})
   }
 
-  handleInputChange (inputValue) { this.setState({inputValue}) }
+  handleInputChange (inputValue) {
+    if (!this.state.inputValue && inputValue === ' ') return
+    this.setState({inputValue})
+  }
   handleNewRequest () { this.setState({inputValue: ''}) }
 
   handleComponentChange (event) {

@@ -1,9 +1,9 @@
 import React from 'react'
 import random from 'lodash/random'
 
-import { Link } from 'react-router-dom'
+import { historyPush } from '../../config/history'
 
-import StackedPictures from '../../profil/components/StackedPictures'
+import StackedPictures from './StackedPictures'
 import IconLocation from 'material-ui/svg-icons/communication/location-on'
 import IconScore from 'material-ui/svg-icons/action/trending-up'
 
@@ -21,7 +21,8 @@ const styles = {
     left: '0px',
     top: '10px',
     height: '380px',
-    zIndex: '9'
+    zIndex: '9',
+    cursor: 'pointer'
   },
   rightBtn: {
     position: 'absolute',
@@ -94,7 +95,10 @@ class ProfilPicture extends React.Component {
           ? (
             <div className='ProfilPicture__Profil'>
               <div className='Profil__Viewer'>
-                <Link style={styles.linkToProfil} to={`/dashboard/profil/${profil._id}/`} />
+                <div style={styles.linkToProfil} onClick={() => {
+                  historyPush(`/dashboard/profil/${profil._id}/`)
+                  this.props.profilView(profil._id)
+                }} />
                 <StackedPictures pictures={pictures} size={300} />
               </div>
               <div className='Profil__infos'>

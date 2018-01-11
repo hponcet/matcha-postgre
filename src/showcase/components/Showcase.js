@@ -1,6 +1,6 @@
 import React from 'react'
 import config from '../../config/config'
-import history from '../../config/history'
+import { historyPush } from '../../config/history'
 import { getToken } from '../../authentification/utils'
 
 import { Link } from 'react-router-dom'
@@ -9,7 +9,7 @@ import './Showcase.css'
 
 class Showcase extends React.Component {
   componentWillMount () {
-    if (getToken()) history.push('/dashboard/home')
+    if (getToken()) historyPush('/dashboard/home')
   }
   render () {
     const leftBubble = (nb) => {

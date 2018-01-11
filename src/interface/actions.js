@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 import { logout } from '../authentification/utils'
-import history from '../config/history'
+import {historyPush} from '../config/history'
 import config from '../config/config'
 import * as constants from './constants'
 
@@ -21,7 +21,7 @@ export const fetchUser = () => dispatch => {
 
 export const logoutAction = () => {
   logout()
-  history.push('/login')
+  historyPush('/login')
   return {
     type: constants.LOGOUT
   }

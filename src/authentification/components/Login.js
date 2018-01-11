@@ -5,7 +5,7 @@ import Crypto from 'crypto-js'
 import Validation from '../../validation/Validation'
 import Keys from '../../Keys'
 import config from '../../config/config'
-import history from '../../config/history'
+import { historyPush } from '../../config/history'
 import { getToken } from '../utils'
 
 import { Card, CardHeader, CardText, CardActions } from '../../styled-components/Cards'
@@ -41,7 +41,7 @@ class Login extends React.Component {
   }
 
   componentWillMount () {
-    if (getToken()) history.push('/dashboard/home')
+    if (getToken()) historyPush('/dashboard/home')
   }
 
   enableButton () { this.setState({canSubmit: true}) }
@@ -124,7 +124,7 @@ class Login extends React.Component {
             </div>
           </CardText>
           <div className='Sign__linkContainer'>
-            <div className='Sign__link'><ClassicLinkButton onClick={() => { history.push('/signup') }}>Créer un compte ?</ClassicLinkButton></div>
+            <div className='Sign__link'><ClassicLinkButton onClick={() => { historyPush('/signup') }}>Créer un compte ?</ClassicLinkButton></div>
             <div className='Sign__link'><ClassicLinkButton onClick={() => { window.alert('Soon...') }}>Oublie du mot de passe ?</ClassicLinkButton></div>
           </div>
         </Card>

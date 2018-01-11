@@ -7,9 +7,10 @@ const errors = require('../errors')
 
 const validatePassword = (receivedPassword, userPassword) => {
   if (!receivedPassword || !userPassword) return Promise.resolve(false)
+
   return bcrypt.compare(receivedPassword, userPassword)
   .then((isValid) => isValid)
-  .catch((err) => err)
+  .catch(err => err)
 }
 
 const buildToken = (userId) => {

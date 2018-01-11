@@ -1,6 +1,5 @@
 import { connect } from 'react-redux'
-import { fetchProfil } from '../../profil/actions'
-import { fetchPictures, getProfilPicture } from '../../styled-components/pictures/actions'
+import { fetchProfil, getLikes } from '../../profil/actions'
 
 import Interface from '../components/Interface'
 
@@ -10,5 +9,5 @@ export default connect(
     profilPicture: state.pictures ? state.pictures.profilPicture : null,
     isFetching: state.profil.isFetching
   }),
-  { fetchProfil, fetchPictures, getProfilPicture }
+  { fetchProfil, getLikes }
 )(Interface)

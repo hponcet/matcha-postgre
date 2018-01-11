@@ -1,17 +1,15 @@
 const createError = require('http-errors')
 const _ = require('lodash')
 const config = require('../config/config')
-const PicturesService = require('../services/pictures')
 const errors = require('../errors')
 
-const getPictures = (req, res, next) => {
-  return PicturesService.getPictures(req.token.userId)
-  .then((pictures) => {
-    if (!pictures) return next(createError.BadRequest(errors.BAD_PROFIL_PICTURE))
-    res.send(pictures.map((picture) => picture.picturePublicPath))
-  })
-  .catch(next)
-}
+const MongoClient = require('mongodb').MongoClient
+const dbParams = require('../config/config').DATABASE
+const dbUrl = `${dbParams.dialect}://${dbParams.host}:${dbParams.port}/${dbParams.database}`
+const mongoSettings = require('../config/config').DATABASE.settings
+
+const PicturesService = require('../services/pictures')
+const profilsService = require('../services/profil')
 
 const addPicture = (req, res, next) => {
   if (!_.has(req, 'file') || _.isEmpty(req.file)) return next(createError.BadRequest(errors.PICTURE_EMPTY_FILE))
@@ -22,42 +20,60 @@ const addPicture = (req, res, next) => {
   if (!_.has(req, 'body.index') || _.isEmpty(req.body.index)) return next(createError.BadRequest(errors.PICTURE_EMPTY_INDEX))
   if ((req.body.index * 1) > 4 || (req.body.index * 1) < 0) return next(createError.BadRequest(errors.PICTURE_BAD_INDEX))
 
-  return PicturesService.addPicture(req.file, req.body.index, req.token.userId)
-  .then((pictures) => res.send(pictures))
-  .catch(next)
+  return MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
+    if (err) return next(err)
+    const db = client.db(dbParams.database)
+    return PicturesService.addPicture(db, req.file, req.body.index, req.token.userId)
+    .then(() => {
+      return profilsService.getParsedProfilByUserId(db, req.token.userId)
+      .then((profil) => res.send(profil))
+      .catch(next)
+    })
+    .catch(next)
+  })
 }
 
 const removePicture = (req, res, next) => {
   if (!_.has(req, 'body.picture') || _.isEmpty(req.body.picture) ||
     !_.has(req, 'body.picture.url') || _.isEmpty(req.body.picture.url) ||
     !_.has(req, 'body.picture.index')) return next(createError.BadRequest(errors.BAD_PICTURE_SIGNATURE))
-  return PicturesService.removePicture(req.body.picture.url, req.body.picture.index, req.token.userId)
-  .then((pictures) => {
-    if (pictures.length === 0) PicturesService.updateProfilPicture(`${config.HOST}:${config.PORT}/files/assets/empty_avatar.jpg`, req.token.userId)
-    res.send(pictures)
+
+  return MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
+    if (err) return next(err)
+    const db = client.db(dbParams.database)
+    return PicturesService.removePicture(db, req.body.picture.url, req.body.picture.index, req.token.userId)
+    .then((pictures) => {
+      if (pictures.length === 0) {
+        PicturesService.updateProfilPicture(db, `${config.HOST}:${config.PORT}/files/assets/empty_avatar.jpg`, req.token.userId)
+      }
+      return profilsService.getParsedProfilByUserId(db, req.token.userId)
+      .then((profil) => res.send(profil))
+      .catch(next)
+    })
+    .catch(next)
   })
-  .catch(next)
 }
 
 const updateProfilPicture = (req, res, next) => {
   if (!_.has(req, 'body.pictureUrl') || _.isEmpty(req.body.pictureUrl)) {
     return next(createError.BadRequest(errors.BAD_PROFIL_PICTURE))
   }
-  return PicturesService.updateProfilPicture(req.body.pictureUrl, req.token.userId)
-  .then((profilPicture) => res.send(profilPicture))
-  .catch(next)
-}
 
-const getProfilPicture = (req, res, next) => {
-  return PicturesService.getProfilePicture(req.token.userId)
-  .then((profilPicture) => res.send(profilPicture))
-  .catch(next)
+  return MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
+    if (err) return next(err)
+    const db = client.db(dbParams.database)
+    return PicturesService.updateProfilPicture(db, req.body.pictureUrl, req.token.userId)
+    .then(() => {
+      return profilsService.getParsedProfilByUserId(db, req.token.userId)
+      .then((profil) => res.send(profil))
+      .catch(next)
+    })
+    .catch(next)
+  })
 }
 
 module.exports = {
-  getPictures,
   addPicture,
   removePicture,
-  getProfilPicture,
   updateProfilPicture
 }

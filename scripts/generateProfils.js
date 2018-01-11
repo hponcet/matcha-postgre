@@ -94,9 +94,12 @@ const generateUniqueProfil = async (profilPseudo) => {
     }),
     pictures: generatePicturesRandomly(sex, 1, 5),
     profilPicture: generatePictures(sex),
-    profilScore: random(100, 100000),
-    consultedBy: generateHistory(pseudo, 1, 500),
+    history: {
+      news: [],
+      archived: []
+    },
     likes: generateUniqueHistory(pseudo, 0, 25),
+    matchs: [],
     userId: new ObjectID()
   }
   return profil

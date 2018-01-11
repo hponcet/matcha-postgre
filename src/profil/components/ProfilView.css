@@ -9,3 +9,13 @@
   font-size: 16px;
   max-width: 600px;
 }
+
+.ProfilView__tags {
+  padding: 20px;
+  margin-bottom: 30px;
+  display: flex;
+  border-radius: 5px;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+}

@@ -1,31 +1,30 @@
 import React from 'react'
 import Menu from '../containers/Menu'
 import { Switch, Route, Redirect } from 'react-router'
-import history from '../../config/history'
+import { connectSocket } from '../../notifications/socketsActions'
 
 import Home from '../../home/containers/Home'
 import Profil from '../../profil/components/Profil'
 import Finder from '../../finder/containers/Finder'
+import History from '../../history/containers/History'
+import Chat from '../../chat/containers/Chat'
 import Loading from '../../styled-components/Loading'
 
 import './Interface.css'
 
 class Interface extends React.Component {
-  componentWillMount () {
+  componentDidMount () {
     this.props.fetchProfil()
-    this.props.fetchPictures()
-    this.props.getProfilPicture()
+    this.props.getLikes()
   }
 
   componentWillReceiveProps (nextProps) {
-    if (!nextProps.isFetching &&
-      nextProps.profil.profilPicture === 'http://localhost:8000/files/assets/empty_avatar.jpg' &&
-      this.props.location.pathname !== '/dashboard/profil') history.push('/dashboard/profil?profilPicture=false')
+    if (!this.props.profil.profilId && nextProps.profil.profilId) connectSocket(nextProps.profil.profilId)
   }
 
   render () {
     return (
-      <div style={{ height: '100%', width: '100%' }}>
+      <div style={{height: '100%', width: '100%'}}>
         <Menu />
         {
           this.props.isFetching && !this.props.profil.profilId
@@ -34,6 +33,8 @@ class Interface extends React.Component {
             <Route path='/dashboard/home' component={Home} />
             <Route path='/dashboard/profil' component={Profil} />
             <Route path='/dashboard/finder' component={Finder} />
+            <Route path='/dashboard/history' component={History} />
+            <Route path='/dashboard/chat' component={Chat} />
             <Switch>
               <Redirect exact from='/dashboard' to='/dashboard/home' />
             </Switch>

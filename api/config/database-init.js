@@ -2,6 +2,7 @@ const validators = require('./validators/matchaValidators')
 const map = require('lodash/map')
 
 const MongoClient = require('mongodb').MongoClient
+const mongoSettings = require('../config/config').DATABASE.settings
 const dbParams = require('../config/config').DATABASE
 const dbUrl = `${dbParams.dialect}://${dbParams.host}:${dbParams.port}/${dbParams.database}`
 
@@ -42,10 +43,12 @@ const createTagsCollection = (db) => {
 
 const initDatabase = () => {
   console.log('[DB] Initialization...')
-  return MongoClient.connect(dbUrl)
-  .then((db) => {
-    return new Promise((resolve, reject) => {
-      return db.listCollections().toArray((err, collections) => {
+  return new Promise((resolve, reject) => {
+    MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
+      if (err) return reject(err)
+      const db = client.db(dbParams.database)
+      const Collections = db.listCollections()
+      Collections.toArray((err, collections) => {
         if (err) return reject(err)
         const collectionsList = map(collections, (collection) => collection.name)
         const createCollections = []
@@ -54,20 +57,16 @@ const initDatabase = () => {
         if (collectionsList.indexOf('tags') === -1) createCollections.push(createTagsCollection(db))
         if (createCollections.length === 0) {
           console.log('[DB] Initialization success')
-          db.close()
           return resolve()
         }
         return Promise.all(createCollections)
         .then(() => {
           console.log('[DB] Creation success')
-          db.close()
           return resolve()
-        })
-        .catch(reject)
+        }).catch(reject)
       })
     })
   })
-  .catch((err) => { return console.log(err.errmsg) })
 }
 
 module.exports = initDatabase

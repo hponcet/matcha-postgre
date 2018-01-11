@@ -1,6 +1,6 @@
 import axios from 'axios'
 import startsWith from 'lodash/startsWith'
-import history from '../config/history'
+import {historyPush} from '../config/history'
 import areIntlLocalesSupported from 'intl-locales-supported'
 
 import appConfig from '../config/config'
@@ -32,7 +32,7 @@ export const initInterceptor = () => {
       error.response.status === 401 && error.response.data.code === 'INVALID_TOKEN'
     ) {
       logout()
-      history.push('/login')
+      historyPush('/login')
     }
 
     return Promise.reject(error)

@@ -15,3 +15,9 @@
   font-size: 22px;
   color: white;
 }
+.Menu__logoContainer {
+  position: relative;
+  bottom: 0;
+  background-color: aquamarine;
+  height: 80px;
+}

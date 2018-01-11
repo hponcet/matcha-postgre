@@ -1,11 +1,13 @@
 import React from 'react'
 import haversine from 'haversine'
+import map from 'lodash/map'
+import { historyPush } from '../../config/history'
 
 import StackedPictures from './StackedPictures'
+import ProfilCallToAction from '../containers/ProfilCallToAction'
 import Loading from '../../styled-components/Loading'
+import Chip from 'material-ui/Chip'
 import { Card } from 'material-ui/Card'
-import history from '../../config/history'
-import IconButton from 'material-ui/IconButton'
 
 import IconLocation from 'material-ui/svg-icons/communication/location-on'
 import IconScore from 'material-ui/svg-icons/action/trending-up'
@@ -21,18 +23,20 @@ class ProfilView extends React.Component {
   componentDidMount () {
     this.props.match.params.userId
     ? this.props.getProfil(this.props.match.params.userId)
-    : history.push('/dashboard/finder')
+    : historyPush('/dashboard/finder')
   }
 
   render () {
     const {profil, user} = this.props
     const profilLoc = profil.location && profil.location.loc ? profil.location.loc : [0, 0]
     const userLoc = user.location && user.location.loc ? user.location.loc : [0, 0]
+
     return (
       !this.props.profil.isFetching
       ? <Card style={{minWidth: '450px', width: '70%', alignSelf: 'center'}}>
         <div className='Profil__profilPicture__container Profil__infoCol'>
           <StackedPictures pictures={this.props.profil.pictures} />
+          <ProfilCallToAction profilId={profil.profilId} />
           <div className='Profil__infoCol'>
             <div className='ProfilView__pseudo'>{profil.pseudo}</div>
             <div className='Profil__age'>
@@ -48,6 +52,16 @@ class ProfilView extends React.Component {
             <div className='Profil__content'><IconScore />{profil.profilScore}</div>
           </div>
           <div className='ProfilView__bio'>{profil.biography}</div>
+          <div className='ProfilView__tags'>{
+            map(profil.tags, (tag, index) => {
+              return <Chip
+                backgroundColor='#79A5C5'
+                labelColor='#ffffff'
+                style={{margin: '4px'}}
+                key={index}>
+                {tag}
+              </Chip>
+            })}</div>
         </div>
       </Card>
       : <Loading />

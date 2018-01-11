@@ -1,9 +1,4 @@
-const MongoClient = require('mongodb').MongoClient
-const dbParams = require('../config/config').DATABASE
-
-const ProfilService = require('../services/profil')
-
-const dbUrl = `${dbParams.dialect}://${dbParams.host}:${dbParams.port}/${dbParams.database}`
+const ObjectID = require('mongodb').ObjectID
 
 const distanceQuery = (coordinates, distance) => {
   return {
@@ -15,65 +10,56 @@ const distanceQuery = (coordinates, distance) => {
     }
   }
 }
-
 const matchAgeRangeQuery = (ageRange) => {
-  return {
-    $match: {
-      birthday: { $lt: new Date(ageRange.min), $gt: new Date(ageRange.max) }
-    }
-  }
+  return { $match: { birthday: { $lt: new Date(ageRange.min), $gt: new Date(ageRange.max) } } }
+}
+const matchTagsQuery = (tags, sex) => {
+  return { $match: { tags: { $in: tags } } }
+}
+const matchOrientationQuery = (sex) => {
+  return { $match: { sex: sex } }
 }
 
-const matchTagsQuery = (tags) => {
-  return { $match: { tags: { $in: tags } }
-  }
-}
-
-const queryConstructor = (originePoint, distance, userId, limit, ageRange, tags) => {
+const queryConstructor = ({profilId, location, distance, ageRange, tags, orientation}) => {
   const query = []
 
-  if (originePoint) query.push(distanceQuery(originePoint, distance))
+  if (location) query.push(distanceQuery(location, distance))
   if (ageRange) query.push(matchAgeRangeQuery(ageRange))
   if (tags && tags.length > 0) query.push(matchTagsQuery(tags))
-  console.table(query)
+  if (orientation !== '3') query.push(matchOrientationQuery(orientation))
+  if (profilId) query.push({$match: { _id: { $not: { $eq: ObjectID(profilId) } } }})
+  if (profilId) query.push({$match: { pictures: { $exists: true, $ne: [] } }})
+
   return query
 }
 
-const find = (originePoint, distance, userId, limit, ageRange, tags) => {
+const find = ({db, profilId, location, distance, ageRange, limit, tags, orientation}) => {
   if (!distance) distance = 1000
   return new Promise((resolve, reject) => {
-    MongoClient.connect(dbUrl)
-    .then((db) => {
-      db.collection('profils')
-      .aggregate(queryConstructor(originePoint, distance, userId, limit, ageRange, tags))
-      .limit(limit || 48)
-      .toArray((err, matchedProfils) => {
-        db.close()
-        if (err) return reject(err)
-        return resolve(matchedProfils)
-      })
+    db.collection('profils')
+    .aggregate(queryConstructor({profilId, location, distance, ageRange, tags, orientation}))
+    .limit(limit || 48)
+    .toArray((err, matchedProfils) => {
+      if (err) return reject(err)
+      return resolve(matchedProfils)
     })
-    .catch(err => reject(err))
   })
 }
 
-const getProfils = (userId) => {
-  return ProfilService.getProfilLocation(userId)
-  .then((location) => find(location, null, userId)
+const searchProfils = ({db, profil, distance, tags, ageRange}) => {
+  return find({
+    db,
+    location: profil.location.loc,
+    orientation: profil.orientation,
+    profilId: profil._id,
+    distance,
+    ageRange,
+    tags
+  })
   .then((profils) => profils)
-  .catch(err => err))
-  .catch(err => err)
-}
-
-const searchProfils = (userId, distance, tags, ageRange) => {
-  return ProfilService.getProfilLocation(userId)
-  .then((location) => find(location, distance, userId, null, ageRange, tags)
-  .then((profils) => profils)
-  .catch(err => err))
   .catch(err => err)
 }
 
 module.exports = {
-  getProfils,
   searchProfils
 }

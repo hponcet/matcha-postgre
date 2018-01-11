@@ -1,0 +1,87 @@
+.NewsFeed__Button {
+  position: relative;
+  width: 52px;
+  height: 52px;
+}
+.NewsFeed__badge {
+  position: absolute;
+  z-index: 10;
+  right: -15px;
+  top: -15px;
+}
+.NewsFeed__FloatingActionButton {
+  border: 2px solid lightgrey;
+  width: 50px;
+  height: 50px;
+}
+
+.NewsFeed__overflow {
+  height: 290px;
+  overflow-y: auto;
+}
+.NewsFeed__newsContainer {
+  display: flex;
+  flex-direction: 'row';
+  align-items: 'center';
+  padding: 6px;
+  max-width: 500px;
+}
+.NewsFeed__infoContainer {
+  display: flex;
+  flex-direction: 'row';
+  align-items: 'center';
+  width: 100%;
+  cursor: pointer;
+}
+.NewsFeed__newsContainer:hover {
+  background-color: #F0F0F0;
+}
+.NewsFeed__sentence {
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+}
+.NewsFeed__avatar {
+  display: flex;
+  align-self: center;
+  height: 40px;
+  width: 40px;
+}
+.NewsFeed__emptyNews {
+  padding: 8px;
+  width: 100%;
+  min-width: 400px;
+  text-align: center;
+}
+
+.NewsFeed__profilPicture {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.NewsFeed__profilPicture__container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  border: 2px solid lightgrey;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.5);
+}
+.NewsFeed__profilPicture__container:active {
+  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.5);
+}
+
+.NewsFeed__container {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  padding-left: 15px;
+}
+.NewsFeed__pseudoLink {
+  position: relative;
+  z-index: 1000;
+  text-decoration: none;
+  color: rgb(121, 165, 197);
+  font-weight: bold
+}

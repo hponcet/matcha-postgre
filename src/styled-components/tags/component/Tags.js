@@ -54,7 +54,10 @@ class Tags extends React.Component {
     }
   }
 
-  handleInputChange (inputValue) { this.setState({inputValue}) }
+  handleInputChange (inputValue) {
+    if (!this.state.inputValue && inputValue === ' ') return
+    this.setState({inputValue})
+  }
   handleNewRequest () { this.setState({inputValue: ''}) }
 
   handleComponentChange (event) {

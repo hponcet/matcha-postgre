@@ -9,7 +9,8 @@ export default connect(
     isUpdating: state.profil.isUpdating,
     user: state.user,
     profil: state.profil,
-    profilPicture: state.pictures.profilPicture,
+    pictures: state.profil.pictures,
+    profilPicture: state.profil.profilPicture,
     profilError: state.profil.profilError,
     error: state.profil.error
   }), {

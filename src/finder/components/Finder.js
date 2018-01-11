@@ -1,13 +1,15 @@
 import React from 'react'
 import InputRange from 'react-input-range'
 
+import { historyPush } from '../../config/history'
+
 import RaisedButton from 'material-ui/RaisedButton'
 import { Card, CardText, CardHeader } from '../../styled-components/Cards'
 import SearchIcon from 'material-ui/svg-icons/action/search'
 import CloseIcon from 'material-ui/svg-icons/navigation/close'
 import SearchTags from '../../styled-components/tags/component/SearchTags'
 
-import Profils from '../../profils-list/containers/ProfilList'
+import Profils from '../../profil/containers/ProfilList'
 
 import 'react-input-range/lib/css/index.css'
 import './Finder.css'
@@ -28,6 +30,12 @@ class Finder extends React.Component {
     }
     this.handleTagChange = this.handleTagChange.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (!nextProps.profilFetching && nextProps.pictures.length === 0) {
+      historyPush('/dashboard/profil?emptypics=1')
+    }
   }
 
   componentDidMount () {

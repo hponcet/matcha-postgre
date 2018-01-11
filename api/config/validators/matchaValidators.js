@@ -65,9 +65,9 @@ const ProfilsValidation = {
         'pictures',
         'profilPicture',
         'userId',
-        'profilScore',
-        'consultedBy',
-        'likes'
+        'history',
+        'likes',
+        'matchs'
       ],
       properties: {
         tags: {
@@ -143,15 +143,15 @@ const ProfilsValidation = {
           bsonType: 'objectId',
           description: 'must be an ObjectId and is required'
         },
-        profilScore: {
-          bsonType: 'int',
-          description: 'must be an int and is required'
+        history: {
+          bsonType: 'object',
+          description: 'must be an object and is required'
         },
-        consultedBy: {
+        likes: {
           bsonType: 'array',
           description: 'must be an array and is required'
         },
-        likes: {
+        matchs: {
           bsonType: 'array',
           description: 'must be an array and is required'
         }

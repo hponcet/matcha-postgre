@@ -5,7 +5,9 @@ import Validation from '../../validation/Validation'
 import Keys from '../../Keys'
 
 import { Card, CardText, CardHeader, CardActions } from 'material-ui/Card'
+import Dialog from 'material-ui/Dialog'
 import RaisedButton from 'material-ui/RaisedButton'
+import FlatButton from 'material-ui/FlatButton'
 import Select from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 import TextField from 'material-ui/TextField'
@@ -19,6 +21,8 @@ class Profil extends React.Component {
     super(props)
     this.state = {
       canSubmit: false,
+      openInfosPictures: false,
+      picturesExpanded: true,
       inputs: {
         sex: {
           value: '',
@@ -62,14 +66,26 @@ class Profil extends React.Component {
     this.handleSelectChange = this.handleSelectChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.clearFields = this.clearFields.bind(this)
+    this.infosAddingPicture = this.infosAddingPicture.bind(this)
+    this.handleInfosClose = this.handleInfosClose.bind(this)
   }
 
   componentDidMount () {
     this.props.fetchUser()
+    if (this.props.pictures.length === 0) {
+      this.infosAddingPicture()
+    }
   }
 
   enableButton () { this.setState({canSubmit: true}) }
   disableButton () { this.setState({canSubmit: false}) }
+
+  handleInfosClose () { this.setState({openInfosPictures: false}) }
+
+  infosAddingPicture () {
+    const UrlParams = new URLSearchParams(this.props.location.search)
+    if (UrlParams.get('emptypics') === '1') { this.setState({openInfosPictures: true}) }
+  }
 
   clearFields () {
     const inputs = this.state.inputs
@@ -216,7 +232,7 @@ class Profil extends React.Component {
           >
             Mes photos
           </CardHeader>
-          <CardText expandable>
+          <CardText expandable={this.state.picturesExpanded}>
             <Pictures />
           </CardText>
         </Card>
@@ -269,6 +285,25 @@ class Profil extends React.Component {
             {Keys(this.props.profilError ? this.props.profilError.appCode : null)}
           </div>
         </CardText>
+
+        <Dialog
+          title='Veuillez choisir une photo de profil'
+          actions={<FlatButton
+            label='Ok'
+            primary
+            keyboardFocused
+            onClick={() => {
+              this.setState({picturesExpanded: false})
+              this.handleInfosClose()
+            }}
+          />}
+          modal={false}
+          open={this.state.openInfosPictures}
+          onRequestClose={this.handleInfosClose}
+        >
+          Vous devez choisir au minimum une photo de profil pour rencontrer d'autres personnes.<br />
+          Vous pourrez le faire à partir de la partie Mes photos située sur cette page.
+        </Dialog>
 
       </Card>
     )

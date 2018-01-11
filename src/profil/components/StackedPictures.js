@@ -107,7 +107,7 @@ class StackedPictures extends React.Component {
 
   animeStack () {
     const stackAnim = anime.timeline()
-    const {pictures} = this.props
+    const { pictures } = this.props
 
     for (let index = 0; index < pictures.length; index++) {
       let {picturesZIndex} = this.state

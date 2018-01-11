@@ -8,9 +8,9 @@ import {
 
 export default connect(
   (state) => ({
-    pictures: state.pictures.data,
-    onUpload: state.pictures.onUpload,
-    errors: state.pictures.error
+    pictures: state.profil.pictures,
+    onUpload: state.profil.profilFetching,
+    errors: state.profil.error
   }), {
     uploadPicture,
     deletePicture,
