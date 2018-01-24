@@ -10,13 +10,13 @@ const serverInit = require('./config/server-init')
 const corsMiddleware = require('./middlewares/cors')
 const errorsHandlingMiddleware = require('./middlewares/errors-handling').errorsHandling
 
-const authenticationRouter = require('./routes/authentication')
-const usersRouter = require('./routes/users')
-const corsRouter = require('./routes/cors')
-const tagsRouter = require('./routes/tags')
-const historyRouter = require('./routes/history')
-const chatRouter = require('./routes/chat')
-const profilRouter = require('./routes/profil')
+// const authenticationRouter = require('./routes/authentication')
+// const usersRouter = require('./routes/users')
+// const corsRouter = require('./routes/cors')
+// const tagsRouter = require('./routes/tags')
+// const historyRouter = require('./routes/history')
+// const chatRouter = require('./routes/chat')
+// const profilRouter = require('./routes/profil')
 
 global.io = {
   client: require('socket.io')(http),
@@ -30,13 +30,13 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(corsMiddleware)
 
-app.use('/', authenticationRouter)
-app.use('/', usersRouter)
-app.use('/', corsRouter)
-app.use('/', tagsRouter)
-app.use('/', historyRouter)
-app.use('/', chatRouter)
-app.use('/', profilRouter)
+// app.use('/', authenticationRouter)
+// app.use('/', usersRouter)
+// app.use('/', corsRouter)
+// app.use('/', tagsRouter)
+// app.use('/', historyRouter)
+// app.use('/', chatRouter)
+// app.use('/', profilRouter)
 app.use(errorsHandlingMiddleware)
 
 serverInit(http).then(() => {

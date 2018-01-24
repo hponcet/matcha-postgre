@@ -1,9 +1,15 @@
 version: '2'
 services:
-  matcha_data:
-    image: mongo:3.6
-    container_name: "mongo-matcha"
-    ports:
-      - "27017:27017"
+  data:
+    image: postgres:9.6
+    container_name: "matcha_data"
     volumes:
-      - /data/db_matcha
+      - /data/db
+    ports:
+      - "5432:5432"
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - DEBUG=true
+      - POSTGRES_DB=matcha
+      - POSTGRES_USER=Gus
+      - POSTGRES_PASSWORD=yolo

@@ -17,9 +17,8 @@ const initServer = (server) => {
   return getPublicIp()
   .then((data) => {
     console.log('[IPv4]', data)
-    return dbInit()
-    .then(() => socketService.startService(server))
-    .catch(err => console.log(err))
+    dbInit()
+    return socketService.startService(server)
   })
   .catch(err => console.log(err))
 }

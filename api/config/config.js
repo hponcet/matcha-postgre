@@ -4,10 +4,10 @@ module.exports = {
   HOST: 'http://localhost',
   UPLOAD_PICTURES_PATH: 'files/pictures',
   DATABASE: {
-    dialect: 'mongodb',
+    user: 'Gus',
     host: 'localhost',
-    port: '27017',
     database: 'matcha',
-    settings: {}
+    password: 'yolo',
+    port: 5432
   }
 }
