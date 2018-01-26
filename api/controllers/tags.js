@@ -1,65 +1,62 @@
 const createError = require('http-errors')
 const _ = require('lodash')
 
-const MongoClient = require('mongodb').MongoClient
-const dbParams = require('../config/config').DATABASE
-const dbUrl = `${dbParams.dialect}://${dbParams.host}:${dbParams.port}/${dbParams.database}`
-const mongoSettings = require('../config/config').DATABASE.settings
 const ValidateObjectId = /^[0-9a-fA-F]{24}$/
 
 const TagsService = require('../services/tags')
+const ProfilService = require('../services/profil')
 const errors = require('../errors')
 
-const getTags = (req, res, next) => {
-  return MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
-    if (err) return next(err)
-    const db = client.db(dbParams.database)
-    return TagsService.getTags(db)
-    .then((tags) => res.send(tags))
-    .catch(next)
-  })
+const getTags = async (req, res, next) => {
+  try {
+    const tags = await TagsService.getTags()
+    return res.send(tags)
+  } catch (err) {
+    return next(err)
+  }
 }
-const updateTag = (req, res, next) => {
-  return MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
-    if (err) return next(err)
-    const db = client.db(dbParams.database)
-    if (!_.has(req, 'body.name') || _.isEmpty(req.body.name)) return next(createError.BadRequest(errors.BAD_TAG_ID))
-    if (!_.has(req, 'body.id') || _.isEmpty(req.body.id) || !ValidateObjectId.test(req.body.id)) return next(createError.BadRequest(errors.BAD_USER_ID))
 
-    return TagsService.updateTag(db, req.body.name, req.body.id)
-    .then(res.status(200).send())
-    .catch(next)
-  })
-}
-const removeTag = (req, res, next) => {
-  return MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
-    if (err) return next(err)
-    const db = client.db(dbParams.database)
+const removeTag = async (req, res, next) => {
+  try {
     if (!_.has(req, 'body.name') || _.isEmpty(req.body.name)) return next(createError.BadRequest(errors.BAD_TAG_NAME))
     if (!_.has(req, 'body.id') || _.isEmpty(req.body.id) || !ValidateObjectId.test(req.body.id)) return next(createError.BadRequest(errors.BAD_TAG_ID))
 
-    return TagsService.removeTag(db, req.body.name, req.body.id)
-    .then(res.status(200).send())
-    .catch(next)
-  })
+    const tagName = req.body.name
+    const userId = req.body.id
+    await ProfilService.removeTag(tagName)
+    const tagId = await TagsService.getTagByName(tagName)
+    await TagsService.removeTag(tagId, userId)
+    return res.status(200).send()
+  } catch (err) {
+    return next(err)
+  }
 }
-const addTag = (req, res, next) => {
-  return MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
-    if (err) return next(err)
-    const db = client.db(dbParams.database)
+
+const addTag = async (req, res, next) => {
+  try {
     if (!_.has(req, 'body.id') || !_.has(req, 'body.name') ||
     _.isEmpty(req.body.id) || _.isEmpty(req.body.name)) return next(createError.BadRequest(errors.BAD_TAG_SIGNATURE))
     if (!ValidateObjectId.test(req.body.id)) return next(createError.BadRequest(errors.BAD_USER_ID))
 
-    return TagsService.addTag(db, req.body.name, req.body.id)
-    .then(res.status(200).send())
-    .catch(next)
-  })
+    const tagName = req.body.name
+    const userId = req.body.id
+    console.log(tagName, userId)
+
+    await ProfilService.addTag(tagName)
+    const tagId = await TagsService.getTagByName(tagName)
+    if (tagId) {
+      await TagsService.updateTag(tagId, userId)
+      res.status(200).send()
+    }
+    await TagsService.addTag(tagName, userId)
+    res.status(200).send()
+  } catch (err) {
+    return next(err)
+  }
 }
 
 module.exports = {
   getTags,
-  updateTag,
   removeTag,
   addTag
 }

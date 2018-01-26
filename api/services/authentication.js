@@ -13,11 +13,17 @@ const validatePassword = (receivedPassword, userPassword) => {
   .catch(err => err)
 }
 
-const buildToken = (userId) => {
-  return Promise.resolve(jwt.sign(
-    {userId: userId.toString()},
-    fs.readFileSync(path.join(__dirname, '../config/secret.key'))
-  ))
+const buildToken = async (userId) => {
+  if (!userId) return Promise.reject(createError.InternalServerError(errors.BUILD_TOKEN_ERROR))
+  try {
+    return jwt.sign(
+      {userId},
+      fs.readFileSync(path.join(__dirname, '../config/secret.key'))
+    )
+  } catch (err) {
+    console.log(err)
+    return createError.InternalServerError(errors.BUILD_TOKEN_ERROR)
+  }
 }
 
 const buildJwtMiddleware = (validateToken) => {

@@ -6,10 +6,9 @@ const initialUserState = {
   id: null,
   pseudo: null,
   sex: null,
-  profilId: null,
   email: null,
-  firstName: null,
-  lastName: null
+  firstname: null,
+  lastname: null
 }
 export const UserReducer = (state = initialUserState, { type, payload }) => {
   switch (type) {
@@ -24,13 +23,12 @@ export const UserReducer = (state = initialUserState, { type, payload }) => {
         ...state,
         isFetching: false,
         error: null,
-        id: payload._id.toString(),
+        id: payload.id,
         pseudo: payload.pseudo,
         sex: payload.sex,
-        profilId: payload.profilId,
         email: payload.email,
-        firstName: payload.firstName,
-        lastName: payload.lastName
+        firstname: payload.firstname,
+        lastname: payload.lastname
       }
     default:
       return state

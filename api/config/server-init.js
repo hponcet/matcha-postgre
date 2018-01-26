@@ -7,19 +7,14 @@ const getPublicIp = () => {
   return publicIp.v4()
   .then((publicIp) => {
     process.env.PUBLIC_IP = publicIp
-    return publicIp
+    console.log('[IPv4]', publicIp)
   })
   .catch(err => err)
 }
 
 const initServer = (server) => {
   console.log(logo)
-  return getPublicIp()
-  .then((data) => {
-    console.log('[IPv4]', data)
-    dbInit()
-    return socketService.startService(server)
-  })
+  return Promise.all([getPublicIp(), dbInit(), socketService.startService(server)])
   .catch(err => console.log(err))
 }
 

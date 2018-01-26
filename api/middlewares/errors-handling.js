@@ -1,5 +1,5 @@
 const errorsHandling = (err, req, res, next) => {
-  console.error('[ERROR]', err.message)
+  console.error('[ERROR]', err.stack)
 
   if (res.headersSent) return next(err)
   if (!err.statusCode) return next(err)

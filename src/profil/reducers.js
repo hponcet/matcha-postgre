@@ -16,7 +16,7 @@ const initialProfilState = {
   location: [],
   likes: [],
   userId: null,
-  profilId: null,
+  id: null,
   history: null
 }
 export const ProfilReducer = (state = initialProfilState, { type, payload }) => {
@@ -34,9 +34,8 @@ export const ProfilReducer = (state = initialProfilState, { type, payload }) => 
         ...state,
         isFetching: false,
         error: null,
-        userId: payload.userId,
         pictures: payload.pictures,
-        profilId: payload._id,
+        id: payload.id,
         birthday: payload.birthday,
         pseudo: payload.pseudo,
         location: payload.location,
@@ -70,8 +69,7 @@ const initialPublicProfilState = {
   location: [],
   consultedBy: [],
   likes: [],
-  userId: null,
-  profilId: null
+  id: null
 }
 export const PublicProfilReducer = (state = initialPublicProfilState, { type, payload }) => {
   switch (type) {
@@ -82,9 +80,8 @@ export const PublicProfilReducer = (state = initialPublicProfilState, { type, pa
         ...state,
         isFetching: false,
         error: null,
-        userId: payload.data.userId,
         pictures: payload.data.pictures,
-        profilId: payload.data._id,
+        id: payload.data.id,
         birthday: payload.data.birthday,
         pseudo: payload.data.pseudo,
         location: payload.data.location,

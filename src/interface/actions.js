@@ -12,7 +12,7 @@ export const fetchUser = () => dispatch => {
     url: `${config.API_BASE_URI}/users/me`
   })
   .then((user) => {
-    return dispatch({type: constants.FETCH_USER_SUCCESS, payload: user.data.data})
+    return dispatch({type: constants.FETCH_USER_SUCCESS, payload: user.data})
   })
   .catch((error) => {
     return dispatch({type: constants.FETCH_USER_FAILURE, payload: error})

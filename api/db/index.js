@@ -1,13 +1,13 @@
 const pg = require('pg')
 const dbConfig = require('../config/config').DATABASE
 
-const client = new pg.Client(dbConfig)
-client
-.connect()
-.catch(err => console.log(err))
+const query = async (query, params, callback) => {
+  const pool = new pg.Pool(dbConfig)
+  const value = await pool.query(query, params)
+  await pool.end()
+  return value
+}
 
 module.exports = {
-  query: (text, params, callback) => {
-    return client.query(text, params, callback)
-  }
+  query
 }

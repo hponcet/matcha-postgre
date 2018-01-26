@@ -42,13 +42,13 @@ class Profil extends React.Component {
           showError: false,
           valid: (value) => Validation(value, {})
         },
-        firstName: {
+        firstname: {
           value: '',
           pristine: true,
           showError: false,
           valid: (value) => Validation(value, {})
         },
-        lastName: {
+        lastname: {
           value: '',
           pristine: true,
           showError: false,
@@ -250,16 +250,16 @@ class Profil extends React.Component {
               <TextField
                 type='text'
                 hintText='Prénom'
-                name='firstName'
-                value={this.state.inputs.firstName.pristine ? this.props.user.firstName : this.state.inputs.firstName.value}
+                name='firstname'
+                value={this.state.inputs.firstname.pristine ? this.props.user.firstname : this.state.inputs.firstname.value}
                 onChange={this.handleChange}
                 style={{width: '47%'}}
               />
               <TextField
                 type='text'
                 hintText='Nom'
-                name='lastName'
-                value={this.state.inputs.lastName.pristine ? this.props.user.lastName : this.state.inputs.lastName.value}
+                name='lastname'
+                value={this.state.inputs.lastname.pristine ? this.props.user.lastname : this.state.inputs.lastname.value}
                 onChange={this.handleChange}
                 style={{width: '47%'}}
               />

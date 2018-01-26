@@ -1,102 +1,107 @@
 const errors = require('../errors')
-const ObjectID = require('mongodb').ObjectID
 const axios = require('axios')
 const bcrypt = require('bcrypt')
 const createError = require('http-errors')
+const db = require('../db')
 
-const add = (db, email, password, sex, firstName, lastName, pseudo, birthday) => {
-  return new Promise((resolve, reject) => {
-    const Users = db.collection('users')
-    return bcrypt.hash(password, 10)
-    .then((hash) => {
-      const user = {
-        email,
-        password: hash,
-        sex,
-        birthday: new Date(birthday),
-        firstName,
-        lastName,
-        pseudo,
-        profilId: null
-      }
-      return Users.insertOne(user)
-      .then((data) => resolve(data.ops[0]))
-      .catch(err => {
-        if (err.code === 121) return reject(createError.BadRequest(errors.USER_VALIDATION_ERROR))
-        return reject(err)
-      })
-    }).catch(reject)
-  })
+const add = async (email, password, sex, firstName, lastName, pseudo, birthday) => {
+  try {
+    const query = `
+      INSERT INTO
+      users ("email", "password", "sex", "birthday", "firstname", "lastname", "pseudo")
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *
+      `
+    const values = [email, bcrypt.hashSync(password, 10), sex, new Date(birthday), firstName, lastName, pseudo]
+    const value = await db.query(query, values)
+    return value.rows[0]
+  } catch (err) {
+    console.log(err.stack)
+    throw createError.BadRequest(errors.USER_VALIDATION_ERROR)
+  }
 }
 
-const deleteUser = (db, userId) => {
-  return new Promise((resolve, reject) => {
-    const Users = db.collection('users')
-    Users.deleteOne({_id: ObjectID(userId)}, (err) => {
-      if (err) return reject(err)
-      return resolve()
-    })
-  })
+// const deleteUser = async (userId) => {
+//   return new Promise((resolve, reject) => {
+//     Users.deleteOne({_id: ObjectID(userId)}, (err) => {
+//       if (err) return reject(err)
+//       return resolve()
+//     })
+//   })
+// }
+
+// const insertProfilId = async (userId, profilId) => {
+//   return new Promise((resolve, reject) => {
+//     Users.findOneAndUpdate({_id: ObjectID(userId)}, {$set: {profilId}}, (err, data) => {
+//       if (err) return reject(err)
+//       return resolve(data)
+//     })
+//   })
+// }
+
+const getById = async (id) => {
+  const query = 'SELECT * FROM users WHERE "id" = $1'
+  const values = [id]
+
+  try {
+    const value = await db.query(query, values)
+    return value.rows[0]
+  } catch (err) {
+    console.log(err.stack)
+    throw createError.InternalServerError(errors.INTRNAL_ERROR)
+  }
 }
 
-const insertProfilId = (db, userId, profilId) => {
-  return new Promise((resolve, reject) => {
-    const Users = db.collection('users')
-    Users.findOneAndUpdate({_id: ObjectID(userId)}, {$set: {profilId}}, (err, data) => {
-      if (err) return reject(err)
-      return resolve(data)
-    })
-  })
+const getByPseudo = async (pseudo) => {
+  const query = 'SELECT * FROM users WHERE "pseudo" = $1'
+  const values = [pseudo]
+
+  try {
+    const value = await db.query(query, values)
+    return value.rows[0]
+  } catch (err) {
+    console.log(err.stack)
+    throw createError.InternalServerError(errors.INTRNAL_ERROR)
+  }
 }
 
-const getByPseudo = (db, pseudo) => {
-  return new Promise((resolve, reject) => {
-    const Users = db.collection('users')
-    Users.findOne({pseudo}, {fields: {password: 0}}, (err, user) => {
-      if (err) return reject(err)
-      return resolve(user)
-    })
-  })
+const getByEmail = async (email) => {
+  const query = 'SELECT * FROM users WHERE "email" = $1'
+  const values = [email]
+
+  try {
+    const value = await db.query(query, values)
+    return value.rows[0]
+  } catch (err) {
+    console.log(err.stack)
+    throw createError.InternalServerError(errors.INTRNAL_ERROR)
+  }
 }
 
-const getPassword = (db, pseudo) => {
-  return new Promise((resolve, reject) => {
-    const Users = db.collection('users')
-    Users.findOne({pseudo}, {fields: {password: 1}}, (err, user) => {
-      if (err) return reject(err)
-      return resolve(user)
-    })
-  })
+const getPassword = async (pseudo) => {
+  const query = 'SELECT "password", "id" FROM users WHERE "pseudo" = $1'
+  const values = [pseudo]
+
+  try {
+    const value = await db.query(query, values)
+    return value.rows[0]
+  } catch (err) {
+    console.log(err.stack)
+    throw createError.InternalServerError(errors.INTRNAL_ERROR)
+  }
 }
 
-const getByMail = (db, email) => {
-  return new Promise((resolve, reject) => {
-    const Users = db.collection('users')
-    Users.findOne({email}, (err, user) => {
-      if (err) return reject(err)
-      return resolve(user)
-    })
-  })
-}
+const updateUser = async (name, value, userId) => {
+  const query = `UPDATE users SET "${name}" = $1 WHERE "id" = $2`
+  const values = [value, userId]
 
-const getById = (db, userId) => {
-  return new Promise((resolve, reject) => {
-    const Users = db.collection('users')
-    Users.findOne({_id: ObjectID(userId)}, (err, data) => {
-      if (err) return reject(err)
-      return resolve(data)
-    })
-  })
-}
-
-const updateField = (db, name, value, userId) => {
-  return new Promise((resolve, reject) => {
-    const Users = db.collection('users')
-    return Users.findOneAndUpdate({_id: ObjectID(userId)}, {$set: {[name]: value}}, (err, data) => {
-      if (err) return reject(err)
-      return resolve(data)
-    })
-  })
+  try {
+    const value = await db.query(query, values)
+    return value.rows[0]
+  } catch (err) {
+    console.log(err.stack)
+    throw createError.InternalServerError(errors.INTRNAL_ERROR)
+  }
 }
 
 const getGeolocation = (ip) => {
@@ -108,10 +113,10 @@ const getGeolocation = (ip) => {
     })
     .then((geoData) => {
       const { city, region, country, postal, loc } = geoData.data
-      if (!loc) return reject(createError.BadRequest(errors.CANT_GET_LOCATION))
+      if (!loc) throw reject(createError.BadRequest(errors.CANT_GET_LOCATION))
       const location = loc.split(',')
       const floatLocation = [parseFloat(location[0]), parseFloat(location[1])]
-      if (location.length !== 2) return reject(createError.InternalServerError(errors.BAD_LOCATION_FROM_API))
+      if (location.length !== 2) throw reject(createError.InternalServerError(errors.BAD_LOCATION_FROM_API))
       const userLocation = {
         ip: userIp,
         city: city || '',
@@ -124,19 +129,19 @@ const getGeolocation = (ip) => {
     })
     .catch((err) => {
       console.log(err)
-      return reject(createError.InternalServerError(errors.API_SERVICE_LOCATION_ERROR))
+      throw reject(createError.InternalServerError(errors.API_SERVICE_LOCATION_ERROR))
     })
   })
 }
 
 module.exports = {
   add,
-  deleteUser,
+  // deleteUser,
   getById,
   getByPseudo,
   getPassword,
-  getByMail,
+  getByEmail,
   getGeolocation,
-  updateField,
-  insertProfilId
+  updateUser
+  // insertProfilId
 }
