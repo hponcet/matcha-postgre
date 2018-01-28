@@ -1,8 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { fetchTags, updateTag, addTag, removeTag } from '../actions'
-import findIndex from 'lodash/findIndex'
-import map from 'lodash/map'
+import { fetchTags, addTag, removeTag } from '../actions'
 
 import AutoComplete from 'material-ui/AutoComplete'
 import Chip from 'material-ui/Chip'
@@ -34,10 +32,9 @@ class Tags extends React.Component {
       suggestions: [],
       inputValue: ''
     }
-    this.handleComponentChange = this.handleComponentChange.bind(this)
+    this.handleAddTag = this.handleAddTag.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
-    this.handleNewRequest = this.handleNewRequest.bind(this)
-    this.handleRequestDelete = this.handleRequestDelete.bind(this)
+    this.handleDeleteTag = this.handleDeleteTag.bind(this)
   }
 
   componentDidMount () {
@@ -58,57 +55,21 @@ class Tags extends React.Component {
     if (!this.state.inputValue && inputValue === ' ') return
     this.setState({inputValue})
   }
-  handleNewRequest () { this.setState({inputValue: ''}) }
 
-  handleComponentChange (event) {
-    const {tags, inputValue} = this.state
-    if (!inputValue) return
-    if (this.updateSuggestions(inputValue)) return this.handleNewRequest()
-    tags.push(inputValue)
-    this.setState({tags, inputValue: ''})
-    this.handleNewRequest()
+  handleAddTag (event) {
     event.preventDefault()
+    const {tags, inputValue} = this.state
+    if (!inputValue || tags.indexOf(inputValue) > -1) return this.setState({inputValue: ''})
+    tags.push(inputValue)
+    this.props.addTag(inputValue)
+    this.setState({tags, inputValue: ''})
   }
 
-  handleRequestDelete (index) {
-    const tags = this.state.tags
-    this.deleteSuggestions(tags[index])
+  handleDeleteTag (index) {
+    const {tags} = this.state
+    this.props.removeTag(tags[index])
     tags.splice(index, 1)
     this.setState({tags})
-  }
-
-  deleteSuggestions (tagName) {
-    const suggestions = this.state.suggestions
-    if (!suggestions.find((tag) => tag.name === tagName)) return
-    const tagNameId = findIndex(suggestions, {name: tagName})
-    if (!suggestions[tagNameId].ids.find((id) => id === this.props.id)) return
-    const idIndex = suggestions[tagNameId].ids.indexOf(this.props.id)
-    suggestions[tagNameId].ids.splice(idIndex, 1)
-    this.props.removeTag(tagName, this.props.id)
-    this.setState({suggestions})
-  }
-
-  parseSuggestions () {
-    return map(this.props.suggestions, (suggestion) => suggestion.name)
-  }
-
-  updateSuggestions (tagName) {
-    const suggestions = this.state.suggestions
-    if (suggestions.find((tag) => tag.name === tagName)) {
-      const tagNameId = findIndex(suggestions, {name: tagName})
-      if (suggestions[tagNameId].ids.find((id) => id === this.props.id)) return true
-      suggestions[tagNameId].ids.push(this.props.id)
-      this.props.updateTag(tagName, this.props.id)
-    } else {
-      const newTag = {
-        name: tagName,
-        ids: [this.props.id]
-      }
-      suggestions.push(newTag)
-      this.props.addTag(tagName, this.props.id)
-    }
-    this.setState({suggestions})
-    return false
   }
 
   render () {
@@ -120,15 +81,15 @@ class Tags extends React.Component {
               return <Chip
                 style={{margin: '4px'}}
                 key={index}
-                onRequestDelete={() => this.handleRequestDelete(index)}>{tag}</Chip>
+                onRequestDelete={() => this.handleDeleteTag(index)}>{tag}</Chip>
             })
           }
         </div>
-        <form onSubmit={this.handleComponentChange}>
+        <form onSubmit={this.handleAddTag}>
           <AutoComplete
             hintText={`Centre d'interet`}
             searchText={this.state.inputValue}
-            dataSource={this.parseSuggestions()}
+            dataSource={this.props.suggestions}
             onUpdateInput={this.handleInputChange}
             openOnFocus={false}
           />
@@ -141,12 +102,11 @@ class Tags extends React.Component {
 
 export default connect(
   (state) => ({
-    suggestions: state.tags.data,
+    suggestions: state.tags.tags,
     tags: state.profil.tags,
     id: state.user.id
   }), {
     fetchTags,
-    updateTag,
     addTag,
     removeTag
   }

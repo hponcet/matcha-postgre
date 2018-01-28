@@ -1,8 +1,6 @@
 const createError = require('http-errors')
 const _ = require('lodash')
 
-const ValidateObjectId = /^[0-9a-fA-F]{24}$/
-
 const TagsService = require('../services/tags')
 const ProfilService = require('../services/profil')
 const errors = require('../errors')
@@ -17,15 +15,17 @@ const getTags = async (req, res, next) => {
 }
 
 const removeTag = async (req, res, next) => {
-  try {
-    if (!_.has(req, 'body.name') || _.isEmpty(req.body.name)) return next(createError.BadRequest(errors.BAD_TAG_NAME))
-    if (!_.has(req, 'body.id') || _.isEmpty(req.body.id) || !ValidateObjectId.test(req.body.id)) return next(createError.BadRequest(errors.BAD_TAG_ID))
+  if (!_.has(req, 'body.name') || _.isEmpty(req.body.name)) {
+    return next(createError.BadRequest(errors.BAD_TAG_SIGNATURE))
+  }
 
+  try {
     const tagName = req.body.name
-    const userId = req.body.id
-    await ProfilService.removeTag(tagName)
-    const tagId = await TagsService.getTagByName(tagName)
-    await TagsService.removeTag(tagId, userId)
+    const userId = req.token.userId
+
+    await ProfilService.removeTag(tagName, userId)
+    const tag = await TagsService.getTagByName(tagName)
+    await TagsService.removeTag(tag.id, userId)
     return res.status(200).send()
   } catch (err) {
     return next(err)
@@ -33,23 +33,22 @@ const removeTag = async (req, res, next) => {
 }
 
 const addTag = async (req, res, next) => {
+  if (!_.has(req, 'body.name') || _.isEmpty(req.body.name)) {
+    return next(createError.BadRequest(errors.BAD_TAG_SIGNATURE))
+  }
+
   try {
-    if (!_.has(req, 'body.id') || !_.has(req, 'body.name') ||
-    _.isEmpty(req.body.id) || _.isEmpty(req.body.name)) return next(createError.BadRequest(errors.BAD_TAG_SIGNATURE))
-    if (!ValidateObjectId.test(req.body.id)) return next(createError.BadRequest(errors.BAD_USER_ID))
-
     const tagName = req.body.name
-    const userId = req.body.id
-    console.log(tagName, userId)
+    const userId = req.token.userId
 
-    await ProfilService.addTag(tagName)
-    const tagId = await TagsService.getTagByName(tagName)
-    if (tagId) {
-      await TagsService.updateTag(tagId, userId)
-      res.status(200).send()
+    await ProfilService.addTag(tagName, userId)
+    const tag = await TagsService.getTagByName(tagName)
+    if (tag) {
+      await TagsService.updateTag(tag.id, userId)
+      return res.status(200).send()
     }
     await TagsService.addTag(tagName, userId)
-    res.status(200).send()
+    return res.status(200).send()
   } catch (err) {
     return next(err)
   }

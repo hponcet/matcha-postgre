@@ -12,7 +12,7 @@ import Select from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 import TextField from 'material-ui/TextField'
 import Tags from '../../styled-components/tags/component/Tags'
-import Pictures from '../../styled-components/pictures/containers/Pictures'
+import PicturesUpload from '../../styled-components/pictures/containers/PicturesUpload'
 
 import './Profil.css'
 
@@ -233,7 +233,7 @@ class Profil extends React.Component {
             Mes photos
           </CardHeader>
           <CardText expandable={this.state.picturesExpanded}>
-            <Pictures />
+            <PicturesUpload />
           </CardText>
         </Card>
 

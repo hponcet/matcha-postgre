@@ -4,9 +4,9 @@ import Dialog from 'material-ui/Dialog'
 import PictureEdit from './PictureEdit'
 import Picture from '../containers/Picture'
 
-import './Pictures.css'
+import './PicturesUpload.css'
 
-class Pictures extends React.Component {
+class PicturesUpload extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -26,6 +26,7 @@ class Pictures extends React.Component {
 
   handleDialogOpen () { this.setState({open: true}) }
   handleDialogClose () { this.setState({open: false}) }
+
   resetInput () { this.refs.uploadPictureInput.value = '' }
 
   getCroppedPicture (picture, index) {
@@ -34,9 +35,8 @@ class Pictures extends React.Component {
     data.append('picture', new Blob([picture], {type: 'image/png'}))
     data.append('index', index)
 
-    this.props.uploadPicture(data)
-    this.resetInput()
     this.handleDialogClose()
+    this.props.uploadPicture(data)
   }
 
   checkMimeType (picture) {
@@ -67,8 +67,8 @@ class Pictures extends React.Component {
   render () {
     const { pictures } = this.props
 
-    const userPictures = !pictures ? [] : pictures.map((picture, index) => {
-      return <Picture key={index} index={index} src={picture} />
+    const userPictures = (!pictures || pictures.length < 1) ? [] : pictures.map((picture, index) => {
+      return <Picture key={index} index={picture.id} src={picture.url} />
     })
 
     const emptyPicture = (
@@ -105,4 +105,4 @@ class Pictures extends React.Component {
   }
 }
 
-export default Pictures
+export default PicturesUpload

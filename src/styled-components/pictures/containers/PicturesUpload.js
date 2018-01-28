@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 
-import Pictures from '../components/Pictures'
+import PicturesUpload from '../components/PicturesUpload'
 import {
   uploadPicture,
   deletePicture,
@@ -16,4 +16,4 @@ export default connect(
     deletePicture,
     updateProfilPicture
   }
-)(Pictures)
+)(PicturesUpload)

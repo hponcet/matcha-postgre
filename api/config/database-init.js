@@ -35,12 +35,12 @@ const initDatabase = () => {
 
       CREATE TABLE IF NOT EXISTS users
       (
-        "id" varchar(64) default generate_object_id() UNIQUE NOT NULL,
-        "firstname" varchar(64),
-        "lastname" varchar(64),
+        "id" varchar(24) default generate_object_id() UNIQUE NOT NULL,
+        "firstname" varchar(30),
+        "lastname" varchar(30),
         "email" varchar(64) NOT NULL,
         "sex" sex NOT NULL,
-        "pseudo" varchar(64) NOT NULL,
+        "pseudo" varchar(30) NOT NULL,
         "birthday" timestamp with time zone NOT NULL,
         "password" varchar(64) NOT NULL
       );
@@ -54,19 +54,27 @@ const initDatabase = () => {
 
       CREATE TABLE IF NOT EXISTS profils
       (
-        "id" varchar(64) UNIQUE NOT NULL,
+        "id" varchar(24) UNIQUE NOT NULL,
         "tags" text[],
-        "pseudo" varchar(64) NOT NULL,
+        "pseudo" varchar(30) NOT NULL,
         "sex" sex NOT NULL,
         "location" jsonb,
         "birthday" timestamp with time zone NOT NULL,
         "orientation" orientation NOT NULL,
-        "biography" varchar(64),
-        "pictures" jsonb[],
-        "profilPicture" varchar(64),
+        "biography" text,
+        "profilPicture" text,
+        "pictures" text[],
         "history" jsonb,
         "likes" jsonb[],
         "matchs" jsonb[]
+      );
+
+      CREATE TABLE IF NOT EXISTS pictures
+      (
+        "picture_id" SERIAL UNIQUE,
+        "id" varchar(24) NOT NULL,
+        "public_path" text,
+        "local_path" text
       )
     `
   )

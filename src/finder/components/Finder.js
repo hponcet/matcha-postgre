@@ -33,7 +33,7 @@ class Finder extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (!nextProps.profilFetching && nextProps.pictures.length === 0) {
+    if (nextProps.pictures.lenght === 0) {
       historyPush('/dashboard/profil?emptypics=1')
     }
   }

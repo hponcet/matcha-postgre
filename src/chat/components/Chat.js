@@ -26,7 +26,7 @@ class Chat extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (!nextProps.profilFetching && nextProps.pictures.length === 0) {
+    if (nextProps.pictures.length === 0) {
       historyPush('/dashboard/profil?emptypics=1')
     }
     if (!nextProps.fetching && nextProps.threads) {

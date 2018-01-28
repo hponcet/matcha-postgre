@@ -74,7 +74,7 @@ class Picture extends React.Component {
         tooltip='Supprimer cette photo'
         touch
         tooltipPosition='bottom-center'
-        onClick={() => { this.props.deletePicture(src, index) }}
+        onClick={() => { this.props.deletePicture(index) }}
       ><IconDelete /></IconButton>
     )
     const ProfilPictureButton = (

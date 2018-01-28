@@ -3,6 +3,8 @@ const errors = require('../errors')
 const config = require('../config/config')
 const db = require('../db')
 
+const picturesService = require('./pictures')
+
 // const getProfilByUserId = async (userId) => {
 //   return new Promise((resolve, reject) => {
 //     const Profils = db.collection('profils')
@@ -23,18 +25,20 @@ const db = require('../db')
 //   })
 // }
 
-const getProfilById = async (id) => {
+const getProfilById = async (userId) => {
   const query = `
     SELECT *
     FROM profils
-    WHERE "id" = $1`
-  const values = [id]
+    WHERE id = $1`
+  const values = [userId]
   try {
-    const profil = await db.query(query, values)
-    return profil.rows[0]
+    const profilRaw = await db.query(query, values)
+    const profil = profilRaw.rows[0]
+    profil.pictures = await picturesService.getPictures(userId)
+    return profil
   } catch (err) {
     console.log(err.stack)
-    throw createError.BadRequest(errors.SERVICE_LOCATION_ERROR)
+    throw createError.BadRequest(errors.INTRNAL_ERROR)
   }
 }
 
@@ -46,26 +50,6 @@ const getProfilById = async (id) => {
 //       return resolve(data)
 //     })
 //   })
-// }
-
-// const getParsedProfilByUserId = async (userId) => {
-//   return getProfilPartByUserId(db, userId, {
-//     tags: 1,
-//     sex: 1,
-//     pseudo: 1,
-//     location: 1,
-//     birthday: 1,
-//     orientation: 1,
-//     biography: 1,
-//     pictures: 1,
-//     profilPicture: 1,
-//     userId: 1
-//   })
-//   .then((profil) => {
-//     profil.pictures = profil.pictures.map((picture) => picture.picturePublicPath)
-//     return profil
-//   })
-//   .catch(err => err)
 // }
 
 // const getParsedProfilById = async (profilId) => {
@@ -156,11 +140,14 @@ const updateProfil = async (name, value, userId) => {
 //   })
 // }
 
-const addTag = async (tagName) => {
+const addTag = async (tagName, userId) => {
   const query = `
     UPDATE profils
-    SET "tags" = array_append(tags, $1)`
-  const values = [tagName]
+    SET "tags" = array_append(tags, $1)
+    WHERE id = $2`
+  const values = [tagName, userId]
+  const tags = await getTags(userId)
+  if (tags.indexOf(tagName) > -1) return
   try {
     return await db.query(query, values)
   } catch (err) {
@@ -169,16 +156,30 @@ const addTag = async (tagName) => {
   }
 }
 
-const removeTag = async (tagName) => {
+const removeTag = async (tagName, userId) => {
   const query = `
     UPDATE profils
-    SET "tags" = array_remove(tags, $1)`
-  const values = [tagName]
+    SET "tags" = array_remove(tags, $1)
+    WHERE id = $2`
+  const values = [tagName, userId]
   try {
     return await db.query(query, values)
   } catch (err) {
     console.log(err.stack)
     throw createError.BadRequest(errors.INTRNAL_ERROR)
+  }
+}
+
+const getTags = async (id) => {
+  const query = 'SELECT "tags" FROM "profils" WHERE "id" = $1'
+  const values = [id]
+
+  try {
+    const value = await db.query(query, values)
+    return value.rows[0].tags
+  } catch (err) {
+    console.log(err.stack)
+    throw createError.InternalServerError(errors.INTRNAL_ERROR)
   }
 }
 
@@ -190,6 +191,20 @@ const getLikes = async (id) => {
     const value = await db.query(query, values)
     return value.rows[0]
   } catch (err) {
+    console.log(err.stack)
+    throw createError.InternalServerError(errors.INTRNAL_ERROR)
+  }
+}
+
+const getProfilPicture = async (id) => {
+  const query = 'SELECT "profilPicture" FROM "profils" WHERE "id" = $1'
+  const values = [id]
+
+  try {
+    const value = await db.query(query, values)
+    return value.rows[0]
+  } catch (err) {
+    console.log(err.stack)
     throw createError.InternalServerError(errors.INTRNAL_ERROR)
   }
 }
@@ -231,13 +246,14 @@ module.exports = {
   getProfilById,
 //   getProfilPartById,
 //   getParsedProfilByUserId,
-//   getParsedProfilById,
   updateLocation,
   getLikes,
   updateProfil,
 //   getProfilLocation,
 //   addLike,
 //   addMatch,
+  getProfilPicture,
   addTag,
-  removeTag
+  removeTag,
+  getTags
 }

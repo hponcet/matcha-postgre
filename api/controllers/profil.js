@@ -12,8 +12,6 @@ const getProfil = async (req, res, next) => {
   try {
     const profil = await ProfilService.getProfilById(req.token.userId)
 
-    profil.pictures = profil.pictures.map((picture) => picture.picturePublicPath)
-
     let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.connection.remoteAddress
     if (ip === '::1' || ip === '127.0.0.1') ip = process.env.PUBLIC_IP
     

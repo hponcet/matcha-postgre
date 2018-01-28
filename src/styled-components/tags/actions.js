@@ -14,23 +14,12 @@ export const fetchTags = () => dispatch => {
   .catch((err) => dispatch({type: constants.FETCH_TAGS_FAILURE, payload: err}))
 }
 
-export const updateTag = (name, id) => dispatch => {
-  dispatch({type: constants.TAG_OPERATION_REQUEST})
-  return axios({
-    method: 'patch',
-    url,
-    data: {name, id}
-  })
-  .then(() => dispatch({type: constants.TAG_OPERATION_SUCCESS}))
-  .catch((err) => dispatch({type: constants.TAG_OPERATION_FAILURE, payload: err}))
-}
-
-export const addTag = (name, id) => dispatch => {
+export const addTag = (name) => dispatch => {
   dispatch({type: constants.TAG_OPERATION_REQUEST})
   return axios({
     method: 'post',
     url,
-    data: {name, id}
+    data: {name}
   })
   .then(() => dispatch({type: constants.TAG_OPERATION_SUCCESS}))
   .catch((err) => dispatch({type: constants.TAG_OPERATION_FAILURE, payload: err}))

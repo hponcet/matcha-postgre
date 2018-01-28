@@ -13,12 +13,12 @@ export const uploadPicture = (data) => dispatch => {
   .catch((err) => dispatch({type: constants.FETCH_PROFIL_FAILURE, payload: err}))
 }
 
-export const deletePicture = (pictureUrl, index) => dispatch => {
+export const deletePicture = (index) => dispatch => {
   dispatch({type: constants.FETCH_PROFIL_REQUEST})
   return axios({
     method: 'delete',
     url: `${config.API_BASE_URI}/profils/pictures`,
-    data: {picture: {url: pictureUrl, index}}
+    data: {index}
   })
   .then((profil) => dispatch({type: constants.FETCH_PROFIL_SUCCESS, payload: profil.data}))
   .catch((err) => dispatch({type: constants.FETCH_PROFIL_FAILURE, payload: err}))

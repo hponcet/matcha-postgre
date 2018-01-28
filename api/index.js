@@ -12,7 +12,7 @@ const errorsHandlingMiddleware = require('./middlewares/errors-handling').errors
 
 const authenticationRouter = require('./routes/authentication')
 const usersRouter = require('./routes/users')
-// const corsRouter = require('./routes/cors')
+const corsRouter = require('./routes/cors')
 const tagsRouter = require('./routes/tags')
 const historyRouter = require('./routes/history')
 // const chatRouter = require('./routes/chat')
@@ -30,9 +30,10 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(corsMiddleware)
 
+app.use('/', corsRouter)
+
 app.use('/', authenticationRouter)
 app.use('/', usersRouter)
-// app.use('/', corsRouter)
 app.use('/', tagsRouter)
 app.use('/', historyRouter)
 // app.use('/', chatRouter)

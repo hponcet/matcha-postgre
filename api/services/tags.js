@@ -31,12 +31,12 @@ const getTagByName = async (tagName) => {
 }
 
 const updateTag = async (tagId, userId) => {
-  const query = `
-    UPDATE tags
-    SET "ids" = array_append(ids, $2)
-    WHERE "id" = $1`
-  const values = [tagId, userId]
   try {
+    const query = `
+      UPDATE tags
+      SET "ids" = array_append(ids, $2)
+      WHERE "id" = $1`
+    const values = [tagId, userId]
     return await db.query(query, values)
   } catch (err) {
     console.log(err.stack)
@@ -70,6 +70,20 @@ const addTag = async (tagName, userId) => {
     throw createError.BadRequest(errors.INTRNAL_ERROR)
   }
 }
+
+// const getIdsById = async (tagId) => {
+//   try {
+//     const query = `
+//       SELECT "ids"
+//       FROM tags
+//       WHERE id = $1`
+//     const values = [tagId]
+//     return await db.query(query, values)
+//   } catch (err) {
+//     console.log(err.stack)
+//     throw createError.BadRequest(errors.INTRNAL_ERROR)
+//   }
+// }
 
 module.exports = {
   getTags,
