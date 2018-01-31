@@ -115,7 +115,13 @@ const getGeolocation = (ip) => {
       const { city, region, country, postal, loc } = geoData.data
       if (!loc) throw reject(createError.BadRequest(errors.CANT_GET_LOCATION))
       const location = loc.split(',')
-      const floatLocation = [parseFloat(location[0]), parseFloat(location[1])]
+      const floatLocation = {
+        type: 'Point',
+        coordinates: [
+          parseFloat(location[0]),
+          parseFloat(location[1])
+        ]
+      }
       if (location.length !== 2) throw reject(createError.InternalServerError(errors.BAD_LOCATION_FROM_API))
       const userLocation = {
         ip: userIp,

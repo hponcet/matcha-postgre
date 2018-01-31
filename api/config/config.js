@@ -4,10 +4,10 @@ module.exports = {
   HOST: 'http://localhost',
   UPLOAD_PICTURES_PATH: 'files/pictures',
   DATABASE: {
-    user: 'Gus',
+    user: 'hponcet',
     host: 'localhost',
     database: 'matcha',
-    password: 'yolo',
+    password: '5Jf_94vy8eeK8fh?',
     port: 5432
   }
 }

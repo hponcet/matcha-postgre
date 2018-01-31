@@ -9,9 +9,10 @@ const imageUpload = require('../middlewares/image-upload')
 
 router.get('/profils/me', userJwt, profilController.getProfil)
 router.post('/profils/me', userJwt, profilController.updateProfil)
-// router.get('/profils', userJwt, profilController.getProfils)
-// router.post('/profils', userJwt, profilController.searchProfils)
-// router.get('/profils/:userId', userJwt, profilController.getPublicProfil)
+
+router.get('/profils', userJwt, profilController.searchProfils)
+router.post('/profils', userJwt, profilController.searchProfils)
+router.get('/profils/:userId', userJwt, profilController.getPublicProfil)
 
 router.get('/profils/me/likes', userJwt, interactionsController.getLikes)
 // router.put('/profils/like', userJwt, interactionsController.newLike)

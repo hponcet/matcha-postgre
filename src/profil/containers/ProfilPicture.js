@@ -1,13 +1,14 @@
 import { connect } from 'react-redux'
 
 import ProfilsPicture from '../components/ProfilPicture'
-import { profilView } from '../actions'
+import { profilView, fetchProfil } from '../actions'
 
 export default connect(
   (state) => ({
     userProfil: state.profil
   }),
   {
-    profilView
+    profilView,
+    fetchProfil
   }
 )(ProfilsPicture)

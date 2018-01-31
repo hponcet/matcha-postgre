@@ -1,15 +1,18 @@
 version: '2'
 services:
   data:
-    image: postgres:9.6
-    container_name: "matcha_data"
+    image: kartoza/postgis:10.0-2.4
+    container_name: "pg_data"
+    restart: always
     volumes:
       - /data/db
     ports:
       - "5432:5432"
     environment:
       - PGDATA=/var/lib/postgresql/data/pgdata
+      - ALLOW_IP_RANGE=0.0.0.0/0
       - DEBUG=true
+      - POSTGRES_DBNAME=matcha
       - POSTGRES_DB=matcha
-      - POSTGRES_USER=Gus
-      - POSTGRES_PASSWORD=yolo
+      - POSTGRES_USER=hponcet
+      - POSTGRES_PASS=5Jf_94vy8eeK8fh?

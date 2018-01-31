@@ -1,65 +1,49 @@
-const ObjectID = require('mongodb').ObjectID
+const db = require('../db')
+const createError = require('http-errors')
+const errors = require('../errors')
+const profilRequests = require('./profilRequests')
 
-const distanceQuery = (coordinates, distance) => {
-  return {
-    $geoNear: {
-      near: { type: 'Point', coordinates },
-      distanceField: 'location.loc',
-      maxDistance: distance * 1000,
-      spherical: true
-    }
+const find = async ({profilId, location, distance, ageRange, tags, orientation}) => {
+  const query = profilRequests.queryConstructor({profilId, location, distance, ageRange, tags, orientation})
+
+  try {
+    const profils = await db.query(query)
+    // profils.rows.map((profil) => console.log(profil.tagsIntersect))
+    return profils.rows
+  } catch (err) {
+    console.log(err.stack)
+    throw createError.InternalServerError(errors.INTRNAL_ERROR)
   }
 }
-const matchAgeRangeQuery = (ageRange) => {
-  return { $match: { birthday: { $lt: new Date(ageRange.min), $gt: new Date(ageRange.max) } } }
-}
-const matchTagsQuery = (tags, sex) => {
-  return { $match: { tags: { $in: tags } } }
-}
-const matchOrientationQuery = (sex) => {
-  return { $match: { sex: sex } }
-}
 
-const queryConstructor = ({profilId, location, distance, ageRange, tags, orientation}) => {
-  const query = []
+const purposedProfils = async (profil) => {
+  const query = profilRequests.queryConstructor(profil)
 
-  if (location) query.push(distanceQuery(location, distance))
-  if (ageRange) query.push(matchAgeRangeQuery(ageRange))
-  if (tags && tags.length > 0) query.push(matchTagsQuery(tags))
-  if (orientation !== '3') query.push(matchOrientationQuery(orientation))
-  if (profilId) query.push({$match: { _id: { $not: { $eq: ObjectID(profilId) } } }})
-  if (profilId) query.push({$match: { pictures: { $exists: true, $ne: [] } }})
-
-  return query
+  try {
+    const profils = await db.query(query)
+    return profils
+  } catch (err) {
+    return err
+  }
 }
 
-const find = ({db, profilId, location, distance, ageRange, limit, tags, orientation}) => {
-  if (!distance) distance = 1000
-  return new Promise((resolve, reject) => {
-    db.collection('profils')
-    .aggregate(queryConstructor({profilId, location, distance, ageRange, tags, orientation}))
-    .limit(limit || 48)
-    .toArray((err, matchedProfils) => {
-      if (err) return reject(err)
-      return resolve(matchedProfils)
+const searchProfils = async (profil, distance, tags, ageRange) => {
+  try {
+    const profils = await find({
+      location: profil.location.loc,
+      orientation: profil.orientation,
+      profilId: profil.id,
+      distance,
+      ageRange,
+      tags
     })
-  })
-}
-
-const searchProfils = ({db, profil, distance, tags, ageRange}) => {
-  return find({
-    db,
-    location: profil.location.loc,
-    orientation: profil.orientation,
-    profilId: profil._id,
-    distance,
-    ageRange,
-    tags
-  })
-  .then((profils) => profils)
-  .catch(err => err)
+    return profils
+  } catch (err) {
+    return err
+  }
 }
 
 module.exports = {
-  searchProfils
+  searchProfils,
+  purposedProfils
 }

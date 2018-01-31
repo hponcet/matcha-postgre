@@ -5,26 +5,6 @@ const db = require('../db')
 
 const picturesService = require('./pictures')
 
-// const getProfilByUserId = async (userId) => {
-//   return new Promise((resolve, reject) => {
-//     const Profils = db.collection('profils')
-//     return Profils.findOne({userId: ObjectID(userId)}, (err, data) => {
-//       if (err) return reject(err)
-//       return resolve(data)
-//     })
-//   })
-// }
-
-// const getProfilPartByUserId = async (userId, fields) => {
-//   return new Promise((resolve, reject) => {
-//     const Profils = db.collection('profils')
-//     return Profils.findOne({userId: ObjectID(userId)}, {fields: fields}, (err, data) => {
-//       if (err) return reject(err)
-//       return resolve(data)
-//     })
-//   })
-// }
-
 const getProfilById = async (userId) => {
   const query = `
     SELECT *
@@ -33,44 +13,15 @@ const getProfilById = async (userId) => {
   const values = [userId]
   try {
     const profilRaw = await db.query(query, values)
+    if (!profilRaw.rows[0]) throw createError.BadRequest(errors.BAD_PROFIL_REQUEST)
     const profil = profilRaw.rows[0]
     profil.pictures = await picturesService.getPictures(userId)
     return profil
   } catch (err) {
     console.log(err.stack)
-    throw createError.BadRequest(errors.INTRNAL_ERROR)
+    throw err
   }
 }
-
-// const getProfilPartById = async (profilId, fields) => {
-//   return new Promise((resolve, reject) => {
-//     const Profils = db.collection('profils')
-//     return Profils.findOne({_id: ObjectID(profilId)}, {fields: fields}, (err, data) => {
-//       if (err) return reject(err)
-//       return resolve(data)
-//     })
-//   })
-// }
-
-// const getParsedProfilById = async (profilId) => {
-//   return getProfilPartById(db, profilId, {
-//     tags: 1,
-//     sex: 1,
-//     pseudo: 1,
-//     location: 1,
-//     birthday: 1,
-//     orientation: 1,
-//     biography: 1,
-//     pictures: 1,
-//     profilPicture: 1,
-//     userId: 1
-//   })
-//   .then((profil) => {
-//     profil.pictures = profil.pictures.map((picture) => picture.picturePublicPath)
-//     return profil
-//   })
-//   .catch(err => err)
-// }
 
 // const getProfilLocation = async (userId) => {
 //   return new Promise((resolve, reject) => {
@@ -87,8 +38,7 @@ const getProfilById = async (userId) => {
 const updateLocation = async (location, id) => {
   if (!location) throw Promise.reject(createError.BadRequest(errors.SERVICE_LOCATION_ERROR))
   const query = `
-    UPDATE
-    profils
+    UPDATE profils
     SET "location" = $1
     WHERE "id" = $2`
   const values = [location, id]
@@ -101,13 +51,17 @@ const updateLocation = async (location, id) => {
 }
 
 const updateProfil = async (name, value, userId) => {
-  const query = `UPDATE profils SET "${name}" = $1 WHERE id = $2`
+  const query = `
+    UPDATE profils
+    SET "${name}" = $1
+    WHERE id = $2`
   const values = [value, userId]
 
   try {
     const value = await db.query(query, values)
     return value.rows[0]
   } catch (err) {
+    console.log(err.stack)
     throw createError.InternalServerError(errors.INTRNAL_ERROR)
   }
 }
@@ -241,11 +195,7 @@ const add = async (user, location) => {
 
 module.exports = {
   add,
-//   getProfilPartByUserId,
-//   getProfilByUserId,
   getProfilById,
-//   getProfilPartById,
-//   getParsedProfilByUserId,
   updateLocation,
   getLikes,
   updateProfil,

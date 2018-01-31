@@ -147,7 +147,7 @@ class StackedPictures extends React.Component {
               id={`StackedPictures_${index}`}
               key={`StackedPictures_${index}`}
             >
-              <img style={{width: '100%'}} src={picture} alt='' />
+              <img style={{width: '100%'}} src={picture.url} alt='' />
             </div>
           )
         })}

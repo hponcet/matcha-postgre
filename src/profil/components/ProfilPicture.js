@@ -1,9 +1,11 @@
 import React from 'react'
 import random from 'lodash/random'
+import map from 'lodash/map'
 
 import { historyPush } from '../../config/history'
 
 import StackedPictures from './StackedPictures'
+import Chip from 'material-ui/Chip'
 import IconLocation from 'material-ui/svg-icons/communication/location-on'
 import IconScore from 'material-ui/svg-icons/action/trending-up'
 
@@ -39,6 +41,7 @@ class ProfilPicture extends React.Component {
       currentViewerPicture: 0,
       profilIsOpen: false,
       profil: {},
+      userProfil: null,
       pictures: [],
       location: []
     }
@@ -64,7 +67,7 @@ class ProfilPicture extends React.Component {
         currentViewerPicture: random(0, props.profil.pictures.length - 1),
         pictures: props.profil.pictures,
         profil: props.profil,
-        location: props.profil.location.loc
+        location: props.profil.location.loc.coordinates
       })
     }
   }
@@ -86,7 +89,8 @@ class ProfilPicture extends React.Component {
   }
 
   render () {
-    const { pictures, location, profil } = this.state
+    const { pictures, profil } = this.state
+
     return this.state.profilLoaded ? (
       <div className='col ProfilPicture__container' onMouseEnter={this.openProfil} onMouseLeave={this.closeProfil}>
         <img className='ProfilPicture__picture' src={profil.profilPicture} alt='' />
@@ -96,7 +100,7 @@ class ProfilPicture extends React.Component {
             <div className='ProfilPicture__Profil'>
               <div className='Profil__Viewer'>
                 <div style={styles.linkToProfil} onClick={() => {
-                  historyPush(`/dashboard/profil/${profil._id}/`)
+                  historyPush(`/dashboard/profil/${profil.id}/`)
                   this.props.profilView(profil._id)
                 }} />
                 <StackedPictures pictures={pictures} size={300} />
@@ -112,11 +116,22 @@ class ProfilPicture extends React.Component {
                   <div className='Profil__content'>
                     <IconLocation />
                     {profil.location.city ? `${profil.location.city}, ` : null}
-                    {Math.floor(location / 1000)}km
+                    {Math.round(profil.distance)}km
                   </div>
                   <div className='Profil__content'><IconScore />{profil.profilScore}</div>
                 </div>
                 <div className='Profil__bio'>{profil.biography}</div>
+                <div className='Profil__bio'>{
+                  map(profil.commonsTags, (tag, index) => {
+                    return <Chip
+                      backgroundColor='#79A5C5'
+                      labelColor='#ffffff'
+                      style={{margin: '4px'}}
+                      key={index}>
+                      {tag}
+                    </Chip>
+                  })
+                }</div>
               </div>
             </div>
           )

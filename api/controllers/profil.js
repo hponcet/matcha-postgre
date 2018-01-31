@@ -3,10 +3,9 @@ const createError = require('http-errors')
 const errors = require('../errors')
 
 const ProfilService = require('../services/profil')
-// const FinderService = require('../services/finder')
+const PicturesService = require('../services/pictures')
+const FinderService = require('../services/finder')
 const UsersService = require('../services/users')
-
-// const ValidateObjectId = /^[0-9a-fA-F]{24}$/
 
 const getProfil = async (req, res, next) => {
   try {
@@ -14,7 +13,7 @@ const getProfil = async (req, res, next) => {
 
     let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.connection.remoteAddress
     if (ip === '::1' || ip === '127.0.0.1') ip = process.env.PUBLIC_IP
-    
+
     if (ip && profil && profil.location && profil.location.ip !== ip) {
       profil.location = await UsersService.getGeolocation(ip)
       await ProfilService.updateLocation(profil.location, req.token.userId)
@@ -27,16 +26,16 @@ const getProfil = async (req, res, next) => {
   }
 }
 
-// const getPublicProfil = async (req, res, next) => {
-//   if (!_.has(req, 'params.userId') || _.isEmpty(req.params.userId) || !ValidateObjectId.test(req.params.userId)) return next(createError.BadRequest(errors.BAD_PROFIL))
-//   return MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
-//     if (err) return next(err)
-//     const db = client.db(dbParams.database)
-//     return ProfilService.getParsedProfilById(db, req.params.userId)
-//     .then((profil) => res.send(profil))
-//     .catch(next)
-//   })
-// }
+const getPublicProfil = async (req, res, next) => {
+  try {
+    if (!_.has(req, 'params.userId') || _.isEmpty(req.params.userId)) return next(createError.BadRequest(errors.BAD_PROFIL))
+
+    const profil = await ProfilService.getProfilById(req.params.userId)
+    return res.send(profil)
+  } catch (err) {
+    return next(err)
+  }
+}
 
 const updateProfil = async (req, res, next) => {
   try {
@@ -68,78 +67,42 @@ const updateProfil = async (req, res, next) => {
   }
 }
 
-// const getProfils = async (req, res, next) => {
-//   return MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
-//     if (err) return next(err)
-//     const db = client.db(dbParams.database)
-//     return ProfilService.getProfilPartByUserId(
-//       db,
-//       req.token.userId,
-//       {orientation: 1, 'location.loc': 1}
-//     ).then((profil) => {
-//       return FinderService.searchProfils({db, profil})
-//       .then((profils) => {
-//         if (!profils) return res.send()
-//         return res.send(parseProfils(profils))
-//       }).catch(next)
-//     }).catch(next)
-//   })
-// }
+const searchProfils = async (req, res, next) => {
+  try {
+    const {userId} = req.token
+    const { ageRange, rangeDistance, tags } = req.body
+    const currentDate = Date.now()
 
-// const searchProfils = async (req, res, next) => {
-//   if (!_.has(req.body, 'ageRange') || _.isEmpty(req.body.ageRange) ||
-//   !_.has(req.body.ageRange, 'min') || !_.has(req.body.ageRange, 'max')) {
-//     return next(createError.BadRequest(errors.BAD_PROFILS_SEARCH))
-//   }
-//   if (!_.has(req.body, 'rangeDistance')) {
-//     return next(createError.BadRequest(errors.BAD_PROFILS_SEARCH))
-//   }
-//   if (!_.has(req.body, 'tags')) {
-//     return next(createError.BadRequest(errors.BAD_PROFILS_SEARCH))
-//   }
+    const age = ageRange
+      ? {
+        min: Math.round((currentDate - (ageRange.min * 3.154e+10)) / 1000),
+        max: Math.round((currentDate - ((ageRange.max + 1) * 3.154e+10)) / 1000)
+      }
+      : null
+    const profil = await ProfilService.getProfilById(userId)
+    const profils = await FinderService.searchProfils(profil, rangeDistance, tags, age)
+    return res.send(profils)
+  } catch (err) {
+    return next(err)
+  }
+}
 
-//   const { ageRange, rangeDistance, tags } = req.body
-//   const age = {
-//     min: new Date(Date.now() - ageRange.min * 3.154e+10),
-//     max: new Date(Date.now() - (ageRange.max + 1) * 3.154e+10)
-//   }
+const purposedProfils = async (req, res, next) => {
+  try {
+    const {userId} = req.token
 
-//   return MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
-//     if (err) return next(err)
-//     const db = client.db(dbParams.database)
-//     return ProfilService.getProfilPartByUserId(
-//       db,
-//       req.token.userId,
-//       {orientation: 1, 'location.loc': 1}
-//     ).then((profil) => {
-//       return FinderService.searchProfils({db, profil, rangeDistance, tags, ageRange: age})
-//       .then((profils) => {
-//         if (!profils) return res.send()
-//         return res.send(parseProfils(profils))
-//       }).catch(next)
-//     }).catch(next)
-//   })
-// }
-
-// const parseProfils = async (profils) => {
-//   return _.map(profils, (profil) => {
-//     const { biography, birthday, location, pictures, profilPicture, pseudo, _id } = profil
-//     return {
-//       biography,
-//       birthday,
-//       location,
-//       pictures: _.map(pictures, (picture) => picture.picturePublicPath),
-//       profilPicture,
-//       pseudo,
-//       _id
-//     }
-//   })
-// }
+    const profil = await ProfilService.getProfilById(userId)
+    const profils = await FinderService.searchProfils(profil)
+    return res.send(profils)
+  } catch (err) {
+    return next(err)
+  }
+}
 
 module.exports = {
   getProfil,
-  // getProfils,
-  // getPublicProfil,
-  updateProfil
-  // searchProfils
+  getPublicProfil,
+  updateProfil,
+  purposedProfils,
+  searchProfils
 }
