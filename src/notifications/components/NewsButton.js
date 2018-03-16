@@ -16,7 +16,7 @@ class NewsButton extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      news: [],
+      notifications: [],
       openNotification: false,
       notification: {}
     }
@@ -24,21 +24,21 @@ class NewsButton extends React.Component {
   }
   componentDidMount () {
     this.socketInit()
-    this.props.fetchHistory()
+    this.props.getNotifications()
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.news) this.setState({ news: nextProps.news })
+    if (nextProps.notifications) this.setState({ notifications: nextProps.notifications })
   }
 
   socketInit () {
     window.matcha.socket.on('notification', (notification) => {
-      const news = this.state.news
-      news.push(notification)
+      const notifications = this.state.notifications
+      notifications.push(notification)
       this.setState({
         notification: notification,
         openNotification: true,
-        news
+        notifications
       })
     })
   }
@@ -70,7 +70,7 @@ class NewsButton extends React.Component {
           >
 
             <NewsFeed
-              news={this.state.news}
+              news={this.state.notifications}
               style={{maxWidth: '500px'}}
             />
             <Divider />
@@ -85,17 +85,17 @@ class NewsButton extends React.Component {
               <div
                 className='Sign__linkContainer'
                 style={{margin: '0', padding: '0', cursor: 'pointer'}}
-                onClick={() => { if (this.props.news.length > 0) this.props.archiveAllNews() }}
+                onClick={() => { if (this.props.notifications.length > 0) this.props.archiveAllNews() }}
               >
                 Tout archiver
               </div>
             </div>
           </IconMenu>
           {
-            this.state.news.length > 0
+            this.state.notifications.length > 0
             ? <Badge
               className='NewsFeed__badge'
-              badgeContent={this.state.news.length}
+              badgeContent={this.state.notifications.length}
               badgeStyle={{color: '#002257'}}
             />
             : null

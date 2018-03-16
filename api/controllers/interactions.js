@@ -1,157 +1,70 @@
-const _ = require('lodash')
-const createError = require('http-errors')
-const errors = require('../errors')
-
-const ValidateObjectId = /^[0-9a-fA-F]{24}$/
-
 const profilService = require('../services/profil')
-// const chatService = require('../services/chat')
+const chatService = require('../services/chat')
 const historyService = require('../services/history')
 const socketService = require('../services/socket')
+const interactionsService = require('../services/interactions')
 
-// const newLike = (req, res, next) => {
-//   if (!_.has(req, 'body.profilId') || !ValidateObjectId.test(req.body.profilId)) {
-//     return next(createError.BadRequest(errors.BAD_PROFIL_ID))
-//   }
-
-//   return MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
-//     if (err) return next(err)
-//     const db = client.db(dbParams.database)
-//     return profilService.getProfilPartByUserId(db, req.token.userId, {likes: 1})
-//     .then((userProfil) => {
-//       const userProfilId = userProfil._id
-//       const profilId = req.body.profilId
-
-//       if (userProfil.likes.indexOf(profilId) !== -1) {
-//         return res.send(userProfil.likes)
-//       }
-
-//       return profilService.addLike(db, userProfilId, profilId)
-//       .then(() => {
-//         return getProfilLikes(db, profilId)
-//         .then(profilLikes => {
-//           profilLikes.indexOf(userProfilId.toString()) === -1
-//           ? like(db, userProfilId.toString(), profilId.toString())
-//           : match(db, userProfilId.toString(), profilId.toString())
-//           return getProfilLikes(db, userProfilId)
-//           .then(likes => res.send(likes))
-//           .catch(next)
-//         }).catch(next)
-//       }).catch(next)
-//     }).catch(next)
-//   })
-// }
-
-// const getProfilLikes = (db, profilId) => {
-//   return profilService.getProfilPartById(db, profilId, {likes: 1})
-//   .then(profil => profil.likes)
-//   .catch(err => err)
-// }
-
-// const match = (db, userProfilId, profilId) => {
-//   return chatService.createNewChat(db, userProfilId, profilId)
-//   .then((chatId) => addMatch(db, userProfilId, profilId, chatId)
-//   .then(() => addMatch(db, profilId, userProfilId, chatId)
-//   ).catch(err => err)
-//   ).catch(err => err)
-// }
-
-const getLikes = async (req, res, next) => {
+const like = async (req, res, next) => {
   try {
-    return await profilService.getLikes(req.token.userId)
+    const { userId } = req.token
+    const { profilId: likedId } = req.body
+
+    const userProfil = await profilService.getProfilById(userId)
+    const likedProfil = await profilService.getProfilById(likedId)
+    const like = await interactionsService.getLike(userId, likedId)
+    const match = await interactionsService.getMatch(userId, likedId)
+
+    if (!like) {
+      await interactionsService.like(userId, likedId)
+      await socketService.likeNotification(userProfil, likedProfil)
+    } else if (!match && like.id !== userId) {
+      const chatId = await chatService.createNewChat(userId, likedId)
+      await interactionsService.match(userId, likedId, chatId)
+      await socketService.matchNotification(userProfil, likedProfil, chatId)
+    }
+
+    const likes = await interactionsService.getLikes(userId, likedId)
+
+    return res.send(likes)
   } catch (err) {
     return next(err)
   }
 }
 
-// const addMatch = (db, profilId, matchedId, chatId) => {
-//   return profilService.getProfilById(db, matchedId)
-//   .then((matchedProfil) => {
-//     return profilService.addMatch(db, profilId, matchedId, chatId)
-//     .then(() => {
-//       const notification = {
-//         _id: new ObjectID(),
-//         type: 'MATCH',
-//         actionUrl: `/dashboard/chat?thread=${chatId}`,
-//         profilUrl: `/dashboard/profil/${matchedProfil._id}`,
-//         profilPicture: matchedProfil.profilPicture,
-//         pseudo: matchedProfil.pseudo,
-//         message: ' et vous avez matché ! Dites lui un mot.',
-//         date: Date.now()
-//       }
-//       return historyService.addNews(db, profilId, notification)
-//       .then(() => socketService.sendNotification(profilId, notification))
-//       .catch(err => err)
-//     }).catch(err => err)
-//   }).catch(err => err)
-// }
+const getLikes = async (req, res, next) => {
+  try {
+    const { userId } = req.token
+    const { profilId } = req.body
 
-// const like = (db, userProfilId, profilId) => {
-//   return addProfilLike(db, userProfilId, profilId)
-//   .then(() => addUserLike(db, userProfilId, profilId)
-//   .catch(err => err)
-//   ).catch(err => err)
-// }
+    return await interactionsService.getLikes(userId, profilId)
+  } catch (err) {
+    return next(err)
+  }
+}
 
-// const addUserLike = (db, userProfilId, profilId) => {
-//   return profilService.getProfilById(db, profilId)
-//   .then((profil) => {
-//     const notification = {
-//       _id: new ObjectID(),
-//       type: 'LIKE',
-//       actionUrl: `/dashboard/profil/${profil._id}`,
-//       profilUrl: `/dashboard/profil/${profil._id}`,
-//       profilPicture: profil.profilPicture,
-//       pseudo: profil.pseudo,
-//       message: ' vous plais.',
-//       date: Date.now()
-//     }
-//     return historyService.addArchive(db, userProfilId, notification)
-//   }).catch(err => err)
-// }
+const profilView = async (req, res, next) => {
+  try {
+    const { profilId } = req.body
+    const userProfil = await profilService.getProfilById(req.token.userId)
+    const notification = {
+      type: 'VIEW',
+      id: profilId,
+      actionUrl: `/dashboard/profil/${userProfil.id}`,
+      profilUrl: `/dashboard/profil/${userProfil.id}`,
+      profilPicture: userProfil.profilPicture,
+      pseudo: userProfil.pseudo,
+      message: ' à vu votre profil.'
+    }
 
-// const addProfilLike = (db, userProfilId, profilId) => {
-//   return profilService.getProfilById(db, userProfilId)
-//   .then((userProfil) => {
-//     const notification = {
-//       _id: new ObjectID(),
-//       type: 'LIKE',
-//       actionUrl: `/dashboard/profil/${userProfil._id}`,
-//       profilUrl: `/dashboard/profil/${userProfil._id}`,
-//       profilPicture: userProfil.profilPicture,
-//       pseudo: userProfil.pseudo,
-//       message: ' vous apprécie.',
-//       date: Date.now()
-//     }
-//     return historyService.addNews(db, profilId, notification)
-//     .then(() => socketService.sendNotification(profilId, notification))
-//   }).catch(err => err)
-// }
-
-// const profilView = (req, res, next) => {
-//   return MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
-//     if (err) return next(err)
-//     const db = client.db(dbParams.database)
-//     return profilService.getProfilByUserId(db, req.token.userId)
-//     .then((userProfil) => {
-//       const notification = {
-//         _id: new ObjectID(),
-//         type: 'VIEW',
-//         actionUrl: `/dashboard/profil/${userProfil._id}`,
-//         profilUrl: `/dashboard/profil/${userProfil._id}`,
-//         profilPicture: userProfil.profilPicture,
-//         pseudo: userProfil.pseudo,
-//         message: ' à vu votre profil.',
-//         date: Date.now()
-//       }
-//       return historyService.addNews(db, req.body.profilId, notification)
-//       .then(() => socketService.sendNotification(req.body.profilId, notification))
-//     }).catch(err => err)
-//   })
-// }
-
+    await historyService.addNews(profilId, notification)
+    await socketService.sendNotification(profilId, notification)
+    return res.send()
+  } catch (err) {
+    return next(err)
+  }
+}
 module.exports = {
-  // newLike,
-  getLikes
-  // profilView
+  like,
+  getLikes,
+  profilView
 }

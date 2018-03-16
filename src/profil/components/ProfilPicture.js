@@ -101,7 +101,7 @@ class ProfilPicture extends React.Component {
               <div className='Profil__Viewer'>
                 <div style={styles.linkToProfil} onClick={() => {
                   historyPush(`/dashboard/profil/${profil.id}/`)
-                  this.props.profilView(profil._id)
+                  this.props.profilView(profil.id)
                 }} />
                 <StackedPictures pictures={pictures} size={300} />
               </div>
@@ -118,10 +118,20 @@ class ProfilPicture extends React.Component {
                     {profil.location.city ? `${profil.location.city}, ` : null}
                     {Math.round(profil.distance)}km
                   </div>
-                  <div className='Profil__content'><IconScore />{profil.profilScore}</div>
+                  <div className='Profil__content'><IconScore />{profil.score}</div>
                 </div>
                 <div className='Profil__bio'>{profil.biography}</div>
-                <div className='Profil__bio'>{
+                <div
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexWrap: 'wrap',
+                    margin: '20px 10px'
+                  }}
+                >{
                   map(profil.commonsTags, (tag, index) => {
                     return <Chip
                       backgroundColor='#79A5C5'

@@ -2,33 +2,34 @@ import * as constants from './constants'
 import axios from 'axios'
 import config from '../config/config'
 
-export const fetchHistory = () => dispatch => {
-  dispatch({ type: constants.FETCH_HISTORY_REQUEST })
+export const getNotifications = () => dispatch => {
+  dispatch({ type: constants.GET_NOTIFICATIONS_REQUEST })
   axios({
-    method: 'get',
-    url: `${config.API_BASE_URI}/history`
+    method: 'post',
+    url: `${config.API_BASE_URI}/notifications`,
+    data: {status: 'NOTIFICATION'}
   })
-  .then((profil) => dispatch({type: constants.FETCH_HISTORY_SUCCESS, payload: profil.data}))
-  .catch((error) => dispatch({type: constants.FETCH_HISTORY_FAILURE, payload: error}))
+  .then((history) => dispatch({type: constants.GET_NOTIFICATIONS_SUCCESS, payload: history.data}))
+  .catch((error) => dispatch({type: constants.GET_NOTIFICATIONS_FAILURE, payload: error}))
 }
 
 export const archiveNews = (newsId) => dispatch => {
-  dispatch({ type: constants.FETCH_HISTORY_REQUEST })
+  dispatch({ type: constants.GET_NOTIFICATIONS_REQUEST })
   axios({
-    method: 'put',
-    url: `${config.API_BASE_URI}/history`,
+    method: 'delete',
+    url: `${config.API_BASE_URI}/notifications`,
     data: {newsId}
   })
-  .then((profil) => dispatch({type: constants.FETCH_HISTORY_SUCCESS, payload: profil.data}))
-  .catch((error) => dispatch({type: constants.FETCH_HISTORY_FAILURE, payload: error}))
+  .then((profil) => dispatch({type: constants.GET_NOTIFICATIONS_SUCCESS, payload: profil.data}))
+  .catch((error) => dispatch({type: constants.GET_NOTIFICATIONS_FAILURE, payload: error}))
 }
 
 export const archiveAllNews = () => dispatch => {
-  dispatch({ type: constants.FETCH_HISTORY_REQUEST })
+  dispatch({ type: constants.GET_NOTIFICATIONS_REQUEST })
   axios({
-    method: 'post',
-    url: `${config.API_BASE_URI}/history`
+    method: 'delete',
+    url: `${config.API_BASE_URI}/notifications/all`
   })
-  .then((profil) => dispatch({type: constants.FETCH_HISTORY_SUCCESS, payload: profil.data}))
-  .catch((error) => dispatch({type: constants.FETCH_HISTORY_FAILURE, payload: error}))
+  .then((profil) => dispatch({type: constants.GET_NOTIFICATIONS_SUCCESS, payload: profil.data}))
+  .catch((error) => dispatch({type: constants.GET_NOTIFICATIONS_FAILURE, payload: error}))
 }

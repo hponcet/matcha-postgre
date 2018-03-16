@@ -15,7 +15,7 @@ const usersRouter = require('./routes/users')
 const corsRouter = require('./routes/cors')
 const tagsRouter = require('./routes/tags')
 const historyRouter = require('./routes/history')
-// const chatRouter = require('./routes/chat')
+const chatRouter = require('./routes/chat')
 const profilRouter = require('./routes/profil')
 
 global.io = {
@@ -36,7 +36,7 @@ app.use('/', authenticationRouter)
 app.use('/', usersRouter)
 app.use('/', tagsRouter)
 app.use('/', historyRouter)
-// app.use('/', chatRouter)
+app.use('/', chatRouter)
 app.use('/', profilRouter)
 app.use(errorsHandlingMiddleware)
 

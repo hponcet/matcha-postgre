@@ -33,46 +33,12 @@ export const getProfil = (userId) => dispatch => {
   .catch((error) => dispatch({type: constants.GET_PROFIL_FAILURE, payload: error}))
 }
 
-export const getProfils = () => dispatch => {
-  dispatch({ type: constants.GET_PROFILS_REQUEST })
-  axios({
-    method: 'get',
-    url: `${config.API_BASE_URI}/profils`
-  })
-  .then((profils) => dispatch({type: constants.GET_PROFILS_SUCCESS, payload: profils.data}))
-  .catch((error) => dispatch({type: constants.GET_PROFILS_FAILURE, payload: error}))
-}
-
-export const searchProfils = (search) => dispatch => {
-  dispatch({ type: constants.GET_PROFILS_REQUEST })
-  return axios({
-    method: 'post',
-    url: `${config.API_BASE_URI}/profils`,
-    data: search
-  })
-  .then((profils) => dispatch({type: constants.GET_PROFILS_SUCCESS, payload: profils.data}))
-  .catch((error) => dispatch({type: constants.GET_PROFILS_FAILURE, payload: error}))
-}
-
 export const like = (profilId) => dispatch => {
-  dispatch({ type: constants.LIKE_PROFIL_REQUEST })
   return axios({
     method: 'put',
     url: `${config.API_BASE_URI}/profils/like`,
     data: {profilId}
   })
-  .then((data) => dispatch({type: constants.LIKE_PROFIL_SUCCESS, payload: data}))
-  .catch((error) => dispatch({type: constants.LIKE_PROFIL_FAILURE, payload: error}))
-}
-
-export const getLikes = () => dispatch => {
-  dispatch({ type: constants.LIKE_PROFIL_REQUEST })
-  return axios({
-    method: 'get',
-    url: `${config.API_BASE_URI}/profils/me/likes`
-  })
-  .then((data) => dispatch({type: constants.LIKE_PROFIL_SUCCESS, payload: data}))
-  .catch((error) => dispatch({type: constants.LIKE_PROFIL_FAILURE, payload: error}))
 }
 
 export const profilView = (profilId) => dispatch => {

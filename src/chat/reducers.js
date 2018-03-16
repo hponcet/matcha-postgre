@@ -2,7 +2,7 @@ import * as constants from './constants'
 
 const initialThreadsState = {
   threadsFetching: false,
-  data: null,
+  threads: null,
   error: null
 }
 export const ThreadsReducer = (state = initialThreadsState, { type, payload }) => {
@@ -10,7 +10,7 @@ export const ThreadsReducer = (state = initialThreadsState, { type, payload }) =
     case constants.FETCH_THREADS_REQUEST:
       return { ...state, threadsFetching: true }
     case constants.FETCH_THREADS_SUCCESS:
-      return { ...state, threadsFetching: false, error: null, data: payload }
+      return { ...state, threadsFetching: false, error: null, threads: payload }
     case constants.FETCH_THREADS_FAILURE:
       return { ...state, threadsFetching: false, error: payload }
     default:
@@ -20,7 +20,9 @@ export const ThreadsReducer = (state = initialThreadsState, { type, payload }) =
 
 const initialChatState = {
   chatFetching: false,
-  data: null,
+  userPicture: null,
+  profilPicture: null,
+  messages: [],
   error: null
 }
 export const ChatReducer = (state = initialChatState, { type, payload }) => {
@@ -28,7 +30,14 @@ export const ChatReducer = (state = initialChatState, { type, payload }) => {
     case constants.GET_CHAT_REQUEST:
       return { ...state, chatFetching: true }
     case constants.GET_CHAT_SUCCESS:
-      return { ...state, chatFetching: false, error: null, data: payload }
+      return {
+        ...state,
+        chatFetching: false,
+        error: null,
+        userPicture: payload.userPicture,
+        profilPicture: payload.profilPicture,
+        messages: payload.messages
+      }
     case constants.GET_CHAT_FAILURE:
       return { ...state, chatFetching: false, error: payload }
     default:

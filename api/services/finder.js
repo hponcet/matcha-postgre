@@ -3,12 +3,11 @@ const createError = require('http-errors')
 const errors = require('../errors')
 const profilRequests = require('./profilRequests')
 
-const find = async ({profilId, location, distance, ageRange, tags, orientation}) => {
-  const query = profilRequests.queryConstructor({profilId, location, distance, ageRange, tags, orientation})
+const purposedProfils = async (...props) => {
+  const { query, values } = profilRequests.purposedProfils(...props)
 
   try {
-    const profils = await db.query(query)
-    // profils.rows.map((profil) => console.log(profil.tagsIntersect))
+    const profils = await db.query(query, values)
     return profils.rows
   } catch (err) {
     console.log(err.stack)
@@ -16,33 +15,16 @@ const find = async ({profilId, location, distance, ageRange, tags, orientation})
   }
 }
 
-const purposedProfils = async (profil) => {
-  const query = profilRequests.queryConstructor(profil)
-
+const searchProfils = async ({profil, order, offset, rangeDistance, tags, age}) => {
   try {
-    const profils = await db.query(query)
-    return profils
+    const { query, values } = profilRequests.searchProfils({profil, order, offset, rangeDistance, tags, age})
+    const profils = await db.query(query, values)
+    return profils.rows
   } catch (err) {
-    return err
+    console.log(err.stack)
+    throw createError.InternalServerError(errors.INTRNAL_ERROR)
   }
 }
-
-const searchProfils = async (profil, distance, tags, ageRange) => {
-  try {
-    const profils = await find({
-      location: profil.location.loc,
-      orientation: profil.orientation,
-      profilId: profil.id,
-      distance,
-      ageRange,
-      tags
-    })
-    return profils
-  } catch (err) {
-    return err
-  }
-}
-
 module.exports = {
   searchProfils,
   purposedProfils

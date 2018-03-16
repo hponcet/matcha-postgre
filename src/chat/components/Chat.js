@@ -1,6 +1,5 @@
 import React from 'react'
-import findIndex from 'lodash/findIndex'
-
+import forEach from 'lodash/forEach'
 import { historyPush } from '../../config/history'
 
 import Dialog from 'material-ui/Dialog'
@@ -15,76 +14,57 @@ class Chat extends React.Component {
     super(props)
     this.state = {
       currentThread: null,
-      currentProfil: null,
-      threadsLabels: [],
-      profilViewed: null,
       openInfos: false
     }
     this.onSelectThread = this.onSelectThread.bind(this)
-    this.urlParamsActions = this.urlParamsActions.bind(this)
+    this.parseUrlParams = this.parseUrlParams.bind(this)
     this.handleInfosClose = this.handleInfosClose.bind(this)
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.pictures.length === 0) {
-      historyPush('/dashboard/profil?emptypics=1')
-    }
-    if (!nextProps.fetching && nextProps.threads) {
-      this.setState({threadsLabels: nextProps.threads})
-      if (nextProps.threads.length > 0 && !this.state.currentThread) {
-        this.setState({
-          currentThread: nextProps.threads[0].chatId,
-          profilViewed: nextProps.threads[0]._id
-        })
-      }
-      if (nextProps.threads.length > 0 && this.state.currentThread) {
-        const threadIndex = findIndex(nextProps.threads, (thread) => thread.chatId === this.state.currentThread)
-        if (threadIndex > -1) {
-          const profilViewed = nextProps.threads[threadIndex]._id
-          this.setState({ profilViewed })
-        }
-      }
-      if (nextProps.threads.length === 0) {
-        this.setState({openInfos: true})
-      }
-    }
   }
 
   componentDidMount () {
     this.props.fetchThreads()
-    this.urlParamsActions()
+    this.parseUrlParams()
   }
 
-  urlParamsActions () {
+  parseUrlParams () {
     const UrlParams = new URLSearchParams(this.props.location.search)
-    if (UrlParams.get('thread')) {
-      this.setState({currentThread: UrlParams.get('thread')})
-    }
+    const chatId = UrlParams.get('thread')
+    if (chatId) this.onSelectThread(chatId)
   }
 
   handleInfosClose () { this.setState({openInfos: false}) }
 
-  onSelectThread (currentThread, profilViewed) {
-    this.setState({currentThread, profilViewed})
+  onSelectThread (chatId) {
+    forEach(this.props.threads, (thread, index) => {
+      if (thread.chatId === chatId) {
+        this.setState({currentThread: thread, chatId})
+        this.props.getCurrentThread(chatId)
+      }
+    })
   }
 
   render () {
+    const { currentThread } = this.state
+    const { threads, thread, userId } = this.props
+
     return (
       <div className='Chat__container'>
         <div className='ChatList'>
           <ChatList
-            threads={this.state.threadsLabels}
-            currentThread={this.state.currentThread}
+            threads={threads}
+            chatId={currentThread ? currentThread.chatId : null}
             onSelectThread={this.onSelectThread}
           />
         </div>
         <div style={{width: '100%', height: '100%'}}>
           <ChatText
-            currentThread={this.state.currentThread}
+            thread={thread}
+            threadInfo={currentThread}
+            userId={userId}
           />
         </div>
         <div className='ChatProfilPreview' style={{width: '40%', height: '100%'}}>
-          <ChatProfilPreview profilId={this.state.profilViewed} />
+          {/* <ChatProfilPreview profilId={threads && threads.length > currentThread ? threads[currentThread].id : null} /> */}
         </div>
         <Dialog
           title={`Vous n'avez encore pas de matchs`}

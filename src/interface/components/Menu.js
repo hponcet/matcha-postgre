@@ -48,7 +48,7 @@ class Menu extends React.Component {
     const profilScore = (
       <div className='Menu__ProfilScore'>
         <div className='Menu__ProfilScore__title'>Popularité</div>
-        <div className='Menu__ProfilScore__score'>{this.props.profilScore}</div>
+        <div className='Menu__ProfilScore__score'>{this.props.profil.score}</div>
       </div>
     )
 

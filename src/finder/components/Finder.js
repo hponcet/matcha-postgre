@@ -5,11 +5,18 @@ import { historyPush } from '../../config/history'
 
 import RaisedButton from 'material-ui/RaisedButton'
 import { Card, CardText, CardHeader } from '../../styled-components/Cards'
-import SearchIcon from 'material-ui/svg-icons/action/search'
-import CloseIcon from 'material-ui/svg-icons/navigation/close'
+import { SelectField, MenuItem } from 'material-ui'
 import SearchTags from '../../styled-components/tags/component/SearchTags'
 
-import Profils from '../../profil/containers/ProfilList'
+import SearchIcon from 'material-ui/svg-icons/action/search'
+import IconButton from 'material-ui/IconButton/IconButton'
+import ArrowUp from 'material-ui/svg-icons/hardware/keyboard-arrow-up'
+import ArrowDown from 'material-ui/svg-icons/hardware/keyboard-arrow-down'
+import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right'
+import CloseIcon from 'material-ui/svg-icons/navigation/close'
+import ChevronLeft from 'material-ui/svg-icons/navigation/chevron-left'
+
+import ProfilList from './ProfilsList'
 
 import 'react-input-range/lib/css/index.css'
 import './Finder.css'
@@ -18,36 +25,76 @@ class Finder extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
+      showSearch: false,
       ageRange: {
         min: 20,
         max: 55
       },
       rangeDistance: 60,
       location: null,
-      departments: [],
-      userZip: null,
-      tags: []
+      tags: [],
+      order: 0
     }
     this.handleTagChange = this.handleTagChange.bind(this)
     this.handleSearch = this.handleSearch.bind(this)
+    this.prevOffset = this.prevOffset.bind(this)
+    this.nextOffset = this.nextOffset.bind(this)
+    this.handleOrder = this.handleOrder.bind(this)
+  }
+
+  componentDidMount () {
+    this.props.getProfils(this.state.offset, this.state.order)
+    this.setState({location: this.props.location})
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.pictures.lenght === 0) {
+    if (nextProps.pictures && nextProps.pictures.lenght === 0) {
       historyPush('/dashboard/profil?emptypics=1')
     }
   }
 
-  componentDidMount () {
-    this.setState({location: this.props.location})
-  }
-
-  handleTagChange (tags) {
-    this.setState({tags})
-  }
+  handleTagChange (tags) { this.setState({tags}) }
 
   handleSearch () {
     this.props.searchProfils({
+      offset: 0,
+      order: this.state.order,
+      ageRange: this.state.ageRange,
+      rangeDistance: this.state.rangeDistance,
+      tags: this.state.tags
+    })
+  }
+
+  nextOffset () {
+    if (this.state.showSearch) {
+      return this.props.searchProfils({
+        offset: this.props.offset + 12,
+        order: this.state.order,
+        ageRange: this.state.ageRange,
+        rangeDistance: this.state.rangeDistance,
+        tags: this.state.tags
+      })
+    }
+    this.props.getProfils(this.props.offset + 12, this.state.order)
+  }
+  prevOffset () {
+    if (this.state.showSearch && this.props.offset > 11) {
+      return this.props.searchProfils({
+        offset: this.props.offset - 12,
+        order: this.state.order,
+        ageRange: this.state.ageRange,
+        rangeDistance: this.state.rangeDistance,
+        tags: this.state.tags
+      })
+    }
+    if (this.props.offset > 11) this.props.getProfils(this.props.offset - 12, this.state.order)
+  }
+  handleOrder (event, index, value) {
+    this.setState({order: value})
+    if (!this.state.showSearch) return this.props.getProfils(this.props.offset || 0, value)
+    this.props.searchProfils({
+      offset: this.props.offset,
+      order: value,
       ageRange: this.state.ageRange,
       rangeDistance: this.state.rangeDistance,
       tags: this.state.tags
@@ -65,15 +112,22 @@ class Finder extends React.Component {
             boxShadow: '0'
           }}>
           <CardHeader
-            actAsExpander
             style={{
               backgroundColor: '#79A5C5',
               color: '#ffffff',
               boxShadow: 'rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px'
             }}
             showExpandableButton
-            closeIcon={<SearchIcon color='#ffffff' />}
-            openIcon={<CloseIcon color='#ffffff' />}
+            closeIcon={
+              <SearchIcon
+                onClick={() => { this.setState({showSearch: true}) }}
+                color='#ffffff'
+              />}
+            openIcon={
+              <CloseIcon
+                onClick={() => { this.setState({showSearch: false}) }}
+                color='#ffffff'
+              />}
           >
             Recherche
           </CardHeader>
@@ -125,7 +179,7 @@ class Finder extends React.Component {
             </div>
             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
               <RaisedButton
-                disabled={this.props.profilsRequesting}
+                disabled={this.props.searching}
                 onClick={this.handleSearch}
                 label='Valider'
                 backgroundColor='#79A5C5'
@@ -135,7 +189,31 @@ class Finder extends React.Component {
             </div>
           </CardText>
         </Card>
-        <Profils />
+        <Card style={{margin: '0px'}}>
+          <CardText>
+            <ProfilList profils={this.props.profils} />
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <IconButton onClick={this.prevOffset} disabled={this.props.offset < 11}><ChevronLeft color='black' /></IconButton>
+              <SelectField
+                style={{ width: '120px' }}
+                floatingLabelText='Trier par'
+                autoWidth
+                value={this.state.order}
+                onChange={this.handleOrder}
+              >
+                <MenuItem value={0} primaryText={<div className='Finder_MenuItems'><ArrowUp color='grey' /> Distance</div>} />
+                <MenuItem value={1} primaryText={<div className='Finder_MenuItems'><ArrowDown color='grey' /> Distance</div>} />
+                <MenuItem value={2} primaryText={<div className='Finder_MenuItems'><ArrowUp color='grey' /> Age</div>} />
+                <MenuItem value={3} primaryText={<div className='Finder_MenuItems'><ArrowDown color='grey' /> Age</div>} />
+                <MenuItem value={4} primaryText={<div className='Finder_MenuItems'><ArrowUp color='grey' /> Intérets</div>} />
+                <MenuItem value={5} primaryText={<div className='Finder_MenuItems'><ArrowDown color='grey' /> Intérets</div>} />
+                <MenuItem value={6} primaryText={<div className='Finder_MenuItems'><ArrowUp color='grey' /> Score</div>} />
+                <MenuItem value={7} primaryText={<div className='Finder_MenuItems'><ArrowDown color='grey' /> Score</div>} />
+              </SelectField>
+              <IconButton onClick={this.nextOffset}><ChevronRight color='black' /></IconButton>
+            </div>
+          </CardText>
+        </Card>
       </div>
     )
   }

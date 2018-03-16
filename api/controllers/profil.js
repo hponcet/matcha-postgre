@@ -3,7 +3,6 @@ const createError = require('http-errors')
 const errors = require('../errors')
 
 const ProfilService = require('../services/profil')
-const PicturesService = require('../services/pictures')
 const FinderService = require('../services/finder')
 const UsersService = require('../services/users')
 
@@ -30,7 +29,10 @@ const getPublicProfil = async (req, res, next) => {
   try {
     if (!_.has(req, 'params.userId') || _.isEmpty(req.params.userId)) return next(createError.BadRequest(errors.BAD_PROFIL))
 
-    const profil = await ProfilService.getProfilById(req.params.userId)
+    const { userId } = req.token
+    const { userId: profilId } = req.params
+
+    const profil = await ProfilService.getPublicProfil(userId, profilId)
     return res.send(profil)
   } catch (err) {
     return next(err)
@@ -70,18 +72,27 @@ const updateProfil = async (req, res, next) => {
 const searchProfils = async (req, res, next) => {
   try {
     const {userId} = req.token
+    let {order, offset} = req.body
     const { ageRange, rangeDistance, tags } = req.body
-    const currentDate = Date.now()
 
+    const currentDate = Date.now()
     const age = ageRange
       ? {
-        min: Math.round((currentDate - (ageRange.min * 3.154e+10)) / 1000),
-        max: Math.round((currentDate - ((ageRange.max + 1) * 3.154e+10)) / 1000)
+        min: currentDate - (ageRange.min * 3.154e+10),
+        max: currentDate - ((ageRange.max + 1) * 3.154e+10)
       }
       : null
+
     const profil = await ProfilService.getProfilById(userId)
-    const profils = await FinderService.searchProfils(profil, rangeDistance, tags, age)
-    return res.send(profils)
+    let profils = await FinderService.searchProfils({profil, order, offset, rangeDistance, tags, age})
+    if (profils.length === 0 && offset > 0) {
+      offset = 0
+      profils = await FinderService.searchProfils({profil, order, offset, rangeDistance, tags, age})
+    }
+    return res.send({
+      data: profils,
+      offset
+    })
   } catch (err) {
     return next(err)
   }
@@ -90,10 +101,18 @@ const searchProfils = async (req, res, next) => {
 const purposedProfils = async (req, res, next) => {
   try {
     const {userId} = req.token
+    let {order, offset} = req.body
 
     const profil = await ProfilService.getProfilById(userId)
-    const profils = await FinderService.searchProfils(profil)
-    return res.send(profils)
+    let profils = await FinderService.purposedProfils(profil, order, offset)
+    if (profils.length === 0 && offset > 0) {
+      offset = 0
+      profils = await FinderService.purposedProfils(profil, order, offset)
+    }
+    return res.send({
+      data: profils,
+      offset
+    })
   } catch (err) {
     return next(err)
   }

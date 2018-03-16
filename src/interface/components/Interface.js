@@ -14,11 +14,10 @@ import './Interface.css'
 class Interface extends React.Component {
   componentDidMount () {
     this.props.fetchProfil()
-    this.props.getLikes()
   }
 
   componentWillReceiveProps (nextProps) {
-    if (!this.props.profil.profilId && nextProps.profil.profilId) connectSocket(nextProps.profil.profilId)
+    if (!this.props.profil.id && nextProps.profil.id) connectSocket(nextProps.profil.id)
   }
 
   render () {

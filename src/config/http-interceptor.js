@@ -13,8 +13,7 @@ export const initErrorInterceptor = () => {
     } else {
       error.appCode = 'UNKNOWN_ERROR'
     }
-    console.error(error)
-    console.error(error.appCode)
+    // console.error(error.appCode)
     return Promise.reject(error)
   })
 }

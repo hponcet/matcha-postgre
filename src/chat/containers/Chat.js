@@ -1,13 +1,15 @@
 import { connect } from 'react-redux'
 
 import Chat from '../components/Chat'
-import { fetchThreads } from '../actions'
+import { fetchThreads, getCurrentThread } from '../actions'
 
 export default connect((state) => ({
-  threads: state.threads.data,
-  fetching: state.threads.threadsFetching,
-  pictures: state.profil.pictures
+  threadsFetching: state.threads.threadsFetching,
+  userId: state.profil.id,
+  threads: state.threads.threads,
+  thread: state.chat
 }), {
-  fetchThreads
+  fetchThreads,
+  getCurrentThread
 }
 )(Chat)

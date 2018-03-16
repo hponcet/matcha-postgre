@@ -1,18 +1,23 @@
 import * as constants from './constants'
 
-const initialHistoryState = {
-  historyFetching: false,
-  data: null,
+const initialNotificationsState = {
+  fetching: false,
+  data: [],
   error: null
 }
-export const HistoryReducer = (state = initialHistoryState, { type, payload }) => {
+export const NotificationReducer = (state = initialNotificationsState, { type, payload }) => {
   switch (type) {
-    case constants.FETCH_HISTORY_REQUEST:
-      return { ...state, historyFetching: true }
-    case constants.FETCH_HISTORY_SUCCESS:
-      return { ...state, historyFetching: false, error: null, data: payload }
-    case constants.FETCH_HISTORY_FAILURE:
-      return { ...state, historyFetching: false, error: payload }
+    case constants.GET_NOTIFICATIONS_REQUEST:
+      return { ...state, fetching: true }
+    case constants.GET_NOTIFICATIONS_SUCCESS:
+      return {
+        ...state,
+        fetching: false,
+        error: null,
+        data: payload
+      }
+    case constants.GET_NOTIFICATIONS_FAILURE:
+      return { ...state, fetching: false, error: payload }
     default:
       return state
   }

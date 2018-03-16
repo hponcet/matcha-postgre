@@ -6,7 +6,8 @@ import { like } from '../actions'
 export default connect(
   (state) => ({
     user: state.profil,
-    userLikes: state.likes.data
+    liked: state.publicProfil.liked,
+    chatId: state.publicProfil.chatId
   }), {
     like
   }

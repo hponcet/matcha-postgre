@@ -1,6 +1,8 @@
 import React from 'react'
 import anime from 'animejs'
 
+import { historyPush } from '../../config/history'
+
 import IconButton from 'material-ui/IconButton'
 import LoveIcon from 'mdi-react/HeartIcon'
 import MessageIcon from 'mdi-react/CommentTextIcon'
@@ -10,8 +12,14 @@ import './ProfilCallToAction.css'
 class ProfilCallToAction extends React.Component {
   constructor (props) {
     super(props)
-    this.state = {}
+    this.state = {
+      isClicked: false
+    }
     this.like = this.like.bind(this)
+  }
+
+  componentDidMount () {
+    if (this.props.chatId || this.props.liked) this.setState({isClicked: true})
   }
 
   like () {
@@ -29,10 +37,12 @@ class ProfilCallToAction extends React.Component {
         easing: 'easeInOutQuart'
       }
     })
+    this.setState({isClicked: true})
   }
 
   render () {
-    const likeCTABtn = (isClicked) => (
+    const { isClicked } = this.state
+    const likeCTABtn = () => (
       <IconButton
         style={{ width: '55px', height: '55px' }}
         onClick={this.like}
@@ -42,17 +52,19 @@ class ProfilCallToAction extends React.Component {
       </IconButton>
     )
     const messageCTABtn = (
-      <div style={{width: '0px'}}>
-        <IconButton style={{ width: '55px', height: '55px' }}>
+      <div>
+        <IconButton
+          style={{ width: '55px', height: '55px' }}
+          onClick={() => { historyPush(`/dashboard/chat?thread=${chatId}`) }}>
           <MessageIcon className='ProfilCTA__icon' />
         </IconButton>
       </div>
     )
-    const { userLikes } = this.props
+    const { chatId, liked } = this.props
     return (
       <div className='ProfilCTA__container'>
-        {userLikes && userLikes.indexOf(this.props.profilId) !== -1 ? likeCTABtn(true) : likeCTABtn(false)}
-        {messageCTABtn}
+        {chatId || liked ? likeCTABtn(true) : likeCTABtn(false)}
+        {chatId ? messageCTABtn : null}
       </div>
     )
   }

@@ -1,80 +1,51 @@
-const map = require('lodash/map')
-
-const MongoClient = require('mongodb').MongoClient
-const dbParams = require('../config/config').DATABASE
-const dbUrl = `${dbParams.dialect}://${dbParams.host}:${dbParams.port}/${dbParams.database}`
-const mongoSettings = require('../config/config').DATABASE.settings
-
-const profilService = require('../services/profil')
 const chatService = require('../services/chat')
 const socketService = require('../services/socket')
 
-const getAllThreads = (req, res, next) => {
-  return MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
-    if (err) return next(err)
-    const db = client.db(dbParams.database)
-    return profilService.getProfilPartByUserId(db, req.token.userId, {_id: 1})
-    .then((profilId) => {
-      return getProfilsMatched(db, profilId)
-      .then(profils => res.send(profils))
-      .catch(next)
-    }).catch(next)
-  })
+const getThreads = async (req, res, next) => {
+  try {
+    const { userId } = req.token
+    const threads = await chatService.getThreads(userId)
+
+    console.log(threads)
+
+    return res.send(threads)
+  } catch (err) {
+    return err
+  }
 }
 
-const getProfilsMatched = (db, profilId) => {
-  return profilService.getProfilPartById(db, profilId._id, {matchs: 1})
-  .then((profil) => {
-    return Promise.all(map(profil.matchs, (match, index) => {
-      return profilService.getParsedProfilById(db, match.profilId)
-    }))
-    .then((profils) => {
-      return Promise.all(map(profil.matchs, (match, index) => {
-        return chatService.getThreadsUpdate(db, match.chatId)
-      }))
-      .then((threads) => {
-        for (let index = 0; index < profil.matchs.length; index++) {
-          profils[index].chatId = profil.matchs[index].chatId
-          profils[index].updated = threads[index].updated
-        }
-        return profils
-      })
-    }).catch(err => err)
-  }).catch(err => err)
-}
+const getThread = async (req, res, next) => {
+  try {
+    const { chatId } = req.body
 
-const getThread = (req, res, next) => {
-  return MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
-    if (err) return next(err)
-    const db = client.db(dbParams.database)
-    return chatService.getThread(db, req.body.chatId)
-    .then((thread) => {
-      return res.send(thread)
-    })
-    .catch(next)
-  })
-}
-
-const sendMessage = (req, res, next) => {
-  return MongoClient.connect(dbUrl, mongoSettings, (err, client) => {
-    if (err) return next(err)
-    const db = client.db(dbParams.database)
-    const message = {
-      content: req.body.message.content,
-      profilId: req.body.message.profilId,
-      date: req.body.message.date
+    const messages = await chatService.getThread(chatId)
+    const thread = {
+      chatId,
+      messages
     }
-    const { destId, chatId } = req.body.message
-    return chatService.addMessage(db, message, chatId)
-    .then(() => {
-      return socketService.sendMessage(destId, chatId, message)
-      .then(() => res.send())
-    }).catch(next)
-  })
+
+    return res.send(thread)
+  } catch (err) {
+    return err
+  }
+}
+
+const sendMessage = async (req, res, next) => {
+  try {
+    const { userId } = req.token
+    const { message } = req.body
+
+    const dbMessage = await chatService.addMessage(userId, message)
+    await socketService.sendMessage(message.destId, message.chatId, dbMessage)
+
+    return res.send()
+  } catch (err) {
+    return err
+  }
 }
 
 module.exports = {
-  getAllThreads,
   getThread,
-  sendMessage
+  sendMessage,
+  getThreads
 }

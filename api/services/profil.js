@@ -2,38 +2,25 @@ const createError = require('http-errors')
 const errors = require('../errors')
 const config = require('../config/config')
 const db = require('../db')
-
-const picturesService = require('./pictures')
+const sql = require('./SQLQueries')('result')
 
 const getProfilById = async (userId) => {
-  const query = `
-    SELECT *
-    FROM profils
-    WHERE id = $1`
-  const values = [userId]
   try {
-    const profilRaw = await db.query(query, values)
-    if (!profilRaw.rows[0]) throw createError.BadRequest(errors.BAD_PROFIL_REQUEST)
-    const profil = profilRaw.rows[0]
-    profil.pictures = await picturesService.getPictures(userId)
-    return profil
+    const query = `
+      SELECT *,
+      ${sql.addRow.score()} AS score,
+      ${sql.addRow.pictures()} AS pictures
+      FROM profils AS result
+      WHERE id = $1`
+    const values = [userId]
+    const profil = await db.query(query, values)
+    if (!profil.rows[0]) throw createError.BadRequest(errors.BAD_PROFIL_REQUEST)
+    return profil.rows[0]
   } catch (err) {
     console.log(err.stack)
     throw err
   }
 }
-
-// const getProfilLocation = async (userId) => {
-//   return new Promise((resolve, reject) => {
-//     getProfilByUserId(db, userId)
-//     .then((profil) => {
-//       if (!profil || !profil.location || !profil.location.loc) {
-//         return reject(createError.BadRequest(errors.EMPTY_LOCATION))
-//       }
-//       return resolve(profil.location.loc)
-//     }).catch(reject)
-//   })
-// }
 
 const updateLocation = async (location, id) => {
   if (!location) throw Promise.reject(createError.BadRequest(errors.SERVICE_LOCATION_ERROR))
@@ -47,6 +34,22 @@ const updateLocation = async (location, id) => {
   } catch (err) {
     console.log(err.stack)
     throw createError.BadRequest(errors.SERVICE_LOCATION_ERROR)
+  }
+}
+
+const getDistances = async (userId, searchedProfil) => {
+  try {
+    const query = `
+      SELECT
+      ${sql.addRow.distances(searchedProfil.location.loc)} AS "distance"
+      FROM profils AS result
+      WHERE id = $1`
+    const values = [userId]
+    const distance = await db.query(query, values)
+    return distance.rows[0]
+  } catch (err) {
+    console.log(err.stack)
+    throw err
   }
 }
 
@@ -65,34 +68,6 @@ const updateProfil = async (name, value, userId) => {
     throw createError.InternalServerError(errors.INTRNAL_ERROR)
   }
 }
-
-// const addLike = async (userProfilId, profilId) => {
-//   return new Promise((resolve, reject) => {
-//     const Profils = db.collection('profils')
-//     Profils.findOneAndUpdate(
-//       {_id: ObjectID(userProfilId)},
-//       {$push: {likes: profilId}},
-//       (err) => {
-//         if (err) return reject(err)
-//         return resolve()
-//       }
-//     )
-//   })
-// }
-
-// const addMatch = async (userProfilId, profilId, chatId) => {
-//   return new Promise((resolve, reject) => {
-//     const Profils = db.collection('profils')
-//     Profils.findOneAndUpdate(
-//       {_id: ObjectID(userProfilId)},
-//       {$push: {matchs: {chatId, profilId: profilId}}},
-//       (err) => {
-//         if (err) return reject(err)
-//         return resolve()
-//       }
-//     )
-//   })
-// }
 
 const addTag = async (tagName, userId) => {
   const query = `
@@ -137,19 +112,6 @@ const getTags = async (id) => {
   }
 }
 
-const getLikes = async (id) => {
-  const query = 'SELECT "likes" FROM "profils" WHERE "id" = $1'
-  const values = [id]
-
-  try {
-    const value = await db.query(query, values)
-    return value.rows[0]
-  } catch (err) {
-    console.log(err.stack)
-    throw createError.InternalServerError(errors.INTRNAL_ERROR)
-  }
-}
-
 const getProfilPicture = async (id) => {
   const query = 'SELECT "profilPicture" FROM "profils" WHERE "id" = $1'
   const values = [id]
@@ -166,8 +128,8 @@ const getProfilPicture = async (id) => {
 const add = async (user, location) => {
   const query = `
     INSERT INTO
-    profils("tags", "sex", "pseudo", "location", "birthday", "orientation", "biography", "pictures", "profilPicture", "matchs", "history", "likes", "id")
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11::jsonb, $12, $13)`
+    profils("tags", "sex", "pseudo", "location", "birthday", "orientation", "biography", "profilPicture", "id")
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
   const values = [
     [],
     user.sex,
@@ -176,11 +138,7 @@ const add = async (user, location) => {
     new Date(user.birthday),
     '3',
     '',
-    [],
     `${config.HOST}:${config.PORT}/files/assets/empty_avatar.jpg`,
-    [],
-    JSON.stringify({news: [], archived: []}),
-    [],
     user.id
   ]
 
@@ -193,17 +151,35 @@ const add = async (user, location) => {
   }
 }
 
+const getPublicProfil = async (userId, searchedId) => {
+  try {
+    const query = `
+      SELECT *,
+      ${sql.addRow.score()} AS score,
+      ${sql.addRow.pictures()} AS pictures,
+      ${sql.addRow.chatId(userId, searchedId)} AS "chatId",
+      ${sql.addRow.isLiked(userId, searchedId)} AS "liked"
+      FROM profils AS result
+      WHERE id = $1`
+    const values = [searchedId]
+    const profil = await db.query(query, values)
+    if (!profil.rows[0]) throw createError.BadRequest(errors.BAD_PROFIL_REQUEST)
+    return profil.rows[0]
+  } catch (err) {
+    console.log(err.stack)
+    throw err
+  }
+}
+
 module.exports = {
   add,
   getProfilById,
+  getPublicProfil,
   updateLocation,
-  getLikes,
   updateProfil,
-//   getProfilLocation,
-//   addLike,
-//   addMatch,
   getProfilPicture,
   addTag,
   removeTag,
-  getTags
+  getTags,
+  getDistances
 }

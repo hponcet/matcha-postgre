@@ -7,14 +7,9 @@ import Subheader from 'material-ui/Subheader'
 import Card from 'material-ui/Card'
 
 class ChatList extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      threadsLabels: [],
-      threadsContent: []
-    }
-  }
   render () {
+    const { chatId } = this.props
+
     return (
       <Card style={{width: '100%', height: '100%'}}>
         <List>
@@ -25,11 +20,11 @@ class ChatList extends React.Component {
                 <ListItem
                   leftAvatar={<Avatar src={thread.profilPicture} />}
                   key={index}
-                  onClick={() => { this.props.onSelectThread(thread.chatId, thread._id) }}
+                  onClick={() => { this.props.onSelectThread(thread.chatId) }}
                   style={{
-                    color: this.props.currentThread === thread.chatId
+                    color: chatId === thread.chatId
                     ? '#ffffff' : 'inherit',
-                    backgroundColor: this.props.currentThread === thread.chatId
+                    backgroundColor: chatId === thread.chatId
                     ? '#79A5C5' : 'inherit'
                   }}
                 >

@@ -10,14 +10,14 @@ const imageUpload = require('../middlewares/image-upload')
 router.get('/profils/me', userJwt, profilController.getProfil)
 router.post('/profils/me', userJwt, profilController.updateProfil)
 
-router.get('/profils', userJwt, profilController.searchProfils)
-router.post('/profils', userJwt, profilController.searchProfils)
+router.post('/profils', userJwt, profilController.purposedProfils)
+router.post('/profils/search', userJwt, profilController.searchProfils)
 router.get('/profils/:userId', userJwt, profilController.getPublicProfil)
 
-router.get('/profils/me/likes', userJwt, interactionsController.getLikes)
-// router.put('/profils/like', userJwt, interactionsController.newLike)
+router.post('/profils/me/likes', userJwt, interactionsController.getLikes)
+router.put('/profils/like', userJwt, interactionsController.like)
 
-// router.put('/profils/view', userJwt, interactionsController.profilView)
+router.put('/profils/view', userJwt, interactionsController.profilView)
 
 router.post('/profils/pictures', userJwt, imageUpload, picturesController.addPicture)
 router.delete('/profils/pictures', userJwt, picturesController.removePicture)

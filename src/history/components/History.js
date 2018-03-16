@@ -18,6 +18,10 @@ class History extends React.Component {
     }
   }
 
+  componentDidMount () {
+    this.props.getHistory()
+  }
+
   render () {
     const generateList = (feedObject) => {
       return map(feedObject, (item, index) => {
@@ -60,11 +64,11 @@ class History extends React.Component {
             style={{marginBottom: '20px'}}
             >
             <CardHeader>Nouvelles activitées</CardHeader>
-            {generateList(this.props.history.news)}
+            {generateList(this.props.news)}
           </Card>
           <Card>
             <CardHeader>Activitées plus anciennes</CardHeader>
-            {generateList(this.props.history.archived)}
+            {generateList(this.props.archived)}
           </Card>
         </div>
         : <div>Vous n'avez aucune notification.</div>

@@ -17,7 +17,9 @@ const initialProfilState = {
   likes: [],
   userId: null,
   id: null,
-  history: null
+  history: null,
+  notifications: null,
+  score: 0
 }
 export const ProfilReducer = (state = initialProfilState, { type, payload }) => {
   switch (type) {
@@ -45,7 +47,9 @@ export const ProfilReducer = (state = initialProfilState, { type, payload }) => 
         biography: payload.biography,
         profilPicture: payload.profilPicture,
         likes: payload.likes,
-        history: payload.history
+        history: payload.history,
+        notifications: payload.notifications,
+        score: payload.score
       }
     case constants.FETCH_PROFIL_FAILURE:
       return { ...state, isFetching: false, error: payload }
@@ -65,10 +69,11 @@ const initialPublicProfilState = {
   orientation: null,
   biography: null,
   profilPicture: null,
-  profilScore: 0,
+  distance: null,
+  liked: null,
+  score: 0,
   location: [],
-  consultedBy: [],
-  likes: [],
+  chatId: null,
   id: null
 }
 export const PublicProfilReducer = (state = initialPublicProfilState, { type, payload }) => {
@@ -89,46 +94,16 @@ export const PublicProfilReducer = (state = initialPublicProfilState, { type, pa
         sex: payload.data.sex,
         orientation: payload.data.orientation,
         biography: payload.data.biography,
-        profilPicture: payload.data.profilPicture
+        profilPicture: payload.data.profilPicture,
+        score: payload.data.score,
+        distance: payload.data.distance,
+        liked: payload.data.liked,
+        chatId: payload.data.chatId
       }
+    case constants.GET_LIKES_SUCCESS:
+      return { ...state, isFetching: false, liked: payload.data.liked, chatId: payload.data.chatId }
     case constants.GET_PROFIL_FAILURE:
       return { ...state, isFetching: false, error: payload }
-    default:
-      return state
-  }
-}
-
-const initialLikeReducer = {
-  isFetching: false,
-  data: [],
-  error: null
-}
-export const LikeReducer = (state = initialLikeReducer, { type, payload }) => {
-  switch (type) {
-    case constants.LIKE_PROFIL_REQUEST:
-      return { ...state, isFetching: true }
-    case constants.LIKE_PROFIL_SUCCESS:
-      return { ...state, isFetching: false, error: null, data: payload.data }
-    case constants.LIKE_PROFIL_FAILURE:
-      return { ...state, isFetching: false, error: payload }
-    default:
-      return state
-  }
-}
-
-const initialProfilsState = {
-  profilsRequesting: false,
-  data: null,
-  error: null
-}
-export const ProfilsReducer = (state = initialProfilsState, { type, payload }) => {
-  switch (type) {
-    case constants.GET_PROFILS_REQUEST:
-      return { ...state, profilsRequesting: true }
-    case constants.GET_PROFILS_SUCCESS:
-      return { ...state, profilsRequesting: false, error: null, data: payload }
-    case constants.GET_PROFILS_FAILURE:
-      return { ...state, profilsRequesting: false, error: payload }
     default:
       return state
   }

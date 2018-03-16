@@ -17,3 +17,8 @@
   color: grey;
   opacity: 0.7;
 }
+.Finder_MenuItems {
+  display: flex;
+  align-items: center;
+  align-content: center;
+}

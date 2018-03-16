@@ -21,18 +21,18 @@ class NewsFeed extends React.Component {
           anchorOrigin={{horizontal: 'left', vertical: 'center'}}
           targetOrigin={{horizontal: 'left', vertical: 'center'}}
         >
-          <MenuItem primaryText='Archiver' onClick={() => { this.props.archiveNews(notification._id) }} />
+          <MenuItem primaryText='Archiver' onClick={() => { this.props.archiveNews(notification.newsId) }} />
           <MenuItem
             primaryText='Voir'
             onClick={() => {
-              this.props.archiveNews(notification._id)
+              this.props.archiveNews(notification.newsId)
               historyPush(notification.actionUrl)
             }}
           />
           <MenuItem
             primaryText='Voir le profil'
             onClick={() => {
-              this.props.archiveNews(notification._id)
+              this.props.archiveNews(notification.newsId)
               historyPush(notification.profilUrl)
             }}
           />
@@ -54,7 +54,7 @@ class NewsFeed extends React.Component {
                 <div
                   className='NewsFeed__infoContainer'
                   onClick={() => {
-                    this.props.archiveNews(notification._id)
+                    this.props.archiveNews(notification.newsId)
                     historyPush(notification.actionUrl)
                   }}
                 >
@@ -68,7 +68,7 @@ class NewsFeed extends React.Component {
                       <Link
                         to={notification.profilUrl}
                         className='NewsFeed__pseudoLink'
-                        onClick={() => { this.props.archiveNews(notification._id) }}
+                        onClick={() => { this.props.archiveNews(notification.newsId) }}
                       >
                         {notification.pseudo}
                       </Link>

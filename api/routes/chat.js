@@ -4,7 +4,7 @@ const router = express.Router()
 const chatController = require('../controllers/chat')
 const userJwt = require('../services/authentication').userJwt
 
-router.get('/chat', userJwt, chatController.getAllThreads)
+router.get('/chat', userJwt, chatController.getThreads)
 router.post('/chat', userJwt, chatController.getThread)
 router.post('/chat/message', userJwt, chatController.sendMessage)
 

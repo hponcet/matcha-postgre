@@ -1,119 +1,65 @@
-const config = require('../config/config')
-const emptyPictureProfil = `${config.HOST}:${config.PORT}/files/assets/empty_avatar.jpg`
+const query = require('./SQLQueries')('result')
 
-const geoQuery = (location, distance = 1000) => `
-  SELECT *
-  FROM profils
-  WHERE ST_DWithin
-  (
-    ST_GeomFromGeoJSON('${JSON.stringify(location)}')::geography,
-    ST_GeomFromGeoJSON(profils.location::json ->> 'loc')::geography,
-    ${distance * 1000}
-  )`
+const purposedProfils = (profil, order, offset) => {
+  return {
+    query: `
+      SELECT "biography", "birthday", "location", "profilPicture", "pseudo", "id",
+        ${query.addRow.distances(profil.location.loc)} AS distance,
+        ${query.addRow.pictures()} AS pictures,
+        ${query.addRow.tagsIntersect('$1')} AS "tagsIntersect",
+        ${query.addRow.commonsTags('$1')} AS "commonsTags",
+        ${query.addRow.score()}  AS "score"
+      FROM (
+        (
+          ${query.geoQuery(profil.location.loc)}
+          ${query.expect.id(profil.id)}
+          ${query.expect.emptyPicture()}
+        )
+        ${query.intersect.orientation(profil.orientation)}
+      ) AS result
+      ${query.order.by(order)}
+      LIMIT 12
+      OFFSET ${offset || 0}
+      `,
+    values: [profil.tags]
+  }
+}
 
-const _exceptUser = (id) => `
-  EXCEPT
-  SELECT *
-  FROM profils
-  WHERE id = '${id}'`
-
-const _expectEmptyPictures = () => `
-  EXCEPT 
-  SELECT *
-  FROM profils
-  WHERE "profilPicture" = '${emptyPictureProfil}'`
-
-const _intersectTagQuery = (tags) => (tags && tags.length > 0) ? `
-  INTERSECT SELECT *
-  FROM profils
-  WHERE tags && ${JSON.stringify(tags)}::text[]` : ``
-
-const _intersectOrientationQuery = orientation => orientation !== '3' ? `
-  INTERSECT SELECT *
-  FROM profils
-  WHERE sex = '${orientation}'` : ``
-
-const _intersectAgeQuery = age => (age && age.min && age.max) ? `
-  INTERSECT SELECT *
-  FROM profils
-  WHERE birthday
-    BETWEEN to_timestamp(${age.max})
-    AND to_timestamp(${age.min})` : ``
-
-const _rowPictures = () => `
-  ARRAY
-  (
-    SELECT json_build_object('id', id, 'url', public_path)
-    FROM pictures
-    WHERE id = result.id
-  )`
-const _rowTagsIntersects = () => `
-  array_length
-  (
-    ARRAY
-    (
-      SELECT unnest(result.tags)
-      INTERSECT
-      SELECT unnest(array['Longskate', 'Racketlon', 'Oulak', 'Alpinisme'])
-    ),
-    1
-  )`
-
-const _rowCalculateDistances = (location) => `
-  ST_Distance 
-  (
-    ST_FlipCoordinates(ST_GeomFromGeoJSON('${JSON.stringify(location)}'))::geography,
-    ST_FlipCoordinates(ST_GeomFromGeoJSON(result.location::json ->> 'loc'))::geography,
-    false
-  ) / 1000`
-
-const _rowCommonTags = (tags1, tags2) => `
-  ARRAY
-  (
-    SELECT unnest(${tags1})
-    INTERSECT
-    SELECT unnest(${tags2})
-  )`
-
-const queryConstructor = ({profilId, location, distance, ageRange, tags, orientation}) => `
-  SELECT "biography", "birthday", "location", "profilPicture", "pseudo", "id",
-    ${_rowCalculateDistances(location)} AS distance,
-    ${_rowPictures()} AS pictures,
-    ${tags ? _rowTagsIntersects(`result.tags`, JSON.stringify(tags))` AS "tagsIntersect"` : ``}
-    ${_rowCommonTags(`result.tags`, JSON.stringify(tags || []))} AS "commonsTags"
-  FROM (
-    (
-      ${geoQuery(location, distance)}
-      ${_exceptUser(profilId)}
-      ${_expectEmptyPictures()}
-    )
-    ${_intersectOrientationQuery(orientation)}
-    ${_intersectTagQuery(tags)}
-    ${_intersectAgeQuery(ageRange)}
-  ) AS result
-  ORDER BY distance ASC
-  LIMIT 48
-  `
-
-const purposedProfils = (profil) => `
-  SELECT "biography", "birthday", "location", "profilPicture", "pseudo", "id",
-    ${_rowCalculateDistances(profil.location)} AS distance,
-    ${_rowPictures()} AS pictures,
-    ${_rowTagsIntersects()} AS "tagsIntersect",
-    ${_rowCommonTags()} AS "commonsTags"
-  FROM (
-    (
-      ${geoQuery(profil.location.loc, 500)}
-      ${_exceptUser(profil.id)}
-      ${_expectEmptyPictures()}
-    )
-    ${_intersectOrientationQuery(profil.orientation)}
-  ) AS result
-  ORDER BY "tagsIntersect" DESC NULLS LAST
-  LIMIT 48
-  `
+const searchProfils = ({
+  profil,
+  order,
+  offset,
+  rangeDistance,
+  tags,
+  age
+}) => {
+  return {
+    query: `
+      SELECT "biography", "birthday", "location", "profilPicture", "pseudo", "id",
+        ${query.addRow.distances(profil.location.loc)} AS distance,
+        ${query.addRow.pictures()} AS pictures,
+        ${query.addRow.tagsIntersect('$1')} AS "tagsIntersect",
+        ${query.addRow.commonsTags('$1')} AS "commonsTags",
+        ${query.addRow.score()}  AS "score"
+      FROM (
+        (
+          ${query.geoQuery(profil.location.loc, rangeDistance)}
+          ${query.expect.id(profil.id)}
+          ${query.expect.emptyPicture()}
+        )
+        ${query.intersect.orientation(profil.orientation)}
+        ${query.intersect.age(age)}
+        ${tags.length > 0 ? query.intersect.tags('$1') : ``}
+      ) AS result
+      ${query.order.by(order)}
+      LIMIT 12
+      OFFSET ${offset || 0}
+      `,
+    values: [tags]
+  }
+}
 
 module.exports = {
-  queryConstructor,
-  purposedProfils
+  purposedProfils,
+  searchProfils
 }

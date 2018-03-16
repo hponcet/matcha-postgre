@@ -1,13 +1,13 @@
 import { connect } from 'react-redux'
 
 import NewsButton from '../components/NewsButton'
-import {fetchHistory, archiveNews, archiveAllNews} from '../actions'
+import {getNotifications, archiveNews, archiveAllNews} from '../actions'
 
 export default connect((state) => ({
-  news: state.history.data && state.history.data.news ? state.history.data.news : [],
+  notifications: state.notifications.data,
   profilPicture: state.profil.profilPicture
 }), {
-  fetchHistory,
+  getNotifications,
   archiveNews,
   archiveAllNews
 }
