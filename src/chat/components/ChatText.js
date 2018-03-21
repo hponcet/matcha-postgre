@@ -52,6 +52,7 @@ class ChatText extends React.Component {
     const { messages } = this.state
     messages.push(message)
     this.setState({ messages })
+    this.props.fetchThreads()
   }
 
   render () {

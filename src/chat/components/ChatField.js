@@ -30,6 +30,7 @@ class ChatField extends React.Component {
   handleEmoji (emoji) {
     const {value} = this.state
     this.setState({value: `${value}${emoji}`})
+    this.chatInput.focus()
   }
 
   render () {
@@ -37,6 +38,7 @@ class ChatField extends React.Component {
       <div className='ChatField__container'>
         <form onSubmit={this.handleSubmit} className='ChatField__formContainer'>
           <input
+            ref={(input) => { this.chatInput = input }}
             type='text'
             value={this.state.value}
             onChange={this.handleChange}

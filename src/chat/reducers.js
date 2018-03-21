@@ -21,6 +21,7 @@ export const ThreadsReducer = (state = initialThreadsState, { type, payload }) =
 const initialChatState = {
   chatFetching: false,
   userPicture: null,
+  chatId: null,
   profilPicture: null,
   messages: [],
   error: null
@@ -36,6 +37,7 @@ export const ChatReducer = (state = initialChatState, { type, payload }) => {
         error: null,
         userPicture: payload.userPicture,
         profilPicture: payload.profilPicture,
+        chatId: payload.chatId,
         messages: payload.messages
       }
     case constants.GET_CHAT_FAILURE:

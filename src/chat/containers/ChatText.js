@@ -1,8 +1,8 @@
 import { connect } from 'react-redux'
 
 import ChatText from '../components/ChatText'
-import { sendMessage } from '../actions'
+import { sendMessage, fetchThreads } from '../actions'
 
 export default connect(
-  (state) => ({}), { sendMessage }
+  (state) => ({}), { sendMessage, fetchThreads }
 )(ChatText)

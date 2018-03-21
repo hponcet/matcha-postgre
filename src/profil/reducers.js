@@ -108,3 +108,21 @@ export const PublicProfilReducer = (state = initialPublicProfilState, { type, pa
       return state
   }
 }
+
+const initialLocationState = {
+  isFetching: false,
+  error: null,
+  result: []
+}
+export const UserLocationReducer = (state = initialLocationState, { type, payload }) => {
+  switch (type) {
+    case constants.GET_GEOCODE_REQUEST:
+      return { ...state, isFetching: true }
+    case constants.GET_GEOCODE_SUCCESS:
+      return { ...state, isFetching: false, error: null, result: payload }
+    case constants.GET_GEOCODE_FAILURE:
+      return { ...state, isFetching: false, error: payload }
+    default:
+      return state
+  }
+}

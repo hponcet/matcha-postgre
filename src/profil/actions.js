@@ -1,6 +1,7 @@
 import * as constants from './constants'
 import axios from 'axios'
 import config from '../config/config'
+import { GoogleMapsClient } from '../utils/googleMap'
 
 export const fetchProfil = () => dispatch => {
   dispatch({ type: constants.FETCH_PROFIL_REQUEST })
@@ -46,5 +47,13 @@ export const profilView = (profilId) => dispatch => {
     method: 'put',
     url: `${config.API_BASE_URI}/profils/view`,
     data: {profilId}
+  })
+}
+
+export const getGeocode = address => dispatch => {
+  dispatch({ type: constants.GET_GEOCODE_REQUEST })
+  return GoogleMapsClient.geocode({ address }, (err, response) => {
+    if (err) return dispatch({ type: constants.GET_GEOCODE_FAILURE, payload: 'GOOGLE_API_ERROR' })
+    return dispatch({ type: constants.GET_GEOCODE_SUCCESS, payload: response.json.results })
   })
 }

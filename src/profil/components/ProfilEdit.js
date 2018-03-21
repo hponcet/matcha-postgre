@@ -5,6 +5,7 @@ import Validation from '../../validation/Validation'
 import Keys from '../../Keys'
 
 import { Card, CardText, CardHeader, CardActions } from 'material-ui/Card'
+import Location from '../containers/Location'
 import Dialog from 'material-ui/Dialog'
 import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
@@ -13,6 +14,7 @@ import MenuItem from 'material-ui/MenuItem'
 import TextField from 'material-ui/TextField'
 import Tags from '../../styled-components/tags/component/Tags'
 import PicturesUpload from '../../styled-components/pictures/containers/PicturesUpload'
+import URLSearchParams from 'url-search-params'
 
 import './Profil.css'
 
@@ -274,6 +276,10 @@ class Profil extends React.Component {
               fullWidth
             />
           </CardText>
+        </Card>
+
+        <Card style={{margin: '20px'}}>
+          <Location />
         </Card>
 
         <CardActions style={{width: '100%', display: 'flex', justifyContent: 'center'}}>

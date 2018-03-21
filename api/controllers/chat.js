@@ -6,7 +6,7 @@ const getThreads = async (req, res, next) => {
     const { userId } = req.token
     const threads = await chatService.getThreads(userId)
 
-    console.log(threads)
+    console.log('threads:', threads)
 
     return res.send(threads)
   } catch (err) {
@@ -23,6 +23,8 @@ const getThread = async (req, res, next) => {
       chatId,
       messages
     }
+
+    console.log('threads:', thread)
 
     return res.send(thread)
   } catch (err) {

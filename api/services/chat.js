@@ -22,6 +22,8 @@ const createNewChat = async (userId, likedId) => {
 
 const getThreads = async (userId) => {
   const query = `
+  SELECT *
+  FROM (
     SELECT
       "id" AS "chatId",
       (
@@ -103,6 +105,8 @@ const getThreads = async (userId) => {
       ) AS "lastMessageUserId"
     FROM "chats" AS result
     WHERE "profilId2" = $1
+  ) AS request
+  ORDER BY request."lastDateMessage" DESC
   `
   const values = [userId]
 
@@ -134,7 +138,6 @@ const getThread = async (chatId) => {
 
 const addMessage = async (userId, message) => {
   try {
-    console.log(message)
     const query = `
       INSERT INTO
       messages ("chatId", "id", "message", "date")

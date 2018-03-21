@@ -12,7 +12,7 @@ export const fetchThreads = () => dispatch => {
   .catch((error) => dispatch({type: constants.FETCH_THREADS_FAILURE, payload: error}))
 }
 
-export const getCurrentThread = (chatId) => dispatch => {
+export const getThread = (chatId) => dispatch => {
   dispatch({ type: constants.GET_CHAT_REQUEST })
   axios({
     method: 'post',

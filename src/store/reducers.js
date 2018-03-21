@@ -5,7 +5,7 @@ import { UserReducer } from '../interface/reducers'
 import { NotificationReducer } from '../notifications/reducers'
 import { HistoryReducer } from '../history/reducers'
 import { ThreadsReducer, ChatReducer } from '../chat/reducers'
-import { ProfilReducer, PublicProfilReducer } from '../profil/reducers'
+import { ProfilReducer, PublicProfilReducer, UserLocationReducer } from '../profil/reducers'
 import { SearchReducer } from '../finder/reducers'
 import { TagsReducer } from '../styled-components/tags/reducers'
 
@@ -23,6 +23,7 @@ export const makeRootReducer = (asyncReducers) => {
     history: HistoryReducer,
     threads: ThreadsReducer,
     chat: ChatReducer,
+    userLocation: UserLocationReducer,
     ...asyncReducers
   })
 }

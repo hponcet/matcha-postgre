@@ -43,14 +43,11 @@ class Finder extends React.Component {
   }
 
   componentDidMount () {
-    this.props.getProfils(this.state.offset, this.state.order)
-    this.setState({location: this.props.location})
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.pictures && nextProps.pictures.lenght === 0) {
+    if (this.props.pictures.length < 1) {
       historyPush('/dashboard/profil?emptypics=1')
     }
+    this.props.getProfils(this.state.offset, this.state.order)
+    this.setState({location: this.props.location})
   }
 
   handleTagChange (tags) { this.setState({tags}) }

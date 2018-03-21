@@ -1,5 +1,4 @@
 import React from 'react'
-import haversine from 'haversine'
 import map from 'lodash/map'
 
 import StackedPictures from './StackedPictures'
@@ -25,9 +24,7 @@ class ProfilChatPreview extends React.Component {
   }
 
   render () {
-    const {profil, user} = this.props
-    const profilLoc = profil.location && profil.location.loc ? profil.location.loc : [0, 0]
-    const userLoc = user.location && user.location.loc ? user.location.loc : [0, 0]
+    const { profil } = this.props
 
     return (
       <Card style={{width: '100%', minWidth: '250px', height: '100%'}}>
@@ -43,10 +40,10 @@ class ProfilChatPreview extends React.Component {
           <div className='Profil__infoRow'>
             <div className='Profil__content'>
               <IconLocation />
-              {profil.location.city ? `${profil.location.city}, ` : null}
-              {Math.floor(haversine(userLoc, profilLoc, {format: '[lat,lon]'}))}km
+              {profil.location.city ? `${profil.location.city}` : null}
+              {profil.distance ? ', ' + Math.round(profil.distance) + 'km' : null}
             </div>
-            <div className='Profil__content'><IconScore />{profil.profilScore}</div>
+            <div className='Profil__content'><IconScore />{profil.score}</div>
           </div>
           <div className='ProfilView__bio'>{profil.biography}</div>
           <div className='ProfilView__tags'>{

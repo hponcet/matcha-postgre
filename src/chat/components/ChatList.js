@@ -27,6 +27,7 @@ class ChatList extends React.Component {
                     backgroundColor: chatId === thread.chatId
                     ? '#79A5C5' : 'inherit'
                   }}
+                  secondaryText={`${thread.lastMessage}`}
                 >
                   {thread.pseudo}
                 </ListItem>
